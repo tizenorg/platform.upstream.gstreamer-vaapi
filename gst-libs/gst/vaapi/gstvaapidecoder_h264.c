@@ -1023,8 +1023,10 @@ parse_sps(GstVaapiDecoderH264 *decoder, GstVaapiDecoderUnit *unit)
     sps->log2_max_pic_order_cnt_lsb_minus4 = 0;
 
     result = gst_h264_parser_parse_sps(priv->parser, &pi->nalu, sps, TRUE);
-    if (result != GST_H264_PARSER_OK)
+    if (result != GST_H264_PARSER_OK) {
+        priv->got_sps = FALSE;
         return get_status(result);
+    }
 
     priv->got_sps = TRUE;
     return GST_VAAPI_DECODER_STATUS_SUCCESS;
@@ -1046,8 +1048,10 @@ parse_pps(GstVaapiDecoderH264 *decoder, GstVaapiDecoderUnit *unit)
     pps->slice_group_change_rate_minus1 = 0;
 
     result = gst_h264_parser_parse_pps(priv->parser, &pi->nalu, pps);
-    if (result != GST_H264_PARSER_OK)
+    if (result != GST_H264_PARSER_OK) {
+        priv->got_pps = FALSE;
         return get_status(result);
+    }
 
     priv->got_pps = TRUE;
     return GST_VAAPI_DECODER_STATUS_SUCCESS;
