@@ -1775,6 +1775,8 @@ exec_picture_refs_modification_1(
         num_refs                       = slice_hdr->num_ref_idx_l1_active_minus1 + 1;
     }
     ref_list_count = *ref_list_count_ptr;
+    if (num_refs > ref_list_count)
+        num_refs = ref_list_count;
 
     if (!GST_VAAPI_PICTURE_IS_FRAME(picture)) {
         MaxPicNum  = 1 << (sps->log2_max_frame_num_minus4 + 5); // 2 * MaxFrameNum
@@ -1971,7 +1973,7 @@ init_picture_refs(
         num_refs = 1 + slice_hdr->num_ref_idx_l1_active_minus1;
         for (i = priv->RefPicList1_count; i < num_refs; i++)
             priv->RefPicList1[i] = NULL;
-        priv->RefPicList1_count = num_refs;
+        //priv->RefPicList1_count = num_refs;
 
         // fall-through
     case GST_VAAPI_PICTURE_TYPE_P:
@@ -1979,7 +1981,7 @@ init_picture_refs(
         num_refs = 1 + slice_hdr->num_ref_idx_l0_active_minus1;
         for (i = priv->RefPicList0_count; i < num_refs; i++)
             priv->RefPicList0[i] = NULL;
-        priv->RefPicList0_count = num_refs;
+        //priv->RefPicList0_count = num_refs;
         break;
     default:
         break;
