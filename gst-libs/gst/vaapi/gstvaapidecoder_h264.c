@@ -37,6 +37,9 @@
 #define DEBUG 1
 #include "gstvaapidebug.h"
 
+/* Define the max views supported */
+#define MAX_VIEW_NUM 2
+
 /* Defined to 1 if strict ordering of DPB is needed. Only useful for debug */
 #define USE_STRICT_DPB_ORDERING 0
 
@@ -46,6 +49,7 @@ typedef struct _GstVaapiFrameStore              GstVaapiFrameStore;
 typedef struct _GstVaapiFrameStoreClass         GstVaapiFrameStoreClass;
 typedef struct _GstVaapiParserInfoH264          GstVaapiParserInfoH264;
 typedef struct _GstVaapiPictureH264             GstVaapiPictureH264;
+typedef struct _GstVaapiDecPicBufLayer          GstVaapiDecPicBufLayer;
 
 // Used for field_poc[]
 #define TOP_FIELD       0
@@ -359,6 +363,24 @@ gst_vaapi_frame_store_has_reference(GstVaapiFrameStore *fs)
         (GstVaapiMiniObject *)(new_fs))
 
 /* ------------------------------------------------------------------------- */
+/* --- H.264 Decoded Picture Buffer layer                                --- */
+/* ------------------------------------------------------------------------- */
+struct _GstVaapiDecPicBufLayer {
+    GstVaapiFrameStore         *dpb[16];
+    guint                       dpb_count;
+    guint                       dpb_size;
+
+    GstVaapiPictureH264        *short_ref[32];
+    guint                       short_ref_count;
+    GstVaapiPictureH264        *long_ref[32];
+    guint                       long_ref_count;
+    GstVaapiPictureH264        *RefPicList0[32];
+    guint                       RefPicList0_count;
+    GstVaapiPictureH264        *RefPicList1[32];
+    guint                       RefPicList1_count;
+};
+
+/* ------------------------------------------------------------------------- */
 /* --- H.264 Decoder                                                     --- */
 /* ------------------------------------------------------------------------- */
 
@@ -370,20 +392,12 @@ struct _GstVaapiDecoderH264Private {
     GstVaapiPictureH264        *current_picture;
     GstVaapiParserInfoH264     *prev_slice_pi;
     GstVaapiFrameStore         *prev_frame;
-    GstVaapiFrameStore         *dpb[16];
-    guint                       dpb_count;
-    guint                       dpb_size;
+    GstVaapiDecPicBufLayer      dpb_layers[MAX_VIEW_NUM]; 
+    GstVaapiDecPicBufLayer*     current_dpb_layer;
     GstVaapiProfile             profile;
     GstVaapiEntrypoint          entrypoint;
     GstVaapiChromaType          chroma_type;
-    GstVaapiPictureH264        *short_ref[32];
-    guint                       short_ref_count;
-    GstVaapiPictureH264        *long_ref[32];
-    guint                       long_ref_count;
-    GstVaapiPictureH264        *RefPicList0[32];
-    guint                       RefPicList0_count;
-    GstVaapiPictureH264        *RefPicList1[32];
-    guint                       RefPicList1_count;
+    guint                       current_view_id;
     guint                       nal_length_size;
     guint                       mb_width;
     guint                       mb_height;
@@ -536,15 +550,16 @@ static void
 dpb_remove_index(GstVaapiDecoderH264 *decoder, guint index)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
-    guint i, num_frames = --priv->dpb_count;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
+    guint i, num_frames = --dpb_layer->dpb_count;
 
-    if (USE_STRICT_DPB_ORDERING) {
+     if (USE_STRICT_DPB_ORDERING) {
         for (i = index; i < num_frames; i++)
-            gst_vaapi_frame_store_replace(&priv->dpb[i], priv->dpb[i + 1]);
+            gst_vaapi_frame_store_replace(&dpb_layer->dpb[i], dpb_layer->dpb[i + 1]);
     }
     else if (index != num_frames)
-        gst_vaapi_frame_store_replace(&priv->dpb[index], priv->dpb[num_frames]);
-    gst_vaapi_frame_store_replace(&priv->dpb[num_frames], NULL);
+        gst_vaapi_frame_store_replace(&dpb_layer->dpb[index], dpb_layer->dpb[num_frames]);
+    gst_vaapi_frame_store_replace(&dpb_layer->dpb[num_frames], NULL);
 }
 
 static gboolean
@@ -568,9 +583,10 @@ static inline void
 dpb_evict(GstVaapiDecoderH264 *decoder, GstVaapiPictureH264 *picture, guint i)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
-    GstVaapiFrameStore * const fs = priv->dpb[i];
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
+    GstVaapiFrameStore * const fs = dpb_layer->dpb[i];
 
-    if (!fs->output_needed && !gst_vaapi_frame_store_has_reference(fs))
+     if (!fs->output_needed && !gst_vaapi_frame_store_has_reference(fs))
         dpb_remove_index(decoder, i);
 }
 
@@ -578,12 +594,13 @@ static gboolean
 dpb_bump(GstVaapiDecoderH264 *decoder)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     GstVaapiPictureH264 *found_picture = NULL;
     guint i, j, found_index;
     gboolean success;
 
-    for (i = 0; i < priv->dpb_count; i++) {
-        GstVaapiFrameStore * const fs = priv->dpb[i];
+    for (i = 0; i < dpb_layer->dpb_count; i++) {
+        GstVaapiFrameStore * const fs = dpb_layer->dpb[i];
         if (!fs->output_needed)
             continue;
         for (j = 0; j < fs->num_buffers; j++) {
@@ -597,7 +614,7 @@ dpb_bump(GstVaapiDecoderH264 *decoder)
     if (!found_picture)
         return FALSE;
 
-    success = dpb_output(decoder, priv->dpb[found_index], found_picture);
+    success = dpb_output(decoder, dpb_layer->dpb[found_index], found_picture);
     dpb_evict(decoder, found_picture, found_index);
     return success;
 }
@@ -606,11 +623,12 @@ static void
 dpb_clear(GstVaapiDecoderH264 *decoder)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     guint i;
 
-    for (i = 0; i < priv->dpb_count; i++)
-        gst_vaapi_frame_store_replace(&priv->dpb[i], NULL);
-    priv->dpb_count = 0;
+    for (i = 0; i < dpb_layer->dpb_count; i++)
+          gst_vaapi_frame_store_replace(&dpb_layer->dpb[i], NULL);
+    dpb_layer->dpb_count = 0;
 
     gst_vaapi_frame_store_replace(&priv->prev_frame, NULL);
 }
@@ -627,14 +645,15 @@ static gboolean
 dpb_add(GstVaapiDecoderH264 *decoder, GstVaapiPictureH264 *picture)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     GstVaapiFrameStore *fs;
     guint i, j;
 
     // Remove all unused pictures
     if (!GST_VAAPI_PICTURE_IS_IDR(picture)) {
         i = 0;
-        while (i < priv->dpb_count) {
-            GstVaapiFrameStore * const fs = priv->dpb[i];
+        while (i < dpb_layer->dpb_count) {
+            GstVaapiFrameStore * const fs = dpb_layer->dpb[i];
             if (!fs->output_needed && !gst_vaapi_frame_store_has_reference(fs))
                 dpb_remove_index(decoder, i);
             else
@@ -661,11 +680,11 @@ dpb_add(GstVaapiDecoderH264 *decoder, GstVaapiPictureH264 *picture)
 
     // C.4.5.1 - Storage and marking of a reference decoded picture into the DPB
     if (GST_VAAPI_PICTURE_IS_REFERENCE(picture)) {
-        while (priv->dpb_count == priv->dpb_size) {
+        while (dpb_layer->dpb_count == dpb_layer->dpb_size) {
             if (!dpb_bump(decoder))
                 return FALSE;
         }
-        gst_vaapi_frame_store_replace(&priv->dpb[priv->dpb_count++], fs);
+        gst_vaapi_frame_store_replace(&dpb_layer->dpb[dpb_layer->dpb_count++], fs);
         if (picture->output_flag) {
             picture->output_needed = TRUE;
             fs->output_needed++;
@@ -676,10 +695,10 @@ dpb_add(GstVaapiDecoderH264 *decoder, GstVaapiPictureH264 *picture)
     else {
         if (!picture->output_flag)
             return TRUE;
-        while (priv->dpb_count == priv->dpb_size) {
+        while (dpb_layer->dpb_count == dpb_layer->dpb_size) {
             gboolean found_picture = FALSE;
-            for (i = 0; !found_picture && i < priv->dpb_count; i++) {
-                GstVaapiFrameStore * const fs = priv->dpb[i];
+            for (i = 0; !found_picture && i < dpb_layer->dpb_count; i++) {
+                GstVaapiFrameStore * const fs = dpb_layer->dpb[i];
                 if (!fs->output_needed)
                     continue;
                 for (j = 0; !found_picture && j < fs->num_buffers; j++)
@@ -691,7 +710,7 @@ dpb_add(GstVaapiDecoderH264 *decoder, GstVaapiPictureH264 *picture)
             if (!dpb_bump(decoder))
                 return FALSE;
         }
-        gst_vaapi_frame_store_replace(&priv->dpb[priv->dpb_count++], fs);
+        gst_vaapi_frame_store_replace(&dpb_layer->dpb[dpb_layer->dpb_count++], fs);
         picture->output_needed = TRUE;
         fs->output_needed++;
     }
@@ -702,9 +721,34 @@ static inline void
 dpb_reset(GstVaapiDecoderH264 *decoder, GstH264SPS *sps)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
+ 
+    dpb_layer->dpb_size = get_max_dec_frame_buffering(sps);
+    GST_DEBUG("DPB size %u", dpb_layer->dpb_size);
+}
 
-    priv->dpb_size = get_max_dec_frame_buffering(sps);
-    GST_DEBUG("DPB size %u", priv->dpb_size);
+static void
+dpb_init(GstVaapiDecoderH264 *decoder)
+{
+    GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = NULL;
+    guint i;
+
+    for (i = 0; i < MAX_VIEW_NUM; i++ ) {
+       dpb_layer = &priv->dpb_layers[i];
+       dpb_layer->dpb_size          = 0;
+       dpb_layer->dpb_count         = 0;
+       dpb_layer->short_ref_count   = 0;
+       dpb_layer->long_ref_count    = 0;
+       dpb_layer->RefPicList0_count = 0;
+       dpb_layer->RefPicList1_count = 0;
+
+       memset(dpb_layer->dpb, 0, sizeof(dpb_layer->dpb));
+       memset(dpb_layer->short_ref, 0, sizeof(dpb_layer->short_ref));
+       memset(dpb_layer->long_ref, 0, sizeof(dpb_layer->long_ref));
+       memset(dpb_layer->RefPicList0, 0, sizeof(dpb_layer->RefPicList0));
+       memset(dpb_layer->RefPicList1, 0, sizeof(dpb_layer->RefPicList1));
+    }
 }
 
 static GstVaapiDecoderStatus
@@ -779,6 +823,10 @@ gst_vaapi_decoder_h264_create(GstVaapiDecoder *base_decoder)
     priv->chroma_type           = GST_VAAPI_CHROMA_TYPE_YUV420;
     priv->prev_pic_structure    = GST_VAAPI_PICTURE_STRUCTURE_FRAME;
     priv->progressive_sequence  = TRUE;
+    priv->current_dpb_layer     = &priv->dpb_layers[0];
+
+    dpb_init(decoder);
+
     return TRUE;
 }
 
@@ -1419,6 +1467,7 @@ init_picture_refs_pic_num(
 )
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     GstH264PPS * const pps = slice_hdr->pps;
     GstH264SPS * const sps = pps->sequence;
     const gint32 MaxFrameNum = 1 << (sps->log2_max_frame_num_minus4 + 4);
@@ -1426,8 +1475,8 @@ init_picture_refs_pic_num(
 
     GST_DEBUG("decode picture numbers");
 
-    for (i = 0; i < priv->short_ref_count; i++) {
-        GstVaapiPictureH264 * const pic = priv->short_ref[i];
+    for (i = 0; i < dpb_layer->short_ref_count; i++) {
+        GstVaapiPictureH264 * const pic = dpb_layer->short_ref[i];
 
         // (8-27)
         if (pic->frame_num > priv->frame_num)
@@ -1446,8 +1495,8 @@ init_picture_refs_pic_num(
         }
     }
 
-    for (i = 0; i < priv->long_ref_count; i++) {
-        GstVaapiPictureH264 * const pic = priv->long_ref[i];
+    for (i = 0; i < dpb_layer->long_ref_count; i++) {
+        GstVaapiPictureH264 * const pic = dpb_layer->long_ref[i];
 
         // (8-29, 8-32, 8-33)
         if (GST_VAAPI_PICTURE_IS_FRAME(picture))
@@ -1525,6 +1574,7 @@ init_picture_refs_p_slice(
 )
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     GstVaapiPictureH264 **ref_list;
     guint i;
 
@@ -1532,20 +1582,20 @@ init_picture_refs_p_slice(
 
     if (GST_VAAPI_PICTURE_IS_FRAME(picture)) {
         /* 8.2.4.2.1 - P and SP slices in frames */
-        if (priv->short_ref_count > 0) {
-            ref_list = priv->RefPicList0;
-            for (i = 0; i < priv->short_ref_count; i++)
-                ref_list[i] = priv->short_ref[i];
+        if (dpb_layer->short_ref_count > 0) {
+            ref_list = dpb_layer->RefPicList0;
+            for (i = 0; i < dpb_layer->short_ref_count; i++)
+                ref_list[i] = dpb_layer->short_ref[i];
             SORT_REF_LIST(ref_list, i, pic_num_dec);
-            priv->RefPicList0_count += i;
+            dpb_layer->RefPicList0_count += i;
         }
 
-        if (priv->long_ref_count > 0) {
-            ref_list = &priv->RefPicList0[priv->RefPicList0_count];
-            for (i = 0; i < priv->long_ref_count; i++)
-                ref_list[i] = priv->long_ref[i];
+        if (dpb_layer->long_ref_count > 0) {
+            ref_list = &dpb_layer->RefPicList0[dpb_layer->RefPicList0_count];
+            for (i = 0; i < dpb_layer->long_ref_count; i++)
+                ref_list[i] = dpb_layer->long_ref[i];
             SORT_REF_LIST(ref_list, i, long_term_pic_num_inc);
-            priv->RefPicList0_count += i;
+            dpb_layer->RefPicList0_count += i;
         }
     }
     else {
@@ -1555,23 +1605,23 @@ init_picture_refs_p_slice(
         GstVaapiPictureH264 *long_ref[32];
         guint long_ref_count = 0;
 
-        if (priv->short_ref_count > 0) {
-            for (i = 0; i < priv->short_ref_count; i++)
-                short_ref[i] = priv->short_ref[i];
+        if (dpb_layer->short_ref_count > 0) {
+            for (i = 0; i < dpb_layer->short_ref_count; i++)
+                short_ref[i] = dpb_layer->short_ref[i];
             SORT_REF_LIST(short_ref, i, frame_num_wrap_dec);
             short_ref_count = i;
         }
 
-        if (priv->long_ref_count > 0) {
-            for (i = 0; i < priv->long_ref_count; i++)
-                long_ref[i] = priv->long_ref[i];
+        if (dpb_layer->long_ref_count > 0) {
+            for (i = 0; i < dpb_layer->long_ref_count; i++)
+                long_ref[i] = dpb_layer->long_ref[i];
             SORT_REF_LIST(long_ref, i, long_term_frame_idx_inc);
             long_ref_count = i;
         }
 
         init_picture_refs_fields(
             picture,
-            priv->RefPicList0, &priv->RefPicList0_count,
+            dpb_layer->RefPicList0, &dpb_layer->RefPicList0_count,
             short_ref,          short_ref_count,
             long_ref,           long_ref_count
         );
@@ -1586,6 +1636,7 @@ init_picture_refs_b_slice(
 )
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     GstVaapiPictureH264 **ref_list;
     guint i, n;
 
@@ -1595,61 +1646,61 @@ init_picture_refs_b_slice(
         /* 8.2.4.2.3 - B slices in frames */
 
         /* RefPicList0 */
-        if (priv->short_ref_count > 0) {
+        if (dpb_layer->short_ref_count > 0) {
             // 1. Short-term references
-            ref_list = priv->RefPicList0;
-            for (n = 0, i = 0; i < priv->short_ref_count; i++) {
-                if (priv->short_ref[i]->base.poc < picture->base.poc)
-                    ref_list[n++] = priv->short_ref[i];
+            ref_list = dpb_layer->RefPicList0;
+            for (n = 0, i = 0; i < dpb_layer->short_ref_count; i++) {
+                if (dpb_layer->short_ref[i]->base.poc < picture->base.poc)
+                    ref_list[n++] = dpb_layer->short_ref[i];
             }
             SORT_REF_LIST(ref_list, n, poc_dec);
-            priv->RefPicList0_count += n;
+            dpb_layer->RefPicList0_count += n;
 
-            ref_list = &priv->RefPicList0[priv->RefPicList0_count];
-            for (n = 0, i = 0; i < priv->short_ref_count; i++) {
-                if (priv->short_ref[i]->base.poc >= picture->base.poc)
-                    ref_list[n++] = priv->short_ref[i];
+            ref_list = &dpb_layer->RefPicList0[dpb_layer->RefPicList0_count];
+            for (n = 0, i = 0; i < dpb_layer->short_ref_count; i++) {
+                if (dpb_layer->short_ref[i]->base.poc >= picture->base.poc)
+                    ref_list[n++] = dpb_layer->short_ref[i];
             }
             SORT_REF_LIST(ref_list, n, poc_inc);
-            priv->RefPicList0_count += n;
+            dpb_layer->RefPicList0_count += n;
         }
 
-        if (priv->long_ref_count > 0) {
+        if (dpb_layer->long_ref_count > 0) {
             // 2. Long-term references
-            ref_list = &priv->RefPicList0[priv->RefPicList0_count];
-            for (n = 0, i = 0; i < priv->long_ref_count; i++)
-                ref_list[n++] = priv->long_ref[i];
+            ref_list = &dpb_layer->RefPicList0[dpb_layer->RefPicList0_count];
+            for (n = 0, i = 0; i < dpb_layer->long_ref_count; i++)
+                ref_list[n++] = dpb_layer->long_ref[i];
             SORT_REF_LIST(ref_list, n, long_term_pic_num_inc);
-            priv->RefPicList0_count += n;
+            dpb_layer->RefPicList0_count += n;
         }
 
         /* RefPicList1 */
-        if (priv->short_ref_count > 0) {
+        if (dpb_layer->short_ref_count > 0) {
             // 1. Short-term references
-            ref_list = priv->RefPicList1;
-            for (n = 0, i = 0; i < priv->short_ref_count; i++) {
-                if (priv->short_ref[i]->base.poc > picture->base.poc)
-                    ref_list[n++] = priv->short_ref[i];
+            ref_list = dpb_layer->RefPicList1;
+            for (n = 0, i = 0; i < dpb_layer->short_ref_count; i++) {
+                if (dpb_layer->short_ref[i]->base.poc > picture->base.poc)
+                    ref_list[n++] = dpb_layer->short_ref[i];
             }
             SORT_REF_LIST(ref_list, n, poc_inc);
-            priv->RefPicList1_count += n;
+            dpb_layer->RefPicList1_count += n;
 
-            ref_list = &priv->RefPicList1[priv->RefPicList1_count];
-            for (n = 0, i = 0; i < priv->short_ref_count; i++) {
-                if (priv->short_ref[i]->base.poc <= picture->base.poc)
-                    ref_list[n++] = priv->short_ref[i];
+            ref_list = &dpb_layer->RefPicList1[dpb_layer->RefPicList1_count];
+            for (n = 0, i = 0; i < dpb_layer->short_ref_count; i++) {
+                if (dpb_layer->short_ref[i]->base.poc <= picture->base.poc)
+                    ref_list[n++] = dpb_layer->short_ref[i];
             }
             SORT_REF_LIST(ref_list, n, poc_dec);
-            priv->RefPicList1_count += n;
+            dpb_layer->RefPicList1_count += n;
         }
 
-        if (priv->long_ref_count > 0) {
+        if (dpb_layer->long_ref_count > 0) {
             // 2. Long-term references
-            ref_list = &priv->RefPicList1[priv->RefPicList1_count];
-            for (n = 0, i = 0; i < priv->long_ref_count; i++)
-                ref_list[n++] = priv->long_ref[i];
+            ref_list = &dpb_layer->RefPicList1[dpb_layer->RefPicList1_count];
+            for (n = 0, i = 0; i < dpb_layer->long_ref_count; i++)
+                ref_list[n++] = dpb_layer->long_ref[i];
             SORT_REF_LIST(ref_list, n, long_term_pic_num_inc);
-            priv->RefPicList1_count += n;
+            dpb_layer->RefPicList1_count += n;
         }
     }
     else {
@@ -1662,61 +1713,61 @@ init_picture_refs_b_slice(
         guint long_ref_count = 0;
 
         /* refFrameList0ShortTerm */
-        if (priv->short_ref_count > 0) {
+        if (dpb_layer->short_ref_count > 0) {
             ref_list = short_ref0;
-            for (n = 0, i = 0; i < priv->short_ref_count; i++) {
-                if (priv->short_ref[i]->base.poc <= picture->base.poc)
-                    ref_list[n++] = priv->short_ref[i];
+            for (n = 0, i = 0; i < dpb_layer->short_ref_count; i++) {
+                if (dpb_layer->short_ref[i]->base.poc <= picture->base.poc)
+                    ref_list[n++] = dpb_layer->short_ref[i];
             }
             SORT_REF_LIST(ref_list, n, poc_dec);
             short_ref0_count += n;
 
             ref_list = &short_ref0[short_ref0_count];
-            for (n = 0, i = 0; i < priv->short_ref_count; i++) {
-                if (priv->short_ref[i]->base.poc > picture->base.poc)
-                    ref_list[n++] = priv->short_ref[i];
+            for (n = 0, i = 0; i < dpb_layer->short_ref_count; i++) {
+                if (dpb_layer->short_ref[i]->base.poc > picture->base.poc)
+                    ref_list[n++] = dpb_layer->short_ref[i];
             }
             SORT_REF_LIST(ref_list, n, poc_inc);
             short_ref0_count += n;
         }
 
         /* refFrameList1ShortTerm */
-        if (priv->short_ref_count > 0) {
+        if (dpb_layer->short_ref_count > 0) {
             ref_list = short_ref1;
-            for (n = 0, i = 0; i < priv->short_ref_count; i++) {
-                if (priv->short_ref[i]->base.poc > picture->base.poc)
-                    ref_list[n++] = priv->short_ref[i];
+            for (n = 0, i = 0; i < dpb_layer->short_ref_count; i++) {
+                if (dpb_layer->short_ref[i]->base.poc > picture->base.poc)
+                    ref_list[n++] = dpb_layer->short_ref[i];
             }
             SORT_REF_LIST(ref_list, n, poc_inc);
             short_ref1_count += n;
 
             ref_list = &short_ref1[short_ref1_count];
-            for (n = 0, i = 0; i < priv->short_ref_count; i++) {
-                if (priv->short_ref[i]->base.poc <= picture->base.poc)
-                    ref_list[n++] = priv->short_ref[i];
+            for (n = 0, i = 0; i < dpb_layer->short_ref_count; i++) {
+                if (dpb_layer->short_ref[i]->base.poc <= picture->base.poc)
+                    ref_list[n++] = dpb_layer->short_ref[i];
             }
             SORT_REF_LIST(ref_list, n, poc_dec);
             short_ref1_count += n;
         }
 
         /* refFrameListLongTerm */
-        if (priv->long_ref_count > 0) {
-            for (i = 0; i < priv->long_ref_count; i++)
-                long_ref[i] = priv->long_ref[i];
+        if (dpb_layer->long_ref_count > 0) {
+            for (i = 0; i < dpb_layer->long_ref_count; i++)
+                long_ref[i] = dpb_layer->long_ref[i];
             SORT_REF_LIST(long_ref, i, long_term_frame_idx_inc);
             long_ref_count = i;
         }
 
         init_picture_refs_fields(
             picture,
-            priv->RefPicList0, &priv->RefPicList0_count,
+            dpb_layer->RefPicList0, &dpb_layer->RefPicList0_count,
             short_ref0,         short_ref0_count,
             long_ref,           long_ref_count
         );
 
         init_picture_refs_fields(
             picture,
-            priv->RefPicList1, &priv->RefPicList1_count,
+            dpb_layer->RefPicList1, &dpb_layer->RefPicList1_count,
             short_ref1,         short_ref1_count,
             long_ref,           long_ref_count
         );
@@ -1724,13 +1775,13 @@ init_picture_refs_b_slice(
 
     /* Check whether RefPicList1 is identical to RefPicList0, then
        swap if necessary */
-    if (priv->RefPicList1_count > 1 &&
-        priv->RefPicList1_count == priv->RefPicList0_count &&
-        memcmp(priv->RefPicList0, priv->RefPicList1,
-               priv->RefPicList0_count * sizeof(priv->RefPicList0[0])) == 0) {
-        GstVaapiPictureH264 * const tmp = priv->RefPicList1[0];
-        priv->RefPicList1[0] = priv->RefPicList1[1];
-        priv->RefPicList1[1] = tmp;
+    if (dpb_layer->RefPicList1_count > 1 &&
+        dpb_layer->RefPicList1_count == dpb_layer->RefPicList0_count &&
+        memcmp(dpb_layer->RefPicList0, dpb_layer->RefPicList1,
+               dpb_layer->RefPicList0_count * sizeof(dpb_layer->RefPicList0[0])) == 0) {
+        GstVaapiPictureH264 * const tmp = dpb_layer->RefPicList1[0];
+        dpb_layer->RefPicList1[0] = dpb_layer->RefPicList1[1];
+        dpb_layer->RefPicList1[1] = tmp;
     }
 }
 
@@ -1740,10 +1791,11 @@ static gint
 find_short_term_reference(GstVaapiDecoderH264 *decoder, gint32 pic_num)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     guint i;
 
-    for (i = 0; i < priv->short_ref_count; i++) {
-        if (priv->short_ref[i]->pic_num == pic_num)
+    for (i = 0; i < dpb_layer->short_ref_count; i++) {
+        if (dpb_layer->short_ref[i]->pic_num == pic_num)
             return i;
     }
     GST_ERROR("found no short-term reference picture with PicNum = %d",
@@ -1755,10 +1807,11 @@ static gint
 find_long_term_reference(GstVaapiDecoderH264 *decoder, gint32 long_term_pic_num)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     guint i;
 
-    for (i = 0; i < priv->long_ref_count; i++) {
-        if (priv->long_ref[i]->long_term_pic_num == long_term_pic_num)
+    for (i = 0; i < dpb_layer->long_ref_count; i++) {
+        if (dpb_layer->long_ref[i]->long_term_pic_num == long_term_pic_num)
             return i;
     }
     GST_ERROR("found no long-term reference picture with LongTermPicNum = %d",
@@ -1775,6 +1828,7 @@ exec_picture_refs_modification_1(
 )
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     GstH264PPS * const pps = slice_hdr->pps;
     GstH264SPS * const sps = pps->sequence;
     GstH264RefPicListModification *ref_pic_list_modification;
@@ -1790,15 +1844,15 @@ exec_picture_refs_modification_1(
     if (list == 0) {
         ref_pic_list_modification      = slice_hdr->ref_pic_list_modification_l0;
         num_ref_pic_list_modifications = slice_hdr->n_ref_pic_list_modification_l0;
-        ref_list                       = priv->RefPicList0;
-        ref_list_count_ptr             = &priv->RefPicList0_count;
+        ref_list                       = dpb_layer->RefPicList0;
+        ref_list_count_ptr             = &dpb_layer->RefPicList0_count;
         num_refs                       = slice_hdr->num_ref_idx_l0_active_minus1 + 1;
     }
     else {
         ref_pic_list_modification      = slice_hdr->ref_pic_list_modification_l1;
         num_ref_pic_list_modifications = slice_hdr->n_ref_pic_list_modification_l1;
-        ref_list                       = priv->RefPicList1;
-        ref_list_count_ptr             = &priv->RefPicList1_count;
+        ref_list                       = dpb_layer->RefPicList1;
+        ref_list_count_ptr             = &dpb_layer->RefPicList1_count;
         num_refs                       = slice_hdr->num_ref_idx_l1_active_minus1 + 1;
     }
     ref_list_count = *ref_list_count_ptr;
@@ -1849,7 +1903,7 @@ exec_picture_refs_modification_1(
                 ref_list[j] = ref_list[j - 1];
             found_ref_idx = find_short_term_reference(decoder, picNum);
             ref_list[ref_list_idx++] =
-                found_ref_idx >= 0 ? priv->short_ref[found_ref_idx] : NULL;
+                found_ref_idx >= 0 ? dpb_layer->short_ref[found_ref_idx] : NULL;
             n = ref_list_idx;
             for (j = ref_list_idx; j <= num_refs; j++) {
                 gint32 PicNumF;
@@ -1871,7 +1925,7 @@ exec_picture_refs_modification_1(
             found_ref_idx =
                 find_long_term_reference(decoder, l->value.long_term_pic_num);
             ref_list[ref_list_idx++] =
-                found_ref_idx >= 0 ? priv->long_ref[found_ref_idx] : NULL;
+                found_ref_idx >= 0 ? dpb_layer->long_ref[found_ref_idx] : NULL;
             n = ref_list_idx;
             for (j = ref_list_idx; j <= num_refs; j++) {
                 gint32 LongTermPicNumF;
@@ -1921,63 +1975,65 @@ static void
 init_picture_ref_lists(GstVaapiDecoderH264 *decoder)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     guint i, j, short_ref_count, long_ref_count;
 
     short_ref_count = 0;
     long_ref_count  = 0;
     if (GST_VAAPI_PICTURE_IS_FRAME(priv->current_picture)) {
-        for (i = 0; i < priv->dpb_count; i++) {
-            GstVaapiFrameStore * const fs = priv->dpb[i];
+        for (i = 0; i < dpb_layer->dpb_count; i++) {
+            GstVaapiFrameStore * const fs = dpb_layer->dpb[i];
             GstVaapiPictureH264 *picture;
             if (!gst_vaapi_frame_store_has_frame(fs))
                 continue;
             picture = fs->buffers[0];
             if (GST_VAAPI_PICTURE_IS_SHORT_TERM_REFERENCE(picture))
-                priv->short_ref[short_ref_count++] = picture;
+                dpb_layer->short_ref[short_ref_count++] = picture;
             else if (GST_VAAPI_PICTURE_IS_LONG_TERM_REFERENCE(picture))
-                priv->long_ref[long_ref_count++] = picture;
+                dpb_layer->long_ref[long_ref_count++] = picture;
             picture->structure = GST_VAAPI_PICTURE_STRUCTURE_FRAME;
             picture->other_field = fs->buffers[1];
         }
     }
     else {
-        for (i = 0; i < priv->dpb_count; i++) {
-            GstVaapiFrameStore * const fs = priv->dpb[i];
+        for (i = 0; i < dpb_layer->dpb_count; i++) {
+            GstVaapiFrameStore * const fs = dpb_layer->dpb[i];
             for (j = 0; j < fs->num_buffers; j++) {
                 GstVaapiPictureH264 * const picture = fs->buffers[j];
                 if (GST_VAAPI_PICTURE_IS_SHORT_TERM_REFERENCE(picture))
-                    priv->short_ref[short_ref_count++] = picture;
+                    dpb_layer->short_ref[short_ref_count++] = picture;
                 else if (GST_VAAPI_PICTURE_IS_LONG_TERM_REFERENCE(picture))
-                    priv->long_ref[long_ref_count++] = picture;
+                    dpb_layer->long_ref[long_ref_count++] = picture;
                 picture->structure = picture->base.structure;
                 picture->other_field = fs->buffers[j ^ 1];
             }
         }
     }
 
-    for (i = short_ref_count; i < priv->short_ref_count; i++)
-        priv->short_ref[i] = NULL;
-    priv->short_ref_count = short_ref_count;
+    for (i = short_ref_count; i < dpb_layer->short_ref_count; i++)
+        dpb_layer->short_ref[i] = NULL;
+    dpb_layer->short_ref_count = short_ref_count;
 
-    for (i = long_ref_count; i < priv->long_ref_count; i++)
-        priv->long_ref[i] = NULL;
-    priv->long_ref_count = long_ref_count;
-}
+    for (i = long_ref_count; i < dpb_layer->long_ref_count; i++)
+        dpb_layer->long_ref[i] = NULL;
+    dpb_layer->long_ref_count = long_ref_count;
+ }
 
 static void
 remove_short_reference(GstVaapiDecoderH264 *decoder, GstVaapiPictureH264 *picture)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     GstVaapiPictureH264 *ref_picture;
     guint i;
     gint32 frame_num = picture->frame_num;
 
-    for (i = 0; i < priv->short_ref_count; ++i) {
-        if (priv->short_ref[i]->frame_num == frame_num) {
-            ref_picture = priv->short_ref[i];
+    for (i = 0; i < dpb_layer->short_ref_count; ++i) {
+        if (dpb_layer->short_ref[i]->frame_num == frame_num) {
+            ref_picture = dpb_layer->short_ref[i];
             if (ref_picture != picture->other_field){
                 gst_vaapi_picture_h264_set_reference(ref_picture, 0, FALSE);
-                ARRAY_REMOVE_INDEX(priv->short_ref, i);
+                ARRAY_REMOVE_INDEX(dpb_layer->short_ref, i);
             }
             return;
         }
@@ -1992,16 +2048,17 @@ init_picture_refs(
 )
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     GstVaapiPicture * const base_picture = &picture->base;
     guint i, num_refs;
 
     init_picture_ref_lists(decoder);
     init_picture_refs_pic_num(decoder, picture, slice_hdr);
 
-    priv->RefPicList0_count = 0;
-    priv->RefPicList1_count = 0;
+    dpb_layer->RefPicList0_count = 0;
+    dpb_layer->RefPicList1_count = 0;
 
-    switch (base_picture->type) {
+     switch (base_picture->type) {
     case GST_VAAPI_PICTURE_TYPE_P:
     case GST_VAAPI_PICTURE_TYPE_SP:
         init_picture_refs_p_slice(decoder, picture, slice_hdr);
@@ -2018,17 +2075,17 @@ init_picture_refs(
     switch (base_picture->type) {
     case GST_VAAPI_PICTURE_TYPE_B:
         num_refs = 1 + slice_hdr->num_ref_idx_l1_active_minus1;
-        for (i = priv->RefPicList1_count; i < num_refs; i++)
-            priv->RefPicList1[i] = NULL;
-        //priv->RefPicList1_count = num_refs;
+        for (i = dpb_layer->RefPicList1_count; i < num_refs; i++)
+            dpb_layer->RefPicList1[i] = NULL;
+        //dpb_layer->RefPicList1_count = num_refs;
 
         // fall-through
     case GST_VAAPI_PICTURE_TYPE_P:
     case GST_VAAPI_PICTURE_TYPE_SP:
         num_refs = 1 + slice_hdr->num_ref_idx_l0_active_minus1;
-        for (i = priv->RefPicList0_count; i < num_refs; i++)
-            priv->RefPicList0[i] = NULL;
-        //priv->RefPicList0_count = num_refs;
+        for (i = dpb_layer->RefPicList0_count; i < num_refs; i++)
+            dpb_layer->RefPicList0[i] = NULL;
+        //dpb_layer->RefPicList0_count = num_refs;
         break;
     default:
         break;
@@ -2043,6 +2100,7 @@ process_for_gaps_in_frame_num(
 )
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     GstH264SPS * const sps = slice_hdr->pps->sequence;
     const gint32 MaxFrameNum = 1 << (sps->log2_max_frame_num_minus4 + 4);
     GstVaapiPictureH264 *dummy_pic;
@@ -2069,7 +2127,7 @@ process_for_gaps_in_frame_num(
         exec_ref_pic_marking_sliding_window(decoder);
         remove_short_reference(decoder, dummy_pic);
         /* add to short reference */
-        priv->short_ref[priv->short_ref_count++] = dummy_pic;
+        dpb_layer->short_ref[dpb_layer->short_ref_count++] = dummy_pic;
         dpb_add(decoder,dummy_pic);
         gst_vaapi_picture_unref(dummy_pic);
         priv->prev_frame_num = priv->frame_num;
@@ -2159,6 +2217,7 @@ static gboolean
 exec_ref_pic_marking_sliding_window(GstVaapiDecoderH264 *decoder)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     GstH264PPS * const pps = priv->current_picture->pps;
     GstH264SPS * const sps = pps->sequence;
     GstVaapiPictureH264 *ref_picture;
@@ -2175,27 +2234,27 @@ exec_ref_pic_marking_sliding_window(GstVaapiDecoderH264 *decoder)
     if (!GST_VAAPI_PICTURE_IS_FRAME(priv->current_picture))
         max_num_ref_frames <<= 1;
 
-    if (priv->short_ref_count + priv->long_ref_count < max_num_ref_frames)
+    if (dpb_layer->short_ref_count + dpb_layer->long_ref_count < max_num_ref_frames)
         return TRUE;
-    if (priv->short_ref_count < 1)
+    if (dpb_layer->short_ref_count < 1)
         return FALSE;
 
-    for (m = 0, i = 1; i < priv->short_ref_count; i++) {
-        GstVaapiPictureH264 * const picture = priv->short_ref[i];
-        if (picture->frame_num_wrap < priv->short_ref[m]->frame_num_wrap)
+    for (m = 0, i = 1; i < dpb_layer->short_ref_count; i++) {
+        GstVaapiPictureH264 * const picture = dpb_layer->short_ref[i];
+        if (picture->frame_num_wrap < dpb_layer->short_ref[m]->frame_num_wrap)
             m = i;
     }
 
-    ref_picture = priv->short_ref[m];
+    ref_picture = dpb_layer->short_ref[m];
     gst_vaapi_picture_h264_set_reference(ref_picture, 0, TRUE);
-    ARRAY_REMOVE_INDEX(priv->short_ref, m);
+    ARRAY_REMOVE_INDEX(dpb_layer->short_ref, m);
 
     /* Both fields need to be marked as "unused for reference", so
        remove the other field from the short_ref[] list as well */
     if (!GST_VAAPI_PICTURE_IS_FRAME(priv->current_picture) && ref_picture->other_field) {
-        for (i = 0; i < priv->short_ref_count; i++) {
-            if (priv->short_ref[i] == ref_picture->other_field) {
-                ARRAY_REMOVE_INDEX(priv->short_ref, i);
+        for (i = 0; i < dpb_layer->short_ref_count; i++) {
+            if (dpb_layer->short_ref[i] == ref_picture->other_field) {
+                ARRAY_REMOVE_INDEX(dpb_layer->short_ref, i);
                 break;
             }
         }
@@ -2225,6 +2284,7 @@ exec_ref_pic_marking_adaptive_mmco_1(
 )
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     gint32 i, picNumX;
 
     picNumX = get_picNumX(picture, ref_pic_marking);
@@ -2232,9 +2292,9 @@ exec_ref_pic_marking_adaptive_mmco_1(
     if (i < 0)
         return;
 
-    gst_vaapi_picture_h264_set_reference(priv->short_ref[i], 0,
+    gst_vaapi_picture_h264_set_reference(dpb_layer->short_ref[i], 0,
         GST_VAAPI_PICTURE_IS_FRAME(picture));
-    ARRAY_REMOVE_INDEX(priv->short_ref, i);
+    ARRAY_REMOVE_INDEX(dpb_layer->short_ref, i);
 }
 
 /* 8.2.5.4.2. Mark long-term reference picture as "unused for reference" */
@@ -2246,15 +2306,16 @@ exec_ref_pic_marking_adaptive_mmco_2(
 )
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     gint32 i;
 
     i = find_long_term_reference(decoder, ref_pic_marking->long_term_pic_num);
     if (i < 0)
         return;
 
-    gst_vaapi_picture_h264_set_reference(priv->long_ref[i], 0,
+    gst_vaapi_picture_h264_set_reference(dpb_layer->long_ref[i], 0,
         GST_VAAPI_PICTURE_IS_FRAME(picture));
-    ARRAY_REMOVE_INDEX(priv->long_ref, i);
+    ARRAY_REMOVE_INDEX(dpb_layer->long_ref, i);
 }
 
 /* 8.2.5.4.3. Assign LongTermFrameIdx to a short-term reference picture */
@@ -2266,16 +2327,17 @@ exec_ref_pic_marking_adaptive_mmco_3(
 )
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     GstVaapiPictureH264 *ref_picture;
     gint32 i, picNumX;
 
-    for (i = 0; i < priv->long_ref_count; i++) {
-        if (priv->long_ref[i]->long_term_frame_idx == ref_pic_marking->long_term_frame_idx)
+    for (i = 0; i < dpb_layer->long_ref_count; i++) {
+        if (dpb_layer->long_ref[i]->long_term_frame_idx == ref_pic_marking->long_term_frame_idx)
             break;
     }
-    if (i != priv->long_ref_count) {
-        gst_vaapi_picture_h264_set_reference(priv->long_ref[i], 0, TRUE);
-        ARRAY_REMOVE_INDEX(priv->long_ref, i);
+    if (i != dpb_layer->long_ref_count) {
+        gst_vaapi_picture_h264_set_reference(dpb_layer->long_ref[i], 0, TRUE);
+        ARRAY_REMOVE_INDEX(dpb_layer->long_ref, i);
     }
 
     picNumX = get_picNumX(picture, ref_pic_marking);
@@ -2283,9 +2345,9 @@ exec_ref_pic_marking_adaptive_mmco_3(
     if (i < 0)
         return;
 
-    ref_picture = priv->short_ref[i];
-    ARRAY_REMOVE_INDEX(priv->short_ref, i);
-    priv->long_ref[priv->long_ref_count++] = ref_picture;
+    ref_picture = dpb_layer->short_ref[i];
+    ARRAY_REMOVE_INDEX(dpb_layer->short_ref, i);
+    dpb_layer->long_ref[dpb_layer->long_ref_count++] = ref_picture;
 
     ref_picture->long_term_frame_idx = ref_pic_marking->long_term_frame_idx;
     gst_vaapi_picture_h264_set_reference(ref_picture,
@@ -2303,15 +2365,16 @@ exec_ref_pic_marking_adaptive_mmco_4(
 )
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     gint32 i, long_term_frame_idx;
 
     long_term_frame_idx = ref_pic_marking->max_long_term_frame_idx_plus1 - 1;
 
-    for (i = 0; i < priv->long_ref_count; i++) {
-        if (priv->long_ref[i]->long_term_frame_idx <= long_term_frame_idx)
+    for (i = 0; i < dpb_layer->long_ref_count; i++) {
+        if (dpb_layer->long_ref[i]->long_term_frame_idx <= long_term_frame_idx)
             continue;
-        gst_vaapi_picture_h264_set_reference(priv->long_ref[i], 0, FALSE);
-        ARRAY_REMOVE_INDEX(priv->long_ref, i);
+        gst_vaapi_picture_h264_set_reference(dpb_layer->long_ref[i], 0, FALSE);
+        ARRAY_REMOVE_INDEX(dpb_layer->long_ref, i);
         i--;
     }
 }
@@ -2482,6 +2545,7 @@ fill_picture(GstVaapiDecoderH264 *decoder,
     GstVaapiPictureH264 *picture, GstVaapiParserInfoH264 *pi)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     GstVaapiPicture * const base_picture = &picture->base;
     GstH264SliceHdr * const slice_hdr = &pi->data.slice_hdr;
     GstH264PPS * const pps = picture->pps;
@@ -2492,8 +2556,8 @@ fill_picture(GstVaapiDecoderH264 *decoder,
     /* Fill in VAPictureParameterBufferH264 */
     vaapi_fill_picture(&pic_param->CurrPic, picture, 0);
 
-    for (i = 0, n = 0; i < priv->dpb_count; i++) {
-        GstVaapiFrameStore * const fs = priv->dpb[i];
+    for (i = 0, n = 0; i < dpb_layer->dpb_count; i++) {
+        GstVaapiFrameStore * const fs = dpb_layer->dpb[i];
         if (gst_vaapi_frame_store_has_reference(fs))
             vaapi_fill_picture(&pic_param->ReferenceFrames[n++],
                 fs->buffers[0], fs->structure);
@@ -2762,6 +2826,7 @@ fill_RefPicList(GstVaapiDecoderH264 *decoder,
     GstVaapiSlice *slice, GstH264SliceHdr *slice_hdr)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
     VASliceParameterBufferH264 * const slice_param = slice->param;
     guint i, num_ref_lists = 0;
 
@@ -2781,8 +2846,8 @@ fill_RefPicList(GstVaapiDecoderH264 *decoder,
     slice_param->num_ref_idx_l0_active_minus1 =
         slice_hdr->num_ref_idx_l0_active_minus1;
 
-    for (i = 0; i < priv->RefPicList0_count && priv->RefPicList0[i]; i++)
-        vaapi_fill_picture(&slice_param->RefPicList0[i], priv->RefPicList0[i], 0);
+    for (i = 0; i < dpb_layer->RefPicList0_count && dpb_layer->RefPicList0[i]; i++)
+        vaapi_fill_picture(&slice_param->RefPicList0[i], dpb_layer->RefPicList0[i], 0);
     for (; i <= slice_param->num_ref_idx_l0_active_minus1; i++)
         vaapi_init_picture(&slice_param->RefPicList0[i]);
 
@@ -2792,8 +2857,8 @@ fill_RefPicList(GstVaapiDecoderH264 *decoder,
     slice_param->num_ref_idx_l1_active_minus1 =
         slice_hdr->num_ref_idx_l1_active_minus1;
 
-    for (i = 0; i < priv->RefPicList1_count && priv->RefPicList1[i]; i++)
-        vaapi_fill_picture(&slice_param->RefPicList1[i], priv->RefPicList1[i], 0);
+    for (i = 0; i < dpb_layer->RefPicList1_count && dpb_layer->RefPicList1[i]; i++)
+        vaapi_fill_picture(&slice_param->RefPicList1[i], dpb_layer->RefPicList1[i], 0);
     for (; i <= slice_param->num_ref_idx_l1_active_minus1; i++)
         vaapi_init_picture(&slice_param->RefPicList1[i]);
     return TRUE;
