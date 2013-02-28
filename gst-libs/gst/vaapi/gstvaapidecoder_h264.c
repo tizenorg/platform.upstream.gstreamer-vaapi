@@ -1939,6 +1939,23 @@ init_picture_ref_lists(GstVaapiDecoderH264 *decoder)
 }
 
 static void
+remove_short_reference(GstVaapiDecoderH264 *decoder, gint32 frame_num)
+{
+    GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiPictureH264 *ref_picture;
+    guint i;
+
+    for (i = 0; i < priv->short_ref_count; ++i) {
+        if (priv->short_ref[i]->frame_num == frame_num) {
+            ref_picture = priv->short_ref[i];
+            gst_vaapi_picture_h264_set_reference(ref_picture, 0, FALSE);
+            ARRAY_REMOVE_INDEX(priv->short_ref, i);
+            return;
+        }
+    }
+}
+
+static void
 init_picture_refs(
     GstVaapiDecoderH264 *decoder,
     GstVaapiPictureH264 *picture,
@@ -2330,6 +2347,8 @@ exec_ref_pic_marking(GstVaapiDecoderH264 *decoder, GstVaapiPictureH264 *picture)
             if (!exec_ref_pic_marking_sliding_window(decoder))
                 return FALSE;
         }
+        if (!priv->prev_pic_has_mmco5)
+            remove_short_reference(decoder, picture->frame_num);
     }
     return TRUE;
 }
