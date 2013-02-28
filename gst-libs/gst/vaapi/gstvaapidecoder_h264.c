@@ -211,6 +211,24 @@ gst_vaapi_picture_h264_new_field(GstVaapiPictureH264 *picture)
     return (GstVaapiPictureH264 *)gst_vaapi_picture_new_field(&picture->base);
 }
 
+static inline GstVaapiPictureH264 *
+gst_vaapi_picture_h264_new_dummy(GstVaapiPictureH264 *picture)
+{
+    GstVaapiPicture *base_picture;
+
+    g_return_val_if_fail(picture, NULL);
+
+    base_picture = gst_vaapi_picture_new_clone(&picture->base);
+    if (!base_picture)
+        return NULL;
+    GST_VAAPI_PICTURE_FLAG_SET(
+        base_picture,
+        (GST_VAAPI_PICTURE_FLAG_SKIPPED |
+         GST_VAAPI_PICTURE_FLAG_SHORT_TERM_REFERENCE));
+    base_picture->poc = -1;
+    return (GstVaapiPictureH264 *)base_picture;
+}
+
 /* ------------------------------------------------------------------------- */
 /* --- Frame Buffers (DPB)                                               --- */
 /* ------------------------------------------------------------------------- */
@@ -410,6 +428,9 @@ struct _GstVaapiDecoderH264Class {
 
 static gboolean
 exec_ref_pic_marking(GstVaapiDecoderH264 *decoder, GstVaapiPictureH264 *picture);
+
+static gboolean
+exec_ref_pic_marking_sliding_window(GstVaapiDecoderH264 *decoder);
 
 /* Get number of reference frames to use */
 static guint
@@ -2010,6 +2031,50 @@ init_picture_refs(
     }
 }
 
+static void
+process_for_gaps_in_frame_num(
+    GstVaapiDecoderH264 *decoder,
+    GstVaapiPictureH264 *picture,
+    GstH264SliceHdr     *slice_hdr
+)
+{
+    GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstH264SPS * const sps = slice_hdr->pps->sequence;
+    const gint32 MaxFrameNum = 1 << (sps->log2_max_frame_num_minus4 + 4);
+    GstVaapiPictureH264 *dummy_pic;
+    gint32 final_frame_num;
+
+    if (priv->frame_num == priv->prev_frame_num ||
+        priv->frame_num == (priv->prev_frame_num + 1)%MaxFrameNum)
+        return;
+
+    final_frame_num = priv->frame_num;
+    priv->frame_num = (priv->prev_frame_num + 1)%MaxFrameNum;
+    init_picture_ref_lists(decoder);
+
+    while(final_frame_num != priv->frame_num) {
+        dummy_pic = gst_vaapi_picture_h264_new_dummy(picture);
+        dummy_pic->frame_num = priv->frame_num;
+        dummy_pic->frame_num_wrap = priv->frame_num;
+        dummy_pic->pps = picture->pps;
+        dummy_pic->output_needed = FALSE;
+        dummy_pic->structure = GST_VAAPI_PICTURE_STRUCTURE_FRAME;
+        priv->current_picture = dummy_pic;
+
+        init_picture_refs_pic_num(decoder, dummy_pic, slice_hdr);
+        exec_ref_pic_marking_sliding_window(decoder);
+        remove_short_reference(decoder, dummy_pic->frame_num);
+        /* add to short reference */
+        priv->short_ref[priv->short_ref_count++] = dummy_pic;
+        dpb_add(decoder,dummy_pic);
+        gst_vaapi_picture_unref(dummy_pic);
+        priv->prev_frame_num = priv->frame_num;
+        priv->frame_num = (priv->prev_frame_num + 1)%MaxFrameNum;
+    }
+    priv->frame_num = final_frame_num;
+    priv->current_picture = picture;
+}
+
 static gboolean
 init_picture(
     GstVaapiDecoderH264 *decoder,
@@ -2018,6 +2083,7 @@ init_picture(
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
     GstVaapiPicture * const base_picture = &picture->base;
     GstH264SliceHdr * const slice_hdr = &pi->data.slice_hdr;
+    GstH264SPS * const sps = slice_hdr->pps->sequence;
 
     priv->prev_frame_num        = priv->frame_num;
     priv->frame_num             = slice_hdr->frame_num;
@@ -2031,7 +2097,8 @@ init_picture(
         GST_DEBUG("<IDR>");
         GST_VAAPI_PICTURE_FLAG_SET(picture, GST_VAAPI_PICTURE_FLAG_IDR);
         dpb_flush(decoder);
-    }
+    } else if (sps->gaps_in_frame_num_value_allowed_flag)
+        process_for_gaps_in_frame_num(decoder, picture, slice_hdr);
 
     /* Initialize slice type */
     switch (slice_hdr->type % 5) {
