@@ -2685,7 +2685,7 @@ get_slice_data_bit_offset(GstH264SliceHdr *slice_hdr)
     guint epb_count;
 
     epb_count = slice_hdr->n_emulation_prevention_bytes;
-    return 8 /* nal_unit_type */ + slice_hdr->header_size - epb_count * 8;
+    return 8 * slice_hdr->nal_header_bytes + slice_hdr->header_size - epb_count * 8;
 }
 
 static gboolean
