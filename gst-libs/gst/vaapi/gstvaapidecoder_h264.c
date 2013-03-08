@@ -2097,7 +2097,7 @@ init_picture(
     base_picture->pts           = GST_VAAPI_DECODER_CODEC_FRAME(decoder)->pts;
 
     /* Reset decoder state for IDR pictures */
-    if (pi->nalu.type == GST_H264_NAL_SLICE_IDR) {
+    if (pi->nalu.idr_pic_flag) {
         GST_DEBUG("<IDR>");
         GST_VAAPI_PICTURE_FLAG_SET(picture, GST_VAAPI_PICTURE_FLAG_IDR);
         dpb_flush(decoder);
