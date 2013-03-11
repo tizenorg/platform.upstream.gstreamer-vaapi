@@ -1607,6 +1607,9 @@ init_picture_refs_pic_num(
     for (i = 0; i < dpb_layer->short_ref_count; i++) {
         GstVaapiPictureH264 * const pic = dpb_layer->short_ref[i];
 
+        if (picture->layer_id != 0 && picture->layer_id != pic->layer_id)
+           continue;
+
         // (8-27)
         if (pic->frame_num > priv->frame_num)
             pic->frame_num_wrap = pic->frame_num - MaxFrameNum;
@@ -1626,6 +1629,9 @@ init_picture_refs_pic_num(
 
     for (i = 0; i < dpb_layer->long_ref_count; i++) {
         GstVaapiPictureH264 * const pic = dpb_layer->long_ref[i];
+
+        if (picture->layer_id != 0 && picture->layer_id != pic->layer_id)
+           continue;
 
         // (8-29, 8-32, 8-33)
         if (GST_VAAPI_PICTURE_IS_FRAME(picture))
