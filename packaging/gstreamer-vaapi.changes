@@ -1,0 +1,32 @@
+* Mon Sep 24 2012 Yan Yin <yan.yin@intel.com> accepted/2.0_beta/20120917.204432@eadd4f0
+- decoder_h264: reduce max_dec_frame_buffering from 16 to 8
+- vaapidecode: dynamically add surface to vaapicontext.
+
+* Mon Sep 17 2012 Yan Yin <yan.yin@intel.com> accepted/2.0_beta/20120912.025253@838e26e
+- vaapisink: ensure render rect for foreign window
+- vaapisink: centralizing display_rect even in user defined render_rect
+- vaapsink: fix display properties check after display_type set
+
+* Tue Sep 11 2012 Yan Yin <yan.yin@intel.com> submit/2.0_beta/20120907.063807@d0aadd7
+- fix summary for devel pacakge
+
+* Wed Sep 05 2012 Yan Yin <yan.yin@intel.com> submit/2.0_beta/20120831.083100@c9d3506
+- fix build failure of libdrm.
+
+* Tue Aug 07 2012 Yan Yin <yan.yin@intel.com> build/2012-08-01.041209@c9c8547
+- fix wrong version number to 0.4.0.pre1
+
+* Wed Aug 01 2012 Yan Yin <yan.yin@intel.com> build/2012-08-01.041020@bc1613b
+- rebase to 0.3.8pre
+
+* Thu Jun 28 2012 Yan Yin <yan.yin@intel.com> 0.2.6@0372cfd
+- add manifest file
+
+* Tue Jun 26 2012 Yan Yin <yan.yin@intel.com> 0.2.6@f766365
+- add packaging files
+
+* Mon Jun 25 2012 Yan Yin <yan.yin@intel.com> 0.2.6@3706b26
+- fix build failure when compiling without GLX
+
+* Fri May 04 2012 Markus Lehtonen <markus.lehtonen@linux.intel.com> 0.2.6@1860d12
+- tizen build: disable docs

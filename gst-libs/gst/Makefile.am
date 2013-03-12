@@ -1,4 +1,4 @@
-SUBDIRS = vaapi
+SUBDIRS = codecparsers vaapi
 
 # Extra clean files so that maintainer-clean removes *everything*
-MAINTAINERCLEANFILES = Makefile.in
+MAINTAINERCLEANFILES = Makefile.in $(gen_headers)
