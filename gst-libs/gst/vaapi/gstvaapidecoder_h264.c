@@ -2994,6 +2994,12 @@ is_new_picture(GstVaapiParserInfoH264 *pi, GstVaapiParserInfoH264 *prev_pi)
 #define CHECK_VALUE(new_slice_hdr, old_slice_hdr, field) \
     CHECK_EXPR(((new_slice_hdr)->field == (old_slice_hdr)->field), #field)
 
+    /* view_id differs in value, and VOIdx of cur_slice should be less than that of VOIdx of prev_slice */
+    if (pi->is_mvc_nal && prev_pi->is_mvc_nal) {
+        CHECK_VALUE(&pi->nalu.extension.mvc,
+                    &prev_pi->nalu.extension.mvc, view_id);
+    }
+
     /* frame_num differs in value, regardless of inferred values to 0 */
     CHECK_VALUE(slice_hdr, prev_slice_hdr, frame_num);
 
