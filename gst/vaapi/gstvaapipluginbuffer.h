@@ -22,6 +22,8 @@
 #ifndef GST_VAAPI_PLUGIN_BUFFER_H
 #define GST_VAAPI_PLUGIN_BUFFER_H
 
+#define GST_VAAPI_RAWYUV_CAPS_NAME "video/x-raw-yuv"
+
 G_GNUC_INTERNAL
 GstBuffer *
 gst_vaapi_video_buffer_new(GstVaapiDisplay *display);

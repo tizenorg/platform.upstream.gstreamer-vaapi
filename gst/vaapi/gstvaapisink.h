@@ -30,6 +30,7 @@
 #include <gst/vaapi/gstvaapitexture.h>
 #endif
 #include "gstvaapipluginutil.h"
+#include "gstvaapiuploader.h"
 
 G_BEGIN_DECLS
 
@@ -69,6 +70,7 @@ struct _GstVaapiSink {
     /*< private >*/
     GstVideoSink parent_instance;
 
+    GstVaapiUploader   *uploader;
     GstCaps            *caps;
     GstVaapiDisplay    *display;
     GstVaapiDisplayType display_type;
@@ -92,6 +94,7 @@ struct _GstVaapiSink {
     guint               use_reflection  : 1;
     guint               use_overlay     : 1;
     guint               use_rotation    : 1;
+    guint               use_video_raw   : 1;
     guint               buffer_sharing  : 1;
     guint               is_pixmap       : 1;
     GstVaapiWindow     *pixmap_pool[MAX_PIXMAP_COUNT];

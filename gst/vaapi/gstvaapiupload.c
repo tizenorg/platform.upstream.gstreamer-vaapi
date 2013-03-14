@@ -1,5 +1,5 @@
 /*
- *  gstvaapiupload.c - VA-API video uploader
+ *  gstvaapiupload.c - VA-API video upload element
  *
  *  Copyright (C) 2010-2011 Splitted-Desktop Systems
  *  Copyright (C) 2011-2012 Intel Corporation
@@ -56,7 +56,7 @@ static const GstElementDetails gst_vaapiupload_details =
 
 /* Default templates */
 static const char gst_vaapiupload_yuv_caps_str[] =
-    "video/x-raw-yuv, "
+    GST_VAAPI_RAWYUV_CAPS_NAME", "
     "width  = (int) [ 1, MAX ], "
     "height = (int) [ 1, MAX ]; ";
 
@@ -486,7 +486,7 @@ gst_vaapiupload_transform_caps(
     structure = gst_caps_get_structure(caps, 0);
 
     if (direction == GST_PAD_SINK) {
-        if (!gst_structure_has_name(structure, "video/x-raw-yuv"))
+        if (!gst_structure_has_name(structure,GST_VAAPI_RAWYUV_CAPS_NAME))
             return NULL;
         out_caps = gst_caps_from_string(gst_vaapiupload_vaapi_caps_str);
 

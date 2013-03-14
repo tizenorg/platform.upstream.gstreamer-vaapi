@@ -54,7 +54,7 @@ static const GstElementDetails gst_vaapidownload_details =
 
 /* Default templates */
 static const char gst_vaapidownload_yuv_caps_str[] =
-    "video/x-raw-yuv, "
+    GST_VAAPI_RAWYUV_CAPS_NAME", "
     "width  = (int) [ 1, MAX ], "
     "height = (int) [ 1, MAX ]; ";
 
@@ -484,7 +484,7 @@ gst_vaapidownload_transform_caps(
         }
     }
     else {
-        if (!gst_structure_has_name(structure, "video/x-raw-yuv"))
+        if (!gst_structure_has_name(structure,GST_VAAPI_RAWYUV_CAPS_NAME))
             return NULL;
         out_caps = gst_caps_from_string(gst_vaapidownload_vaapi_caps_str);
 

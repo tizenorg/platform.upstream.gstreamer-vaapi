@@ -70,6 +70,10 @@ gst_vaapi_image_pool_alloc_object(
 {
     GstVaapiImagePoolPrivate * const priv = GST_VAAPI_IMAGE_POOL(pool)->priv;
 
+    // Virtual I420 Image Object Will Be Converted to NV12.
+    // TODO FIXME
+    priv->format = GST_VAAPI_IMAGE_NV12;
+
     return gst_vaapi_image_new(display,
                                priv->format,
                                priv->width,

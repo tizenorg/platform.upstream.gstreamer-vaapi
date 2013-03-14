@@ -75,6 +75,10 @@ static const GstElementDetails gst_vaapisink_details =
         "Gwenole Beauchesne <gwenole.beauchesne@intel.com>");
 
 static const char gst_vaapisink_sink_caps_str[] =
+    GST_VAAPI_RAWYUV_CAPS_NAME", "
+    "format= (fourcc) { NV12, I420},"
+    "width  = (int) [ 1, MAX ], "
+    "height = (int) [ 1, MAX ]; "
     GST_VAAPI_SURFACE_CAPS "; "
     GST_VAAPI_BUFFER_SHARING_CAPS;
 
@@ -280,6 +284,7 @@ gst_vaapisink_destroy(GstVaapiSink *sink)
     gst_buffer_replace(&sink->video_buffer, NULL);
     g_clear_object(&sink->texture);
     g_clear_object(&sink->display);
+    g_clear_object(&sink->uploader);
 
     gst_caps_replace(&sink->caps, NULL);
 
@@ -376,6 +381,20 @@ gst_vaapisink_ensure_display(GstVaapiSink *sink)
 
         sink->use_rotation = gst_vaapi_display_has_property(
             sink->display, GST_VAAPI_DISPLAY_PROP_ROTATION);
+    }
+    return TRUE;
+}
+
+static gboolean
+gst_vaapisink_ensure_uploader(GstVaapiSink *sink)
+{
+    if (!gst_vaapisink_ensure_display(sink))
+        return FALSE;
+
+    if (!sink->uploader) {
+        sink->uploader = gst_vaapi_uploader_new(sink->display);
+        if (!sink->uploader)
+            return FALSE;
     }
     return TRUE;
 }
@@ -657,9 +676,8 @@ end:
 static gboolean
 gst_vaapisink_start(GstBaseSink *base_sink)
 {
-    GstVaapiSink * const sink = GST_VAAPISINK(base_sink);
-
-    return gst_vaapisink_ensure_display(sink);
+    GstVaapiSink *const sink = GST_VAAPISINK(base_sink);
+    return gst_vaapisink_ensure_uploader(sink);
 }
 
 static gboolean
@@ -681,6 +699,7 @@ gst_vaapisink_stop(GstBaseSink *base_sink)
     sink->window = NULL;
 
     g_clear_object(&sink->display);
+    g_clear_object(&sink->uploader);
 
     if (sink->video_pool) {
         g_object_unref(sink->video_pool);
@@ -689,6 +708,30 @@ gst_vaapisink_stop(GstBaseSink *base_sink)
     sink->buffer_sharing = FALSE;
 
     return TRUE;
+}
+
+static GstCaps *
+gst_vaapisink_get_caps(GstBaseSink *base_sink)
+{
+    GstVaapiSink * const sink = GST_VAAPISINK(base_sink);
+    GstCaps *out_caps, *yuv_caps, *share_caps;
+
+    out_caps = gst_caps_from_string(GST_VAAPI_SURFACE_CAPS);
+    if (!out_caps)
+        return NULL;
+
+    share_caps = gst_caps_from_string(GST_VAAPI_BUFFER_SHARING_CAPS_NAME);
+    if (!share_caps){
+        gst_caps_unref(out_caps);
+        return NULL;
+    }
+    if (gst_vaapisink_ensure_uploader(sink)) {
+        yuv_caps = gst_vaapi_uploader_get_caps(sink->uploader);
+        if (yuv_caps)
+            gst_caps_append(out_caps, gst_caps_copy(yuv_caps));
+    }
+    gst_caps_append(out_caps, share_caps);
+    return out_caps;
 }
 
 static gboolean
@@ -716,6 +759,9 @@ gst_vaapisink_set_caps(GstBaseSink *base_sink, GstCaps *caps)
         return FALSE;
     sink->video_width  = video_width;
     sink->video_height = video_height;
+
+    if (gst_structure_has_name(structure, GST_VAAPI_RAWYUV_CAPS_NAME))
+      sink->use_video_raw = TRUE;
 
     gst_video_parse_caps_pixel_aspect_ratio(caps, &video_par_n, &video_par_d);
     sink->video_par_n  = video_par_n;
@@ -935,12 +981,30 @@ static GstFlowReturn
 gst_vaapisink_show_frame(GstBaseSink *base_sink, GstBuffer *buffer)
 {
     GstVaapiSink * const sink = GST_VAAPISINK(base_sink);
-    GstVaapiVideoBuffer * vbuffer;
+    GstVaapiVideoBuffer *vbuffer;
     GstVaapiSurface *surface;
     guint flags;
     gboolean success;
     GstVideoOverlayComposition * const composition =
         gst_video_buffer_get_overlay_composition(buffer);
+    if (!sink->use_video_raw){
+        buffer = gst_buffer_ref(buffer);
+    }else{
+        GstBuffer *const src_buffer = buffer;
+        if (GST_VAAPI_IS_VIDEO_BUFFER(buffer)){
+            buffer = gst_buffer_ref(src_buffer);
+        }else if (GST_VAAPI_IS_VIDEO_BUFFER(buffer->parent)){
+            buffer = gst_buffer_ref(src_buffer->parent);
+        }else {
+            buffer = gst_vaapi_uploader_get_buffer(sink->uploader);
+            if (!buffer)
+                return GST_FLOW_UNEXPECTED;
+        }
+
+        if (!gst_vaapi_uploader_process(sink->uploader, src_buffer, buffer)){
+            goto error;
+        }
+    }
 
     if (sink->buffer_sharing)
         vbuffer = GST_VAAPI_VIDEO_BUFFER(buffer->data);
@@ -948,18 +1012,18 @@ gst_vaapisink_show_frame(GstBaseSink *base_sink, GstBuffer *buffer)
         vbuffer = GST_VAAPI_VIDEO_BUFFER(buffer);
 
     if (sink->display != gst_vaapi_video_buffer_get_display (vbuffer)) {
-      g_clear_object(&sink->display);
-      sink->display = g_object_ref (gst_vaapi_video_buffer_get_display (vbuffer));
+        g_clear_object(&sink->display);
+        sink->display = g_object_ref (gst_vaapi_video_buffer_get_display (vbuffer));
     }
 
     if (!sink->window)
-        return GST_FLOW_UNEXPECTED;
+        goto error;
 
     gst_vaapisink_ensure_rotation(sink, TRUE);
 
     surface = gst_vaapi_video_buffer_get_surface(vbuffer);
     if (!surface)
-        return GST_FLOW_UNEXPECTED;
+        goto error;
 
     GST_DEBUG("render surface %" GST_VAAPI_ID_FORMAT,
               GST_VAAPI_ID_ARGS(gst_vaapi_surface_get_id(surface)));
@@ -997,14 +1061,26 @@ gst_vaapisink_show_frame(GstBaseSink *base_sink, GstBuffer *buffer)
         break;
     }
     if (!success)
-        return GST_FLOW_UNEXPECTED;
+        goto error;
+
+    if(sink->use_video_raw){
+        gst_vaapi_uploader_free_buffer(sink->uploader,buffer);
+    }
 
     /* Retain VA surface until the next one is displayed */
     if (sink->use_overlay)
         gst_buffer_replace(&sink->video_buffer, buffer);
 
     FPS_CALCULATION(vaapisink);
+    gst_buffer_unref(buffer);
     return GST_FLOW_OK;
+
+error:
+    if(sink->use_video_raw){
+        gst_vaapi_uploader_free_buffer(sink->uploader,buffer);
+    }
+    gst_buffer_unref(buffer);
+    return GST_FLOW_UNEXPECTED;
 }
 
 static gboolean
@@ -1018,7 +1094,7 @@ gst_vaapisink_query(GstBaseSink *base_sink, GstQuery *query)
 static gboolean
 gst_vaapisink_ensure_video_pool(
     GstVaapiSink *sink,
-    GstCaps *caps)
+    GstCaps      *caps)
 {
     GstStructure *structure;
     gint width = 0, height = 0;
@@ -1044,14 +1120,13 @@ gst_vaapisink_ensure_video_pool(
 }
 
 static GstFlowReturn
-gst_vaapisink_pad_buffer_alloc(
-    GstPad * pad,
-    guint64 offset,
-    guint size,
-    GstCaps * caps,
-    GstBuffer ** buf)
+gst_vaapisink_share_buffer(
+    GstVaapiSink *sink,
+    guint64       offset,
+    guint         size,
+    GstCaps      *caps,
+    GstBuffer   **buf)
 {
-    GstVaapiSink * const sink = GST_VAAPISINK(GST_OBJECT_PARENT(pad));
     GstStructure *structure = NULL;
     GstBuffer *video_buffer = NULL;
 
@@ -1082,6 +1157,63 @@ gst_vaapisink_pad_buffer_alloc(
 error:
     GST_ERROR("vaapisink allocate buffer failed.");
     return GST_FLOW_ERROR;
+}
+
+static GstFlowReturn
+gst_vaapisink_raw_buffer(
+    GstVaapiSink *sink,
+    guint64       offset,
+    guint         size,
+    GstCaps      *caps,
+    GstBuffer   **pbuf)
+{
+    GstStructure *structure;
+    guint32 in_format = 0;
+    GstBuffer *buf;
+
+    *pbuf = NULL;
+    structure = gst_caps_get_structure(caps, 0);
+    if (!gst_vaapi_uploader_ensure_display(sink->uploader, sink->display))
+        return GST_FLOW_NOT_SUPPORTED;
+    if (!gst_vaapi_uploader_ensure_caps(sink->uploader, caps, NULL))
+        return GST_FLOW_NOT_SUPPORTED;
+
+    if (!gst_structure_get_fourcc(structure, "format", &in_format)){
+        return GST_FLOW_OK;
+    }
+
+    if(in_format != GST_MAKE_FOURCC('I','4','2','0')){
+        buf = gst_vaapi_uploader_get_buffer(sink->uploader);
+        if (!buf) {
+            GST_WARNING("failed to allocate resources for raw YUV buffer");
+            return GST_FLOW_NOT_SUPPORTED;
+        }
+        *pbuf = buf;
+    }
+    return GST_FLOW_OK;
+}
+
+static GstFlowReturn
+gst_vaapisink_buffer_alloc(
+    GstBaseSink *base_sink,
+    guint64      offset,
+    guint        size,
+    GstCaps     *caps,
+    GstBuffer   **pbuf)
+{
+    GstVaapiSink *sink = GST_VAAPISINK(base_sink);
+    GstStructure *structure = NULL;
+
+    structure = gst_caps_get_structure(caps, 0);
+    if(!structure){
+        return GST_FLOW_ERROR;
+    }
+
+    if (!gst_structure_has_name(structure, GST_VAAPI_RAWYUV_CAPS_NAME)){
+        return gst_vaapisink_share_buffer(sink,offset,size,caps,pbuf);
+    }else{
+        return gst_vaapisink_raw_buffer(sink,offset,size,caps,pbuf);
+    }
 }
 
 static void
@@ -1179,10 +1311,12 @@ gst_vaapisink_class_init(GstVaapiSinkClass *klass)
 
     basesink_class->start        = gst_vaapisink_start;
     basesink_class->stop         = gst_vaapisink_stop;
+    basesink_class->get_caps     = gst_vaapisink_get_caps;
     basesink_class->set_caps     = gst_vaapisink_set_caps;
     basesink_class->preroll      = gst_vaapisink_show_frame;
     basesink_class->render       = gst_vaapisink_show_frame;
     basesink_class->query        = gst_vaapisink_query;
+    basesink_class->buffer_alloc = gst_vaapisink_buffer_alloc;
 
     gst_element_class_set_details_simple(
         element_class,
@@ -1272,9 +1406,6 @@ gst_vaapisink_init(GstVaapiSink *sink)
 {
     int i = 0;
     GstPad *sinkpad = GST_BASE_SINK_PAD(sink);
-
-    gst_pad_set_bufferalloc_function(sinkpad,
-      gst_vaapisink_pad_buffer_alloc);
 
     sink->caps           = NULL;
     sink->display        = NULL;
