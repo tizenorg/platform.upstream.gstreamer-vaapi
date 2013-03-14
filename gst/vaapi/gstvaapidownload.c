@@ -308,6 +308,21 @@ get_surface_format(GstVaapiSurface *surface)
     return format;
 }
 
+static void
+fix_frame_rate(GstCaps *caps)
+{
+    GstStructure *structure;
+
+    if (gst_caps_is_any(caps) ||
+        !(structure = gst_caps_get_structure(caps, 0)))
+        return;
+    if (!gst_structure_has_field(structure, "framerate"))
+        return;
+    gst_structure_fixate_field_nearest_fraction(
+        structure, "framerate",
+        30, 1);
+}
+
 static gboolean
 gst_vaapidownload_update_src_caps(GstVaapiDownload *download, GstBuffer *buffer)
 {
@@ -345,6 +360,7 @@ gst_vaapidownload_update_src_caps(GstVaapiDownload *download, GstBuffer *buffer)
         gst_caps_unref(out_caps);
         return FALSE;
     }
+    fix_frame_rate(out_caps);
 
     /* Try to renegotiate downstream caps */
     srcpad = gst_element_get_static_pad(GST_ELEMENT(download), "src");
