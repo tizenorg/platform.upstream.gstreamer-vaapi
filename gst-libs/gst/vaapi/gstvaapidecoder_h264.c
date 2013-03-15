@@ -2237,6 +2237,7 @@ decode_buffer(GstVaapiDecoderH264 *decoder, GstBuffer *buffer)
     GstH264NalUnit nalu;
     guchar *buf;
     guint buf_size, ofs;
+    gboolean merged = FALSE;
 
     buf      = GST_BUFFER_DATA(buffer);
     buf_size = GST_BUFFER_SIZE(buffer);
@@ -2252,6 +2253,7 @@ decode_buffer(GstVaapiDecoderH264 *decoder, GstBuffer *buffer)
             return GST_VAAPI_DECODER_STATUS_ERROR_ALLOCATION_FAILED;
         gst_buffer_unref(priv->sub_buffer);
         priv->sub_buffer = NULL;
+        merged = TRUE;
     }
 
     buf      = GST_BUFFER_DATA(buffer);
@@ -2321,6 +2323,8 @@ decode_buffer(GstVaapiDecoderH264 *decoder, GstBuffer *buffer)
             gst_adapter_flush(priv->adapter, nalu.size);
         ofs = nalu.offset + nalu.size;
     } while (status == GST_VAAPI_DECODER_STATUS_SUCCESS && ofs < buf_size);
+    if (merged)
+        gst_buffer_unref(buffer);
     return status;
 }
 

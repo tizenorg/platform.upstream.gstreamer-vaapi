@@ -1081,6 +1081,7 @@ decode_buffer(GstVaapiDecoderVC1 *decoder, GstBuffer *buffer)
     GstBuffer *codec_data;
     guchar *buf;
     guint buf_size, ofs;
+    gboolean merged = FALSE;
 
     buf      = GST_BUFFER_DATA(buffer);
     buf_size = GST_BUFFER_SIZE(buffer);
@@ -1111,6 +1112,7 @@ decode_buffer(GstVaapiDecoderVC1 *decoder, GstBuffer *buffer)
             return GST_VAAPI_DECODER_STATUS_ERROR_ALLOCATION_FAILED;
         gst_buffer_unref(priv->sub_buffer);
         priv->sub_buffer = NULL;
+        merged = TRUE;
     }
 
     buf      = GST_BUFFER_DATA(buffer);
@@ -1139,6 +1141,8 @@ decode_buffer(GstVaapiDecoderVC1 *decoder, GstBuffer *buffer)
         if (gst_adapter_available(priv->adapter) >= ebdu.size)
             gst_adapter_flush(priv->adapter, ebdu.size);
     } while (status == GST_VAAPI_DECODER_STATUS_SUCCESS);
+    if (merged)
+        gst_buffer_unref(buffer);
     return status;
 }
 

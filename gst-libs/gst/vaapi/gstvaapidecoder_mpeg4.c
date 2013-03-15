@@ -946,6 +946,7 @@ decode_buffer(GstVaapiDecoderMpeg4 *decoder, GstBuffer *buffer)
 {
     GstVaapiDecoderMpeg4Private * const priv = decoder->priv;
     GstVaapiDecoderStatus status = GST_VAAPI_DECODER_STATUS_ERROR_UNKNOWN;
+    gboolean merged = FALSE;
     guchar *buf;
     guint pos, buf_size;
 
@@ -965,6 +966,7 @@ decode_buffer(GstVaapiDecoderMpeg4 *decoder, GstBuffer *buffer)
             return GST_VAAPI_DECODER_STATUS_ERROR_ALLOCATION_FAILED;
         gst_buffer_unref(priv->sub_buffer);
         priv->sub_buffer = NULL;
+        merged = TRUE;
     }
 
     buf      = GST_BUFFER_DATA(buffer);
@@ -1029,6 +1031,8 @@ decode_buffer(GstVaapiDecoderMpeg4 *decoder, GstBuffer *buffer)
         priv->sub_buffer = gst_buffer_create_sub(buffer, pos, buf_size-pos);
         status = GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA;
     }
+    if (merged)
+        gst_buffer_unref(buffer);
     return status;
 }
 

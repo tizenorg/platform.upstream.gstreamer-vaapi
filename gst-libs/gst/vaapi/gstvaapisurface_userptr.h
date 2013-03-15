@@ -87,7 +87,8 @@ gst_vaapi_surface_userptr_new(
     GstVaapiChromaType  chroma_type,
     GstVaapiImageFormat format,
     guint               width,
-    guint               height
+    guint               height,
+    guint               row_stride
 );
 
 GstVaapiImageFormat

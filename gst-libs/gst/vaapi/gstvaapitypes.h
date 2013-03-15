@@ -145,9 +145,9 @@ enum _GstVaapiRenderMode {
 typedef enum _GstVaapiRotation GstVaapiRotation;
 enum _GstVaapiRotation {
     GST_VAAPI_ROTATION_0   = 0,
-    GST_VAAPI_ROTATION_90  = 90,
-    GST_VAAPI_ROTATION_180 = 180,
-    GST_VAAPI_ROTATION_270 = 270,
+    GST_VAAPI_ROTATION_90,
+    GST_VAAPI_ROTATION_180,
+    GST_VAAPI_ROTATION_270,
 };
 
 /**

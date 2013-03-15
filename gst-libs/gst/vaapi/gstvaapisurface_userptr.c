@@ -44,11 +44,13 @@ G_DEFINE_TYPE(GstVaapiSurfaceUserPtr, gst_vaapi_surface_userptr, GST_VAAPI_TYPE_
 
 struct _GstVaapiSurfaceUserPtrPrivate {
     GstVaapiImageFormat format;
+    guint               stride;
 };
 
 enum {
     PROP_0,
 
+    PROP_STRIDE,
     PROP_FORMAT
 };
 
@@ -68,6 +70,7 @@ _get_surface_userptr_info(
     GstVaapiImageFormat format,
     guint width,
     guint height,
+    guint first_stride,
     GstVaapiSurfaceUserPtrInfo *info
 )
 {
@@ -84,6 +87,10 @@ _get_surface_userptr_info(
 
     stride1 = GST_ROUND_UP_4(width);
     stride2 = GST_ROUND_UP_4((width + 1) / 2);
+    if (stride1 < first_stride)
+        stride1 = first_stride;
+    if (stride2 < first_stride/2)
+        stride2 = first_stride/2;
     height2 = (height + 1) / 2;
 
     info->datasize = (stride1 * height) + (stride2 * height2)*2;
@@ -134,7 +141,8 @@ gst_vaapi_surface_userptr_create(GstVaapiSurface *base)
     chroma_type = gst_vaapi_surface_get_chroma_type(base);
     gst_vaapi_surface_get_size(base, &width, &height);
 
-    if (!_get_surface_userptr_info(priv->format, width, height, &info)) {
+    if (!_get_surface_userptr_info(
+            priv->format, width, height, priv->stride, &info)) {
         GST_ERROR("surface userptr format error.");
         return FALSE;
     }
@@ -200,6 +208,9 @@ gst_vaapi_surface_userptr_set_property(
     case PROP_FORMAT:
         priv->format = g_value_get_uint(value);
         break;
+    case PROP_STRIDE:
+        priv->stride = g_value_get_uint(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -215,10 +226,14 @@ gst_vaapi_surface_userptr_get_property(
 )
 {
     GstVaapiSurfaceUserPtr * const surface = GST_VAAPI_SURFACE_USERPTR(object);
+    GstVaapiSurfaceUserPtrPrivate *priv = GST_VAAPI_SURFACE_USERPTR_GET_PRIVATE(surface);
 
     switch (prop_id) {
     case PROP_FORMAT:
         g_value_set_uint(value, gst_vaapi_surface_userptr_get_format(surface));
+        break;
+    case PROP_STRIDE:
+        g_value_set_uint(value, priv->stride);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -248,6 +263,14 @@ gst_vaapi_surface_userptr_class_init(GstVaapiSurfaceUserPtrClass *klass)
                            "The buffer format of surface userptr",
                            0, G_MAXUINT32, 0,
                            G_PARAM_READWRITE|G_PARAM_CONSTRUCT_ONLY));
+    g_object_class_install_property
+        (object_class,
+         PROP_STRIDE,
+         g_param_spec_uint("stride",
+                           "stride",
+                           "The first row stride for surface",
+                           0, G_MAXUINT32, 0,
+                           G_PARAM_READWRITE|G_PARAM_CONSTRUCT_ONLY));
 }
 
 static void
@@ -257,6 +280,7 @@ gst_vaapi_surface_userptr_init(GstVaapiSurfaceUserPtr *surface)
 
     surface->priv        = priv;
     priv->format         = 0;
+    priv->stride         = 0;
 }
 
 /**
@@ -266,6 +290,7 @@ gst_vaapi_surface_userptr_init(GstVaapiSurfaceUserPtr *surface)
  * @format: the fourcc format of the buffer
  * @width: the requested surface width
  * @height: the requested surface height
+ * @row_stride: the requested surface row_stride(luma)
  *
  * Creates a new #GstVaapiSurface with the specified chroma format and
  * dimensions.
@@ -278,7 +303,8 @@ gst_vaapi_surface_userptr_new(
     GstVaapiChromaType  chroma_type,
     GstVaapiImageFormat format,
     guint               width,
-    guint               height
+    guint               height,
+    guint               row_stride
 )
 {
     GST_DEBUG("size %ux%u, chroma type 0x%x", width, height, chroma_type);
@@ -288,6 +314,7 @@ gst_vaapi_surface_userptr_new(
                         "id",           GST_VAAPI_ID(VA_INVALID_ID),
                         "width",        width,
                         "height",       height,
+                        "stride",       row_stride,
                         "chroma-type",  chroma_type,
                         "format",       format,
                         NULL);

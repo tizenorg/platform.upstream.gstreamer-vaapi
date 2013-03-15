@@ -638,7 +638,7 @@ gst_vaapisink_ensure_rotation(GstVaapiSink *sink, gboolean recalc_display_rect)
         goto end;
     }
 
-    if (((sink->rotation + sink->rotation_req) % 180) == 90) {
+    if (((sink->rotation + sink->rotation_req) % 2 ) == 1) {
         /* Orientation changed */
         G_PRIMITIVE_SWAP(guint, sink->video_width, sink->video_height);
         G_PRIMITIVE_SWAP(gint, sink->video_par_n, sink->video_par_d);

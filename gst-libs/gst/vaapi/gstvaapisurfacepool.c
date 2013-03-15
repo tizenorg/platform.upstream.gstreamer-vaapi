@@ -45,6 +45,7 @@ struct _GstVaapiSurfacePoolPrivate {
     GstVaapiChromaType  chroma_type;
     guint               width;
     guint               height;
+    guint               stride;
     gboolean            is_shared_buffer;
 };
 
@@ -54,10 +55,13 @@ gst_vaapi_surface_pool_set_caps(GstVaapiVideoPool *pool, GstCaps *caps)
     GstVaapiSurfacePoolPrivate *priv = GST_VAAPI_SURFACE_POOL(pool)->priv;
     GstStructure *structure;
     gint width, height;
+    gint stride;
 
     structure = gst_caps_get_structure(caps, 0);
     gst_structure_get_int(structure, "width", &width);
     gst_structure_get_int(structure, "height", &height);
+    if (!gst_structure_get_int(structure, "row-stride", &stride))
+        stride = 0;
 
     if (gst_structure_has_name(structure, GST_VAAPI_BUFFER_SHARING_CAPS_NAME))
         priv->is_shared_buffer = TRUE;
@@ -67,6 +71,7 @@ gst_vaapi_surface_pool_set_caps(GstVaapiVideoPool *pool, GstCaps *caps)
     priv->chroma_type   = GST_VAAPI_CHROMA_TYPE_YUV420;
     priv->width         = width;
     priv->height        = height;
+    priv->stride        = stride;
 }
 
 gpointer
@@ -82,7 +87,8 @@ gst_vaapi_surface_pool_alloc_object(
                                              priv->chroma_type,
                                              GST_VAAPI_IMAGE_NV12,
                                              priv->width,
-                                             priv->height);
+                                             priv->height,
+                                             priv->stride);
     else
         return gst_vaapi_surface_new(display,
                                      priv->chroma_type,
