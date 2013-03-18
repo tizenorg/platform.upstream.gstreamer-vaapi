@@ -100,6 +100,46 @@ static GstStaticPadTemplate gst_vaapisink_sink_factory =
         GST_STATIC_CAPS(gst_vaapisink_sink_caps_str));
 
 /* GstImplementsInterface interface */
+/**
+ * gst_vaapisink_prepare_xid:
+ * @overlay: a #GstVideoOverlay which does not yet have an XWindow or XPixmap.
+ *
+ * This will post a "prepare-xid" element message with video size and display size on the bus
+ * to give applications an opportunity to call
+ * gst_x_overlay_set_xwindow_id() before a plugin creates its own
+ * window or pixmap.
+ *
+ * This function should only be used by video overlay plugin developers.
+ */
+static void
+gst_vaapisink_prepare_xid (GstVideoOverlay * overlay)
+{
+  GstStructure *s;
+  GstMessage *msg;
+  guint display_width, display_height;
+
+  g_return_if_fail (overlay != NULL);
+  g_return_if_fail (GST_VIDEO_OVERLAY (overlay));
+
+  GstVaapiSink *sink;
+  sink = GST_VAAPISINK (GST_OBJECT (overlay));
+
+  gst_vaapi_display_get_size(sink->display, &display_width, &display_height);
+
+  GST_DEBUG ("post \"prepare-xid\" element message with video-width(%d), video-height(%d), display-width(%d), display-height(%d)",
+       sink->video_width, sink->video_height, display_width, display_height); 
+
+  GST_LOG_OBJECT (GST_OBJECT (overlay), "prepare xid");
+  s = gst_structure_new ("prepare-xid",
+        "video-width", G_TYPE_INT, sink->video_width,
+        "video-height", G_TYPE_INT, sink->video_height,
+        "display-width", G_TYPE_INT, display_width, 
+        "display-height", G_TYPE_INT, display_height,
+        NULL);
+  msg = gst_message_new_element (GST_OBJECT (overlay), s);
+  gst_element_post_message (GST_ELEMENT (overlay), msg);
+}
+
 #if !GST_CHECK_VERSION(1,0,0)
 static gboolean
 gst_vaapisink_implements_interface_supported(
@@ -844,6 +884,8 @@ gst_vaapisink_set_caps(GstBaseSink *base_sink, GstCaps *caps)
     else {
         gst_vaapi_display_lock(sink->display);
         gst_video_overlay_prepare_window_handle(GST_VIDEO_OVERLAY(sink));
+        if (!sink->window) 
+            gst_vaapisink_prepare_xid(GST_VIDEO_OVERLAY(sink)); // tizen customized interface/message for webkit-efl
         gst_vaapi_display_unlock(sink->display);
         if (sink->window)
             return TRUE;
