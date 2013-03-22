@@ -141,6 +141,7 @@ gst_vaapisink_prepare_xid (GstXOverlay * overlay)
 {
   GstStructure *s;
   GstMessage *msg;
+  guint display_width, display_height;
 
   g_return_if_fail (overlay != NULL);
   g_return_if_fail (GST_IS_X_OVERLAY (overlay));
@@ -148,15 +149,17 @@ gst_vaapisink_prepare_xid (GstXOverlay * overlay)
   GstVaapiSink *sink;
   sink = GST_VAAPISINK (GST_OBJECT (overlay));
 
+  gst_vaapi_display_get_size(sink->display, &display_width, &display_height);
+
   GST_DEBUG ("post \"prepare-xid\" element message with video-width(%d), video-height(%d), display-width(%d), display-height(%d)",
-       sink->video_width, sink->video_height, sink->window_width, sink->window_height);
+       sink->video_width, sink->video_height, display_width, display_height); 
 
   GST_LOG_OBJECT (GST_OBJECT (overlay), "prepare xid");
   s = gst_structure_new ("prepare-xid",
         "video-width", G_TYPE_INT, sink->video_width,
         "video-height", G_TYPE_INT, sink->video_height,
-        "display-width", G_TYPE_INT, sink->window_width,
-        "display-height", G_TYPE_INT, sink->window_height,
+        "display-width", G_TYPE_INT, display_width, 
+        "display-height", G_TYPE_INT, display_height,
         NULL);
   msg = gst_message_new_element (GST_OBJECT (overlay), s);
   gst_element_post_message (GST_ELEMENT (overlay), msg);
