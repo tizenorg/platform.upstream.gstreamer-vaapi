@@ -26,6 +26,7 @@
 
 #include "sysdeps.h"
 #include <string.h>
+#include <stdlib.h>
 #include "gstvaapidisplay_priv.h"
 #include "gstvaapidisplay_wayland.h"
 #include "gstvaapidisplay_wayland_priv.h"
