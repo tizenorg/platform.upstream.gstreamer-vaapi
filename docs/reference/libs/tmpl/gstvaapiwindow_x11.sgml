@@ -1,0 +1,83 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiWindowX11
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiWindowX11 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GstVaapiWindowX11Class ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO GST_VAAPI_WINDOW_XWINDOW ##### -->
+<para>
+
+</para>
+
+@window: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_x11_new ##### -->
+<para>
+
+</para>
+
+@display: 
+@width: 
+@height: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_x11_new_with_xid ##### -->
+<para>
+
+</para>
+
+@display: 
+@xid: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_x11_get_xid ##### -->
+<para>
+
+</para>
+
+@window: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_x11_is_foreign_xid ##### -->
+<para>
+
+</para>
+
+@window: 
+@Returns: 
+
+

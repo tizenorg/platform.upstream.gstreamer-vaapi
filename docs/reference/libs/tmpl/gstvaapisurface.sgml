@@ -1,0 +1,214 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiSurface
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### ENUM GstVaapiChromaType ##### -->
+<para>
+
+</para>
+
+@GST_VAAPI_CHROMA_TYPE_YUV420: 
+@GST_VAAPI_CHROMA_TYPE_YUV422: 
+@GST_VAAPI_CHROMA_TYPE_YUV444: 
+
+<!-- ##### ENUM GstVaapiSurfaceStatus ##### -->
+<para>
+
+</para>
+
+@GST_VAAPI_SURFACE_STATUS_IDLE: 
+@GST_VAAPI_SURFACE_STATUS_RENDERING: 
+@GST_VAAPI_SURFACE_STATUS_DISPLAYING: 
+@GST_VAAPI_SURFACE_STATUS_SKIPPED: 
+
+<!-- ##### ENUM GstVaapiSurfaceRenderFlags ##### -->
+<para>
+
+</para>
+
+@GST_VAAPI_PICTURE_STRUCTURE_TOP_FIELD: 
+@GST_VAAPI_PICTURE_STRUCTURE_BOTTOM_FIELD: 
+@GST_VAAPI_PICTURE_STRUCTURE_FRAME: 
+@GST_VAAPI_COLOR_STANDARD_ITUR_BT_601: 
+@GST_VAAPI_COLOR_STANDARD_ITUR_BT_709: 
+
+<!-- ##### STRUCT GstVaapiSurface ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiSurface:chroma-type ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiSurface:height ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiSurface:parent-context ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiSurface:width ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GstVaapiSurfaceClass ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_new ##### -->
+<para>
+
+</para>
+
+@display: 
+@chroma_type: 
+@width: 
+@height: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_get_id ##### -->
+<para>
+
+</para>
+
+@surface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_get_chroma_type ##### -->
+<para>
+
+</para>
+
+@surface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_get_width ##### -->
+<para>
+
+</para>
+
+@surface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_get_height ##### -->
+<para>
+
+</para>
+
+@surface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_get_size ##### -->
+<para>
+
+</para>
+
+@surface: 
+@pwidth: 
+@pheight: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_derive_image ##### -->
+<para>
+
+</para>
+
+@surface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_get_image ##### -->
+<para>
+
+</para>
+
+@surface: 
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_put_image ##### -->
+<para>
+
+</para>
+
+@surface: 
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_associate_subpicture ##### -->
+<para>
+
+</para>
+
+@surface: 
+@subpicture: 
+@src_rect: 
+@dst_rect: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_deassociate_subpicture ##### -->
+<para>
+
+</para>
+
+@surface: 
+@subpicture: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_sync ##### -->
+<para>
+
+</para>
+
+@surface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_query_status ##### -->
+<para>
+
+</para>
+
+@surface: 
+@pstatus: 
+@Returns: 
+
+

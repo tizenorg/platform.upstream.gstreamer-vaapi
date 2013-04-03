@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiWindowGLX</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="GstVaapiWindowX11.html" title="GstVaapiWindowX11">
+<link rel="next" href="GstVaapiObject.html" title="GstVaapiObject">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiWindowX11.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiObject.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiWindowGLX.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiWindowGLX.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiWindowGLX.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GstVaapiWindowGLX.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiWindowGLX"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiWindowGLX.top_of_page"></a>GstVaapiWindowGLX</span></h2>
+<p>GstVaapiWindowGLX — VA/GLX window abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiWindowGLX.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiWindowGLX.html#GstVaapiWindowGLX-struct" title="struct GstVaapiWindowGLX">GstVaapiWindowGLX</a>;
+struct              <a class="link" href="GstVaapiWindowGLX.html#GstVaapiWindowGLXClass" title="struct GstVaapiWindowGLXClass">GstVaapiWindowGLXClass</a>;
+<a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="returnvalue">GstVaapiWindow</span></a> *    <a class="link" href="GstVaapiWindowGLX.html#gst-vaapi-window-glx-new" title="gst_vaapi_window_glx_new ()">gst_vaapi_window_glx_new</a>            (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);
+<a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="returnvalue">GstVaapiWindow</span></a> *    <a class="link" href="GstVaapiWindowGLX.html#gst-vaapi-window-glx-new-with-xid" title="gst_vaapi_window_glx_new_with_xid ()">gst_vaapi_window_glx_new_with_xid</a>   (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">Window</span> xid</code></em>);
+<span class="returnvalue">GLXContext</span>          <a class="link" href="GstVaapiWindowGLX.html#gst-vaapi-window-glx-get-context" title="gst_vaapi_window_glx_get_context ()">gst_vaapi_window_glx_get_context</a>    (<em class="parameter"><code><a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a> *window</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiWindowGLX.html#gst-vaapi-window-glx-set-context" title="gst_vaapi_window_glx_set_context ()">gst_vaapi_window_glx_set_context</a>    (<em class="parameter"><code><a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLXContext</span> ctx</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiWindowGLX.html#gst-vaapi-window-glx-make-current" title="gst_vaapi_window_glx_make_current ()">gst_vaapi_window_glx_make_current</a>   (<em class="parameter"><code><a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a> *window</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiWindowGLX.html#gst-vaapi-window-glx-swap-buffers" title="gst_vaapi_window_glx_swap_buffers ()">gst_vaapi_window_glx_swap_buffers</a>   (<em class="parameter"><code><a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a> *window</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiWindowGLX.html#gst-vaapi-window-glx-put-texture" title="gst_vaapi_window_glx_put_texture ()">gst_vaapi_window_glx_put_texture</a>    (<em class="parameter"><code><a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *src_rect</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *dst_rect</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindowGLX.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a class="link" href="GstVaapiObject.html" title="GstVaapiObject">GstVaapiObject</a>
+         +----<a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow">GstVaapiWindow</a>
+               +----<a class="link" href="GstVaapiWindowX11.html" title="GstVaapiWindowX11">GstVaapiWindowX11</a>
+                     +----GstVaapiWindowGLX
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindowGLX.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GstVaapiWindowGLX.html#GstVaapiWindowGLX--glx-context" title='The "glx-context" property'>glx-context</a>"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindowGLX.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindowGLX.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiWindowGLX-struct"></a><h3>struct GstVaapiWindowGLX</h3>
+<pre class="programlisting">struct GstVaapiWindowGLX;</pre>
+<p>
+An X11 <span class="type">Window</span> suitable for GLX rendering.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiWindowGLXClass"></a><h3>struct GstVaapiWindowGLXClass</h3>
+<pre class="programlisting">struct GstVaapiWindowGLXClass {
+};
+</pre>
+<p>
+An X11 <span class="type">Window</span> suitable for GLX rendering.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-glx-new"></a><h3>gst_vaapi_window_glx_new ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="returnvalue">GstVaapiWindow</span></a> *    gst_vaapi_window_glx_new            (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);</pre>
+<p>
+Creates a window with the specified <em class="parameter"><code>width</code></em> and <em class="parameter"><code>height</code></em>. The window
+will be attached to the <em class="parameter"><code>display</code></em> and remains invisible to the user
+until <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-show" title="gst_vaapi_window_show ()"><code class="function">gst_vaapi_window_show()</code></a> is called.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>width</code></em> :</span></p></td>
+<td>the requested window width, in pixels</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>height</code></em> :</span></p></td>
+<td>the requested windo height, in pixels</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-glx-new-with-xid"></a><h3>gst_vaapi_window_glx_new_with_xid ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="returnvalue">GstVaapiWindow</span></a> *    gst_vaapi_window_glx_new_with_xid   (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">Window</span> xid</code></em>);</pre>
+<p>
+Creates a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> using the X11 <span class="type">Window</span> <em class="parameter"><code>xid</code></em>. The caller
+still owns the window and must call <code class="function">XDestroyWindow()</code> when all
+<a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> references are released. Doing so too early can
+yield undefined behaviour.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>xid</code></em> :</span></p></td>
+<td>an X11 <span class="type">Window</span> id</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-glx-get-context"></a><h3>gst_vaapi_window_glx_get_context ()</h3>
+<pre class="programlisting"><span class="returnvalue">GLXContext</span>          gst_vaapi_window_glx_get_context    (<em class="parameter"><code><a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a> *window</code></em>);</pre>
+<p>
+Returns the <span class="type">GLXContext</span> bound to the <em class="parameter"><code>window</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <span class="type">GLXContext</span> bound to the <em class="parameter"><code>window</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-glx-set-context"></a><h3>gst_vaapi_window_glx_set_context ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_window_glx_set_context    (<em class="parameter"><code><a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLXContext</span> ctx</code></em>);</pre>
+<p>
+Binds GLX context <em class="parameter"><code>ctx</code></em> to <em class="parameter"><code>window</code></em>. If <em class="parameter"><code>ctx</code></em> is non <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, the caller
+is responsible to making sure it has compatible visual with that of
+the underlying X window. If <em class="parameter"><code>ctx</code></em> is <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, a new context is created
+and the <em class="parameter"><code>window</code></em> owns it.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>ctx</code></em> :</span></p></td>
+<td>a GLX context</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-glx-make-current"></a><h3>gst_vaapi_window_glx_make_current ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_window_glx_make_current   (<em class="parameter"><code><a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a> *window</code></em>);</pre>
+<p>
+Makes the <em class="parameter"><code>window</code></em> GLX context the current GLX rendering context of
+the calling thread, replacing the previously current context if
+there was one.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-glx-swap-buffers"></a><h3>gst_vaapi_window_glx_swap_buffers ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_window_glx_swap_buffers   (<em class="parameter"><code><a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a> *window</code></em>);</pre>
+<p>
+Promotes the contents of the back buffer of <em class="parameter"><code>window</code></em> to become the
+contents of the front buffer of <em class="parameter"><code>window</code></em>. This simply is wrapper
+around <code class="function">glXSwapBuffers()</code>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-glx-put-texture"></a><h3>gst_vaapi_window_glx_put_texture ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_window_glx_put_texture    (<em class="parameter"><code><a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *src_rect</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *dst_rect</code></em>);</pre>
+<p>
+Renders the <em class="parameter"><code>texture</code></em> region specified by <em class="parameter"><code>src_rect</code></em> into the <em class="parameter"><code>window</code></em>
+region specified by <em class="parameter"><code>dst_rect</code></em>.
+</p>
+<p>
+NOTE: only GL_TEXTURE_2D textures are supported at this time.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX"><span class="type">GstVaapiWindowGLX</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>src_rect</code></em> :</span></p></td>
+<td>the sub-rectangle of the source texture to
+extract and process. If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, the entire texture will be used.</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>dst_rect</code></em> :</span></p></td>
+<td>the sub-rectangle of the destination
+window into which the texture is rendered. If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, the entire
+window will be used.</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindowGLX.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiWindowGLX--glx-context"></a><h3>The <code class="literal">"glx-context"</code> property</h3>
+<pre class="programlisting">  "glx-context"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write</pre>
+<p>GLX context.</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

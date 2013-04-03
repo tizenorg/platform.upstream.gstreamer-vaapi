@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE book PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
+<book xmlns="http://www.devhelp.net/book" title="GStreamer VA-API Plugins 0.10 Library Reference Manual" link="index.html" author="" name="libs" version="2" language="c">
+  <chapters>
+    <sub name="gst-plugins-vaapi Library" link="ch01.html">
+      <sub name="Basic data structures" link="libs-Basic-data-structures.html"/>
+      <sub name="gstvaapivalue" link="libs-gstvaapivalue.html"/>
+      <sub name="gstvaapiparamspecs" link="libs-gstvaapiparamspecs.html"/>
+      <sub name="GstVaapiDisplay" link="GstVaapiDisplay.html"/>
+      <sub name="GstVaapiDisplayX11" link="GstVaapiDisplayX11.html"/>
+      <sub name="GstVaapiDisplayGLX" link="GstVaapiDisplayGLX.html"/>
+      <sub name="GstVaapiWindow" link="GstVaapiWindow.html"/>
+      <sub name="GstVaapiWindowX11" link="GstVaapiWindowX11.html"/>
+      <sub name="GstVaapiWindowGLX" link="GstVaapiWindowGLX.html"/>
+      <sub name="GstVaapiObject" link="GstVaapiObject.html"/>
+      <sub name="GstVaapiSurface" link="libs-gstvaapisurface.html"/>
+      <sub name="GstVaapiImage" link="libs-gstvaapiimage.html"/>
+      <sub name="GstVaapiImageFormat" link="libs-GstVaapiImageFormat.html"/>
+      <sub name="GstVaapiSubpicture" link="GstVaapiSubpicture.html"/>
+      <sub name="GstVaapiTexture" link="GstVaapiTexture.html"/>
+      <sub name="GstVaapiProfile" link="libs-GstVaapiProfile.html"/>
+      <sub name="GstVaapiVideoPool" link="GstVaapiVideoPool.html"/>
+      <sub name="GstVaapiSurfacePool" link="GstVaapiSurfacePool.html"/>
+      <sub name="GstVaapiImagePool" link="GstVaapiImagePool.html"/>
+      <sub name="GstVaapiContext" link="GstVaapiContext.html"/>
+      <sub name="GstVaapiDecoder" link="libs-gstvaapidecoder.html"/>
+      <sub name="GstVaapiDecoderJpeg" link="libs-GstVaapiDecoderJpeg.html"/>
+      <sub name="GstVaapiDecoderMpeg2" link="libs-GstVaapiDecoderMpeg2.html"/>
+      <sub name="GstVaapiDecoderMpeg4" link="libs-GstVaapiDecoderMpeg4.html"/>
+      <sub name="GstVaapiDecoderH264" link="libs-GstVaapiDecoderH264.html"/>
+      <sub name="GstVaapiDecoderVC1" link="libs-GstVaapiDecoderVC1.html"/>
+      <sub name="GstVaapiSurfaceProxy" link="libs-GstVaapiSurfaceProxy.html"/>
+    </sub>
+    <sub name="Object Hierarchy" link="object-tree.html"/>
+    <sub name="API Index" link="api-index-full.html"/>
+    <sub name="Annotation Glossary" link="annotation-glossary.html"/>
+  </chapters>
+  <functions>
+    <keyword type="typedef" name="GstVaapiID" link="libs-Basic-data-structures.html#GstVaapiID"/>
+    <keyword type="macro" name="GST_VAAPI_ID_FORMAT" link="libs-Basic-data-structures.html#GST-VAAPI-ID-FORMAT:CAPS"/>
+    <keyword type="macro" name="GST_VAAPI_ID_ARGS()" link="libs-Basic-data-structures.html#GST-VAAPI-ID-ARGS:CAPS"/>
+    <keyword type="macro" name="GST_VAAPI_ID()" link="libs-Basic-data-structures.html#GST-VAAPI-ID:CAPS"/>
+    <keyword type="macro" name="GST_VAAPI_ID_NONE" link="libs-Basic-data-structures.html#GST-VAAPI-ID-NONE:CAPS"/>
+    <keyword type="struct" name="struct GstVaapiPoint" link="libs-Basic-data-structures.html#GstVaapiPoint"/>
+    <keyword type="struct" name="struct GstVaapiRectangle" link="libs-Basic-data-structures.html#GstVaapiRectangle"/>
+    <keyword type="macro" name="GST_VAAPI_TYPE_ID" link="libs-gstvaapivalue.html#GST-VAAPI-TYPE-ID:CAPS"/>
+    <keyword type="function" name="gst_vaapi_value_get_id ()" link="libs-gstvaapivalue.html#gst-vaapi-value-get-id"/>
+    <keyword type="function" name="gst_vaapi_value_set_id ()" link="libs-gstvaapivalue.html#gst-vaapi-value-set-id"/>
+    <keyword type="struct" name="struct GstVaapiParamSpecID" link="libs-gstvaapiparamspecs.html#GstVaapiParamSpecID"/>
+    <keyword type="function" name="gst_vaapi_param_spec_id ()" link="libs-gstvaapiparamspecs.html#gst-vaapi-param-spec-id"/>
+    <keyword type="struct" name="struct GstVaapiDisplay" link="GstVaapiDisplay.html#GstVaapiDisplay-struct"/>
+    <keyword type="struct" name="struct GstVaapiDisplayClass" link="GstVaapiDisplay.html#GstVaapiDisplayClass"/>
+    <keyword type="function" name="gst_vaapi_display_new_with_display ()" link="GstVaapiDisplay.html#gst-vaapi-display-new-with-display"/>
+    <keyword type="function" name="gst_vaapi_display_lock ()" link="GstVaapiDisplay.html#gst-vaapi-display-lock"/>
+    <keyword type="function" name="gst_vaapi_display_unlock ()" link="GstVaapiDisplay.html#gst-vaapi-display-unlock"/>
+    <keyword type="function" name="gst_vaapi_display_sync ()" link="GstVaapiDisplay.html#gst-vaapi-display-sync"/>
+    <keyword type="function" name="gst_vaapi_display_flush ()" link="GstVaapiDisplay.html#gst-vaapi-display-flush"/>
+    <keyword type="function" name="gst_vaapi_display_get_display ()" link="GstVaapiDisplay.html#gst-vaapi-display-get-display"/>
+    <keyword type="function" name="gst_vaapi_display_get_width ()" link="GstVaapiDisplay.html#gst-vaapi-display-get-width"/>
+    <keyword type="function" name="gst_vaapi_display_get_height ()" link="GstVaapiDisplay.html#gst-vaapi-display-get-height"/>
+    <keyword type="function" name="gst_vaapi_display_get_size ()" link="GstVaapiDisplay.html#gst-vaapi-display-get-size"/>
+    <keyword type="function" name="gst_vaapi_display_get_pixel_aspect_ratio ()" link="GstVaapiDisplay.html#gst-vaapi-display-get-pixel-aspect-ratio"/>
+    <keyword type="function" name="gst_vaapi_display_get_decode_caps ()" link="GstVaapiDisplay.html#gst-vaapi-display-get-decode-caps"/>
+    <keyword type="function" name="gst_vaapi_display_has_decoder ()" link="GstVaapiDisplay.html#gst-vaapi-display-has-decoder"/>
+    <keyword type="function" name="gst_vaapi_display_get_encode_caps ()" link="GstVaapiDisplay.html#gst-vaapi-display-get-encode-caps"/>
+    <keyword type="function" name="gst_vaapi_display_has_encoder ()" link="GstVaapiDisplay.html#gst-vaapi-display-has-encoder"/>
+    <keyword type="function" name="gst_vaapi_display_get_image_caps ()" link="GstVaapiDisplay.html#gst-vaapi-display-get-image-caps"/>
+    <keyword type="function" name="gst_vaapi_display_has_image_format ()" link="GstVaapiDisplay.html#gst-vaapi-display-has-image-format"/>
+    <keyword type="function" name="gst_vaapi_display_get_subpicture_caps ()" link="GstVaapiDisplay.html#gst-vaapi-display-get-subpicture-caps"/>
+    <keyword type="function" name="gst_vaapi_display_has_subpicture_format ()" link="GstVaapiDisplay.html#gst-vaapi-display-has-subpicture-format"/>
+    <keyword type="function" name="gst_vaapi_display_has_property ()" link="GstVaapiDisplay.html#gst-vaapi-display-has-property"/>
+    <keyword type="function" name="gst_vaapi_display_get_rotation ()" link="GstVaapiDisplay.html#gst-vaapi-display-get-rotation"/>
+    <keyword type="function" name="gst_vaapi_display_set_rotation ()" link="GstVaapiDisplay.html#gst-vaapi-display-set-rotation"/>
+    <keyword type="function" name="gst_vaapi_display_get_render_mode ()" link="GstVaapiDisplay.html#gst-vaapi-display-get-render-mode"/>
+    <keyword type="function" name="gst_vaapi_display_set_render_mode ()" link="GstVaapiDisplay.html#gst-vaapi-display-set-render-mode"/>
+    <keyword type="property" name="The &quot;brightness&quot; property" link="GstVaapiDisplay.html#GstVaapiDisplay--brightness"/>
+    <keyword type="property" name="The &quot;contrast&quot; property" link="GstVaapiDisplay.html#GstVaapiDisplay--contrast"/>
+    <keyword type="property" name="The &quot;display&quot; property" link="GstVaapiDisplay.html#GstVaapiDisplay--display"/>
+    <keyword type="property" name="The &quot;display-type&quot; property" link="GstVaapiDisplay.html#GstVaapiDisplay--display-type"/>
+    <keyword type="property" name="The &quot;height&quot; property" link="GstVaapiDisplay.html#GstVaapiDisplay--height"/>
+    <keyword type="property" name="The &quot;hue&quot; property" link="GstVaapiDisplay.html#GstVaapiDisplay--hue"/>
+    <keyword type="property" name="The &quot;render-mode&quot; property" link="GstVaapiDisplay.html#GstVaapiDisplay--render-mode"/>
+    <keyword type="property" name="The &quot;rotation&quot; property" link="GstVaapiDisplay.html#GstVaapiDisplay--rotation"/>
+    <keyword type="property" name="The &quot;saturation&quot; property" link="GstVaapiDisplay.html#GstVaapiDisplay--saturation"/>
+    <keyword type="property" name="The &quot;width&quot; property" link="GstVaapiDisplay.html#GstVaapiDisplay--width"/>
+    <keyword type="struct" name="struct GstVaapiDisplayX11" link="GstVaapiDisplayX11.html#GstVaapiDisplayX11-struct"/>
+    <keyword type="struct" name="struct GstVaapiDisplayX11Class" link="GstVaapiDisplayX11.html#GstVaapiDisplayX11Class"/>
+    <keyword type="function" name="gst_vaapi_display_x11_new ()" link="GstVaapiDisplayX11.html#gst-vaapi-display-x11-new"/>
+    <keyword type="function" name="gst_vaapi_display_x11_new_with_display ()" link="GstVaapiDisplayX11.html#gst-vaapi-display-x11-new-with-display"/>
+    <keyword type="function" name="gst_vaapi_display_x11_get_display ()" link="GstVaapiDisplayX11.html#gst-vaapi-display-x11-get-display"/>
+    <keyword type="function" name="gst_vaapi_display_x11_get_screen ()" link="GstVaapiDisplayX11.html#gst-vaapi-display-x11-get-screen"/>
+    <keyword type="property" name="The &quot;display-name&quot; property" link="GstVaapiDisplayX11.html#GstVaapiDisplayX11--display-name"/>
+    <keyword type="property" name="The &quot;synchronous&quot; property" link="GstVaapiDisplayX11.html#GstVaapiDisplayX11--synchronous"/>
+    <keyword type="property" name="The &quot;x11-display&quot; property" link="GstVaapiDisplayX11.html#GstVaapiDisplayX11--x11-display"/>
+    <keyword type="property" name="The &quot;x11-screen&quot; property" link="GstVaapiDisplayX11.html#GstVaapiDisplayX11--x11-screen"/>
+    <keyword type="struct" name="struct GstVaapiDisplayGLX" link="GstVaapiDisplayGLX.html#GstVaapiDisplayGLX-struct"/>
+    <keyword type="struct" name="struct GstVaapiDisplayGLXClass" link="GstVaapiDisplayGLX.html#GstVaapiDisplayGLXClass"/>
+    <keyword type="function" name="gst_vaapi_display_glx_new ()" link="GstVaapiDisplayGLX.html#gst-vaapi-display-glx-new"/>
+    <keyword type="function" name="gst_vaapi_display_glx_new_with_display ()" link="GstVaapiDisplayGLX.html#gst-vaapi-display-glx-new-with-display"/>
+    <keyword type="struct" name="struct GstVaapiWindow" link="GstVaapiWindow.html#GstVaapiWindow-struct"/>
+    <keyword type="struct" name="struct GstVaapiWindowClass" link="GstVaapiWindow.html#GstVaapiWindowClass"/>
+    <keyword type="function" name="gst_vaapi_window_get_display ()" link="GstVaapiWindow.html#gst-vaapi-window-get-display"/>
+    <keyword type="function" name="gst_vaapi_window_show ()" link="GstVaapiWindow.html#gst-vaapi-window-show"/>
+    <keyword type="function" name="gst_vaapi_window_hide ()" link="GstVaapiWindow.html#gst-vaapi-window-hide"/>
+    <keyword type="function" name="gst_vaapi_window_get_fullscreen ()" link="GstVaapiWindow.html#gst-vaapi-window-get-fullscreen"/>
+    <keyword type="function" name="gst_vaapi_window_set_fullscreen ()" link="GstVaapiWindow.html#gst-vaapi-window-set-fullscreen"/>
+    <keyword type="function" name="gst_vaapi_window_get_width ()" link="GstVaapiWindow.html#gst-vaapi-window-get-width"/>
+    <keyword type="function" name="gst_vaapi_window_get_height ()" link="GstVaapiWindow.html#gst-vaapi-window-get-height"/>
+    <keyword type="function" name="gst_vaapi_window_get_size ()" link="GstVaapiWindow.html#gst-vaapi-window-get-size"/>
+    <keyword type="function" name="gst_vaapi_window_set_width ()" link="GstVaapiWindow.html#gst-vaapi-window-set-width"/>
+    <keyword type="function" name="gst_vaapi_window_set_height ()" link="GstVaapiWindow.html#gst-vaapi-window-set-height"/>
+    <keyword type="function" name="gst_vaapi_window_set_size ()" link="GstVaapiWindow.html#gst-vaapi-window-set-size"/>
+    <keyword type="function" name="gst_vaapi_window_put_surface ()" link="GstVaapiWindow.html#gst-vaapi-window-put-surface"/>
+    <keyword type="property" name="The &quot;fullscreen&quot; property" link="GstVaapiWindow.html#GstVaapiWindow--fullscreen"/>
+    <keyword type="property" name="The &quot;height&quot; property" link="GstVaapiWindow.html#GstVaapiWindow--height"/>
+    <keyword type="property" name="The &quot;width&quot; property" link="GstVaapiWindow.html#GstVaapiWindow--width"/>
+    <keyword type="struct" name="struct GstVaapiWindowX11" link="GstVaapiWindowX11.html#GstVaapiWindowX11-struct"/>
+    <keyword type="struct" name="struct GstVaapiWindowX11Class" link="GstVaapiWindowX11.html#GstVaapiWindowX11Class"/>
+    <keyword type="macro" name="GST_VAAPI_WINDOW_XWINDOW()" link="GstVaapiWindowX11.html#GST-VAAPI-WINDOW-XWINDOW:CAPS"/>
+    <keyword type="function" name="gst_vaapi_window_x11_new ()" link="GstVaapiWindowX11.html#gst-vaapi-window-x11-new"/>
+    <keyword type="function" name="gst_vaapi_window_x11_new_with_xid ()" link="GstVaapiWindowX11.html#gst-vaapi-window-x11-new-with-xid"/>
+    <keyword type="function" name="gst_vaapi_window_x11_get_xid ()" link="GstVaapiWindowX11.html#gst-vaapi-window-x11-get-xid"/>
+    <keyword type="function" name="gst_vaapi_window_x11_is_foreign_xid ()" link="GstVaapiWindowX11.html#gst-vaapi-window-x11-is-foreign-xid"/>
+    <keyword type="struct" name="struct GstVaapiWindowGLX" link="GstVaapiWindowGLX.html#GstVaapiWindowGLX-struct"/>
+    <keyword type="struct" name="struct GstVaapiWindowGLXClass" link="GstVaapiWindowGLX.html#GstVaapiWindowGLXClass"/>
+    <keyword type="function" name="gst_vaapi_window_glx_new ()" link="GstVaapiWindowGLX.html#gst-vaapi-window-glx-new"/>
+    <keyword type="function" name="gst_vaapi_window_glx_new_with_xid ()" link="GstVaapiWindowGLX.html#gst-vaapi-window-glx-new-with-xid"/>
+    <keyword type="function" name="gst_vaapi_window_glx_get_context ()" link="GstVaapiWindowGLX.html#gst-vaapi-window-glx-get-context"/>
+    <keyword type="function" name="gst_vaapi_window_glx_set_context ()" link="GstVaapiWindowGLX.html#gst-vaapi-window-glx-set-context"/>
+    <keyword type="function" name="gst_vaapi_window_glx_make_current ()" link="GstVaapiWindowGLX.html#gst-vaapi-window-glx-make-current"/>
+    <keyword type="function" name="gst_vaapi_window_glx_swap_buffers ()" link="GstVaapiWindowGLX.html#gst-vaapi-window-glx-swap-buffers"/>
+    <keyword type="function" name="gst_vaapi_window_glx_put_texture ()" link="GstVaapiWindowGLX.html#gst-vaapi-window-glx-put-texture"/>
+    <keyword type="property" name="The &quot;glx-context&quot; property" link="GstVaapiWindowGLX.html#GstVaapiWindowGLX--glx-context"/>
+    <keyword type="struct" name="struct GstVaapiObject" link="GstVaapiObject.html#GstVaapiObject-struct"/>
+    <keyword type="struct" name="struct GstVaapiObjectClass" link="GstVaapiObject.html#GstVaapiObjectClass"/>
+    <keyword type="function" name="gst_vaapi_object_get_display ()" link="GstVaapiObject.html#gst-vaapi-object-get-display"/>
+    <keyword type="function" name="gst_vaapi_object_lock_display ()" link="GstVaapiObject.html#gst-vaapi-object-lock-display"/>
+    <keyword type="function" name="gst_vaapi_object_unlock_display ()" link="GstVaapiObject.html#gst-vaapi-object-unlock-display"/>
+    <keyword type="function" name="gst_vaapi_object_get_id ()" link="GstVaapiObject.html#gst-vaapi-object-get-id"/>
+    <keyword type="property" name="The &quot;display&quot; property" link="GstVaapiObject.html#GstVaapiObject--display"/>
+    <keyword type="property" name="The &quot;id&quot; property" link="GstVaapiObject.html#GstVaapiObject--id"/>
+    <keyword type="signal" name="The &quot;destroy&quot; signal" link="GstVaapiObject.html#GstVaapiObject-destroy"/>
+    <keyword type="enum" name="enum GstVaapiChromaType" link="libs-gstvaapisurface.html#GstVaapiChromaType"/>
+    <keyword type="enum" name="enum GstVaapiSurfaceStatus" link="libs-gstvaapisurface.html#GstVaapiSurfaceStatus"/>
+    <keyword type="enum" name="enum GstVaapiSurfaceRenderFlags" link="libs-gstvaapisurface.html#GstVaapiSurfaceRenderFlags"/>
+    <keyword type="struct" name="struct GstVaapiSurface" link="libs-gstvaapisurface.html#GstVaapiSurface-struct"/>
+    <keyword type="struct" name="struct GstVaapiSurfaceClass" link="libs-gstvaapisurface.html#GstVaapiSurfaceClass"/>
+    <keyword type="function" name="gst_vaapi_surface_new ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-new"/>
+    <keyword type="function" name="gst_vaapi_surface_get_id ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-get-id"/>
+    <keyword type="function" name="gst_vaapi_surface_get_chroma_type ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-get-chroma-type"/>
+    <keyword type="function" name="gst_vaapi_surface_get_width ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-get-width"/>
+    <keyword type="function" name="gst_vaapi_surface_get_height ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-get-height"/>
+    <keyword type="function" name="gst_vaapi_surface_get_size ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-get-size"/>
+    <keyword type="function" name="gst_vaapi_surface_derive_image ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-derive-image"/>
+    <keyword type="function" name="gst_vaapi_surface_get_image ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-get-image"/>
+    <keyword type="function" name="gst_vaapi_surface_put_image ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-put-image"/>
+    <keyword type="function" name="gst_vaapi_surface_associate_subpicture ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-associate-subpicture"/>
+    <keyword type="function" name="gst_vaapi_surface_deassociate_subpicture ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-deassociate-subpicture"/>
+    <keyword type="function" name="gst_vaapi_surface_sync ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-sync"/>
+    <keyword type="function" name="gst_vaapi_surface_query_status ()" link="libs-gstvaapisurface.html#gst-vaapi-surface-query-status"/>
+    <keyword type="property" name="The &quot;chroma-type&quot; property" link="libs-gstvaapisurface.html#GstVaapiSurface--chroma-type"/>
+    <keyword type="property" name="The &quot;height&quot; property" link="libs-gstvaapisurface.html#GstVaapiSurface--height"/>
+    <keyword type="property" name="The &quot;parent-context&quot; property" link="libs-gstvaapisurface.html#GstVaapiSurface--parent-context"/>
+    <keyword type="property" name="The &quot;width&quot; property" link="libs-gstvaapisurface.html#GstVaapiSurface--width"/>
+    <keyword type="macro" name="GST_VAAPI_IMAGE_FORMAT()" link="libs-gstvaapiimage.html#GST-VAAPI-IMAGE-FORMAT:CAPS"/>
+    <keyword type="macro" name="GST_VAAPI_IMAGE_WIDTH()" link="libs-gstvaapiimage.html#GST-VAAPI-IMAGE-WIDTH:CAPS"/>
+    <keyword type="macro" name="GST_VAAPI_IMAGE_HEIGHT()" link="libs-gstvaapiimage.html#GST-VAAPI-IMAGE-HEIGHT:CAPS"/>
+    <keyword type="struct" name="struct GstVaapiImage" link="libs-gstvaapiimage.html#GstVaapiImage-struct"/>
+    <keyword type="struct" name="struct GstVaapiImageClass" link="libs-gstvaapiimage.html#GstVaapiImageClass"/>
+    <keyword type="function" name="gst_vaapi_image_new ()" link="libs-gstvaapiimage.html#gst-vaapi-image-new"/>
+    <keyword type="function" name="gst_vaapi_image_new_with_image ()" link="libs-gstvaapiimage.html#gst-vaapi-image-new-with-image"/>
+    <keyword type="function" name="gst_vaapi_image_get_id ()" link="libs-gstvaapiimage.html#gst-vaapi-image-get-id"/>
+    <keyword type="function" name="gst_vaapi_image_get_image ()" link="libs-gstvaapiimage.html#gst-vaapi-image-get-image"/>
+    <keyword type="function" name="gst_vaapi_image_get_format ()" link="libs-gstvaapiimage.html#gst-vaapi-image-get-format"/>
+    <keyword type="function" name="gst_vaapi_image_get_width ()" link="libs-gstvaapiimage.html#gst-vaapi-image-get-width"/>
+    <keyword type="function" name="gst_vaapi_image_get_height ()" link="libs-gstvaapiimage.html#gst-vaapi-image-get-height"/>
+    <keyword type="function" name="gst_vaapi_image_get_size ()" link="libs-gstvaapiimage.html#gst-vaapi-image-get-size"/>
+    <keyword type="function" name="gst_vaapi_image_is_linear ()" link="libs-gstvaapiimage.html#gst-vaapi-image-is-linear"/>
+    <keyword type="function" name="gst_vaapi_image_is_mapped ()" link="libs-gstvaapiimage.html#gst-vaapi-image-is-mapped"/>
+    <keyword type="function" name="gst_vaapi_image_map ()" link="libs-gstvaapiimage.html#gst-vaapi-image-map"/>
+    <keyword type="function" name="gst_vaapi_image_unmap ()" link="libs-gstvaapiimage.html#gst-vaapi-image-unmap"/>
+    <keyword type="function" name="gst_vaapi_image_get_plane_count ()" link="libs-gstvaapiimage.html#gst-vaapi-image-get-plane-count"/>
+    <keyword type="function" name="gst_vaapi_image_get_plane ()" link="libs-gstvaapiimage.html#gst-vaapi-image-get-plane"/>
+    <keyword type="function" name="gst_vaapi_image_get_pitch ()" link="libs-gstvaapiimage.html#gst-vaapi-image-get-pitch"/>
+    <keyword type="function" name="gst_vaapi_image_get_data_size ()" link="libs-gstvaapiimage.html#gst-vaapi-image-get-data-size"/>
+    <keyword type="function" name="gst_vaapi_image_get_buffer ()" link="libs-gstvaapiimage.html#gst-vaapi-image-get-buffer"/>
+    <keyword type="function" name="gst_vaapi_image_get_raw ()" link="libs-gstvaapiimage.html#gst-vaapi-image-get-raw"/>
+    <keyword type="function" name="gst_vaapi_image_update_from_buffer ()" link="libs-gstvaapiimage.html#gst-vaapi-image-update-from-buffer"/>
+    <keyword type="property" name="The &quot;format&quot; property" link="libs-gstvaapiimage.html#GstVaapiImage--format"/>
+    <keyword type="property" name="The &quot;height&quot; property" link="libs-gstvaapiimage.html#GstVaapiImage--height"/>
+    <keyword type="property" name="The &quot;image&quot; property" link="libs-gstvaapiimage.html#GstVaapiImage--image"/>
+    <keyword type="property" name="The &quot;width&quot; property" link="libs-gstvaapiimage.html#GstVaapiImage--width"/>
+    <keyword type="enum" name="enum GstVaapiImageFormat" link="libs-GstVaapiImageFormat.html#GstVaapiImageFormat"/>
+    <keyword type="function" name="gst_vaapi_image_format_is_rgb ()" link="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-is-rgb"/>
+    <keyword type="function" name="gst_vaapi_image_format_is_yuv ()" link="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-is-yuv"/>
+    <keyword type="function" name="gst_vaapi_image_format ()" link="libs-GstVaapiImageFormat.html#gst-vaapi-image-format"/>
+    <keyword type="function" name="gst_vaapi_image_format_from_caps ()" link="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-from-caps"/>
+    <keyword type="function" name="gst_vaapi_image_format_from_fourcc ()" link="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-from-fourcc"/>
+    <keyword type="function" name="gst_vaapi_image_format_from_video ()" link="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-from-video"/>
+    <keyword type="function" name="gst_vaapi_image_format_get_va_format ()" link="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-get-va-format"/>
+    <keyword type="function" name="gst_vaapi_image_format_get_caps ()" link="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-get-caps"/>
+    <keyword type="function" name="gst_vaapi_image_format_get_score ()" link="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-get-score"/>
+    <keyword type="struct" name="struct GstVaapiSubpicture" link="GstVaapiSubpicture.html#GstVaapiSubpicture-struct"/>
+    <keyword type="struct" name="struct GstVaapiSubpictureClass" link="GstVaapiSubpicture.html#GstVaapiSubpictureClass"/>
+    <keyword type="function" name="gst_vaapi_subpicture_new ()" link="GstVaapiSubpicture.html#gst-vaapi-subpicture-new"/>
+    <keyword type="function" name="gst_vaapi_subpicture_new_from_overlay_rectangle ()" link="GstVaapiSubpicture.html#gst-vaapi-subpicture-new-from-overlay-rectangle"/>
+    <keyword type="function" name="gst_vaapi_subpicture_get_id ()" link="GstVaapiSubpicture.html#gst-vaapi-subpicture-get-id"/>
+    <keyword type="function" name="gst_vaapi_subpicture_get_flags ()" link="GstVaapiSubpicture.html#gst-vaapi-subpicture-get-flags"/>
+    <keyword type="function" name="gst_vaapi_subpicture_get_global_alpha ()" link="GstVaapiSubpicture.html#gst-vaapi-subpicture-get-global-alpha"/>
+    <keyword type="function" name="gst_vaapi_subpicture_set_global_alpha ()" link="GstVaapiSubpicture.html#gst-vaapi-subpicture-set-global-alpha"/>
+    <keyword type="function" name="gst_vaapi_subpicture_get_image ()" link="GstVaapiSubpicture.html#gst-vaapi-subpicture-get-image"/>
+    <keyword type="function" name="gst_vaapi_subpicture_set_image ()" link="GstVaapiSubpicture.html#gst-vaapi-subpicture-set-image"/>
+    <keyword type="property" name="The &quot;flags&quot; property" link="GstVaapiSubpicture.html#GstVaapiSubpicture--flags"/>
+    <keyword type="property" name="The &quot;global-alpha&quot; property" link="GstVaapiSubpicture.html#GstVaapiSubpicture--global-alpha"/>
+    <keyword type="property" name="The &quot;image&quot; property" link="GstVaapiSubpicture.html#GstVaapiSubpicture--image"/>
+    <keyword type="struct" name="struct GstVaapiTexture" link="GstVaapiTexture.html#GstVaapiTexture-struct"/>
+    <keyword type="struct" name="struct GstVaapiTextureClass" link="GstVaapiTexture.html#GstVaapiTextureClass"/>
+    <keyword type="function" name="gst_vaapi_texture_new ()" link="GstVaapiTexture.html#gst-vaapi-texture-new"/>
+    <keyword type="function" name="gst_vaapi_texture_new_with_texture ()" link="GstVaapiTexture.html#gst-vaapi-texture-new-with-texture"/>
+    <keyword type="function" name="gst_vaapi_texture_get_id ()" link="GstVaapiTexture.html#gst-vaapi-texture-get-id"/>
+    <keyword type="function" name="gst_vaapi_texture_get_target ()" link="GstVaapiTexture.html#gst-vaapi-texture-get-target"/>
+    <keyword type="function" name="gst_vaapi_texture_get_format ()" link="GstVaapiTexture.html#gst-vaapi-texture-get-format"/>
+    <keyword type="function" name="gst_vaapi_texture_get_width ()" link="GstVaapiTexture.html#gst-vaapi-texture-get-width"/>
+    <keyword type="function" name="gst_vaapi_texture_get_height ()" link="GstVaapiTexture.html#gst-vaapi-texture-get-height"/>
+    <keyword type="function" name="gst_vaapi_texture_get_size ()" link="GstVaapiTexture.html#gst-vaapi-texture-get-size"/>
+    <keyword type="function" name="gst_vaapi_texture_put_surface ()" link="GstVaapiTexture.html#gst-vaapi-texture-put-surface"/>
+    <keyword type="property" name="The &quot;format&quot; property" link="GstVaapiTexture.html#GstVaapiTexture--format"/>
+    <keyword type="property" name="The &quot;height&quot; property" link="GstVaapiTexture.html#GstVaapiTexture--height"/>
+    <keyword type="property" name="The &quot;target&quot; property" link="GstVaapiTexture.html#GstVaapiTexture--target"/>
+    <keyword type="property" name="The &quot;width&quot; property" link="GstVaapiTexture.html#GstVaapiTexture--width"/>
+    <keyword type="enum" name="enum GstVaapiCodec" link="libs-GstVaapiProfile.html#GstVaapiCodec"/>
+    <keyword type="enum" name="enum GstVaapiProfile" link="libs-GstVaapiProfile.html#GstVaapiProfile"/>
+    <keyword type="enum" name="enum GstVaapiEntrypoint" link="libs-GstVaapiProfile.html#GstVaapiEntrypoint"/>
+    <keyword type="function" name="gst_vaapi_profile ()" link="libs-GstVaapiProfile.html#gst-vaapi-profile"/>
+    <keyword type="function" name="gst_vaapi_profile_from_caps ()" link="libs-GstVaapiProfile.html#gst-vaapi-profile-from-caps"/>
+    <keyword type="function" name="gst_vaapi_profile_get_va_profile ()" link="libs-GstVaapiProfile.html#gst-vaapi-profile-get-va-profile"/>
+    <keyword type="function" name="gst_vaapi_profile_get_caps ()" link="libs-GstVaapiProfile.html#gst-vaapi-profile-get-caps"/>
+    <keyword type="function" name="gst_vaapi_profile_get_codec ()" link="libs-GstVaapiProfile.html#gst-vaapi-profile-get-codec"/>
+    <keyword type="function" name="gst_vaapi_entrypoint ()" link="libs-GstVaapiProfile.html#gst-vaapi-entrypoint"/>
+    <keyword type="function" name="gst_vaapi_entrypoint_get_va_entrypoint ()" link="libs-GstVaapiProfile.html#gst-vaapi-entrypoint-get-va-entrypoint"/>
+    <keyword type="struct" name="struct GstVaapiVideoPool" link="GstVaapiVideoPool.html#GstVaapiVideoPool-struct"/>
+    <keyword type="struct" name="struct GstVaapiVideoPoolClass" link="GstVaapiVideoPool.html#GstVaapiVideoPoolClass"/>
+    <keyword type="function" name="gst_vaapi_video_pool_get_display ()" link="GstVaapiVideoPool.html#gst-vaapi-video-pool-get-display"/>
+    <keyword type="function" name="gst_vaapi_video_pool_get_caps ()" link="GstVaapiVideoPool.html#gst-vaapi-video-pool-get-caps"/>
+    <keyword type="function" name="gst_vaapi_video_pool_get_object ()" link="GstVaapiVideoPool.html#gst-vaapi-video-pool-get-object"/>
+    <keyword type="function" name="gst_vaapi_video_pool_put_object ()" link="GstVaapiVideoPool.html#gst-vaapi-video-pool-put-object"/>
+    <keyword type="function" name="gst_vaapi_video_pool_add_object ()" link="GstVaapiVideoPool.html#gst-vaapi-video-pool-add-object"/>
+    <keyword type="function" name="gst_vaapi_video_pool_add_objects ()" link="GstVaapiVideoPool.html#gst-vaapi-video-pool-add-objects"/>
+    <keyword type="function" name="gst_vaapi_video_pool_get_capacity ()" link="GstVaapiVideoPool.html#gst-vaapi-video-pool-get-capacity"/>
+    <keyword type="function" name="gst_vaapi_video_pool_set_capacity ()" link="GstVaapiVideoPool.html#gst-vaapi-video-pool-set-capacity"/>
+    <keyword type="function" name="gst_vaapi_video_pool_get_size ()" link="GstVaapiVideoPool.html#gst-vaapi-video-pool-get-size"/>
+    <keyword type="function" name="gst_vaapi_video_pool_reserve ()" link="GstVaapiVideoPool.html#gst-vaapi-video-pool-reserve"/>
+    <keyword type="property" name="The &quot;capacity&quot; property" link="GstVaapiVideoPool.html#GstVaapiVideoPool--capacity"/>
+    <keyword type="property" name="The &quot;caps&quot; property" link="GstVaapiVideoPool.html#GstVaapiVideoPool--caps"/>
+    <keyword type="property" name="The &quot;display&quot; property" link="GstVaapiVideoPool.html#GstVaapiVideoPool--display"/>
+    <keyword type="struct" name="struct GstVaapiSurfacePool" link="GstVaapiSurfacePool.html#GstVaapiSurfacePool-struct"/>
+    <keyword type="struct" name="struct GstVaapiSurfacePoolClass" link="GstVaapiSurfacePool.html#GstVaapiSurfacePoolClass"/>
+    <keyword type="function" name="gst_vaapi_surface_pool_new ()" link="GstVaapiSurfacePool.html#gst-vaapi-surface-pool-new"/>
+    <keyword type="struct" name="struct GstVaapiImagePool" link="GstVaapiImagePool.html#GstVaapiImagePool-struct"/>
+    <keyword type="struct" name="struct GstVaapiImagePoolClass" link="GstVaapiImagePool.html#GstVaapiImagePoolClass"/>
+    <keyword type="function" name="gst_vaapi_image_pool_new ()" link="GstVaapiImagePool.html#gst-vaapi-image-pool-new"/>
+    <keyword type="struct" name="struct GstVaapiContext" link="GstVaapiContext.html#GstVaapiContext-struct"/>
+    <keyword type="struct" name="struct GstVaapiContextClass" link="GstVaapiContext.html#GstVaapiContextClass"/>
+    <keyword type="function" name="gst_vaapi_context_new ()" link="GstVaapiContext.html#gst-vaapi-context-new"/>
+    <keyword type="function" name="gst_vaapi_context_reset ()" link="GstVaapiContext.html#gst-vaapi-context-reset"/>
+    <keyword type="function" name="gst_vaapi_context_get_id ()" link="GstVaapiContext.html#gst-vaapi-context-get-id"/>
+    <keyword type="function" name="gst_vaapi_context_get_profile ()" link="GstVaapiContext.html#gst-vaapi-context-get-profile"/>
+    <keyword type="function" name="gst_vaapi_context_set_profile ()" link="GstVaapiContext.html#gst-vaapi-context-set-profile"/>
+    <keyword type="function" name="gst_vaapi_context_get_entrypoint ()" link="GstVaapiContext.html#gst-vaapi-context-get-entrypoint"/>
+    <keyword type="function" name="gst_vaapi_context_get_size ()" link="GstVaapiContext.html#gst-vaapi-context-get-size"/>
+    <keyword type="function" name="gst_vaapi_context_get_surface ()" link="GstVaapiContext.html#gst-vaapi-context-get-surface"/>
+    <keyword type="function" name="gst_vaapi_context_get_surface_count ()" link="GstVaapiContext.html#gst-vaapi-context-get-surface-count"/>
+    <keyword type="function" name="gst_vaapi_context_put_surface ()" link="GstVaapiContext.html#gst-vaapi-context-put-surface"/>
+    <keyword type="function" name="gst_vaapi_context_find_surface_by_id ()" link="GstVaapiContext.html#gst-vaapi-context-find-surface-by-id"/>
+    <keyword type="function" name="gst_vaapi_context_apply_composition ()" link="GstVaapiContext.html#gst-vaapi-context-apply-composition"/>
+    <keyword type="property" name="The &quot;entrypoint&quot; property" link="GstVaapiContext.html#GstVaapiContext--entrypoint"/>
+    <keyword type="property" name="The &quot;height&quot; property" link="GstVaapiContext.html#GstVaapiContext--height"/>
+    <keyword type="property" name="The &quot;profile&quot; property" link="GstVaapiContext.html#GstVaapiContext--profile"/>
+    <keyword type="property" name="The &quot;ref-frames&quot; property" link="GstVaapiContext.html#GstVaapiContext--ref-frames"/>
+    <keyword type="property" name="The &quot;width&quot; property" link="GstVaapiContext.html#GstVaapiContext--width"/>
+    <keyword type="enum" name="enum GstVaapiDecoderStatus" link="libs-gstvaapidecoder.html#GstVaapiDecoderStatus"/>
+    <keyword type="struct" name="struct GstVaapiDecoder" link="libs-gstvaapidecoder.html#GstVaapiDecoder-struct"/>
+    <keyword type="struct" name="struct GstVaapiDecoderClass" link="libs-gstvaapidecoder.html#GstVaapiDecoderClass"/>
+    <keyword type="function" name="gst_vaapi_decoder_get_caps ()" link="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-caps"/>
+    <keyword type="function" name="gst_vaapi_decoder_get_codec ()" link="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-codec"/>
+    <keyword type="function" name="gst_vaapi_decoder_get_codec_state ()" link="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-codec-state"/>
+    <keyword type="function" name="gst_vaapi_decoder_put_buffer ()" link="libs-gstvaapidecoder.html#gst-vaapi-decoder-put-buffer"/>
+    <keyword type="function" name="gst_vaapi_decoder_get_surface ()" link="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-surface"/>
+    <keyword type="function" name="gst_vaapi_decoder_get_frame ()" link="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-frame"/>
+    <keyword type="function" name="gst_vaapi_decoder_parse ()" link="libs-gstvaapidecoder.html#gst-vaapi-decoder-parse"/>
+    <keyword type="function" name="gst_vaapi_decoder_decode ()" link="libs-gstvaapidecoder.html#gst-vaapi-decoder-decode"/>
+    <keyword type="property" name="The &quot;caps&quot; property" link="libs-gstvaapidecoder.html#GstVaapiDecoder--caps"/>
+    <keyword type="property" name="The &quot;display&quot; property" link="libs-gstvaapidecoder.html#GstVaapiDecoder--display"/>
+    <keyword type="struct" name="struct GstVaapiDecoderJpeg" link="libs-GstVaapiDecoderJpeg.html#GstVaapiDecoderJpeg"/>
+    <keyword type="struct" name="struct GstVaapiDecoderJpegClass" link="libs-GstVaapiDecoderJpeg.html#GstVaapiDecoderJpegClass"/>
+    <keyword type="function" name="gst_vaapi_decoder_jpeg_new ()" link="libs-GstVaapiDecoderJpeg.html#gst-vaapi-decoder-jpeg-new"/>
+    <keyword type="struct" name="struct GstVaapiDecoderMpeg2" link="libs-GstVaapiDecoderMpeg2.html#GstVaapiDecoderMpeg2"/>
+    <keyword type="struct" name="struct GstVaapiDecoderMpeg2Class" link="libs-GstVaapiDecoderMpeg2.html#GstVaapiDecoderMpeg2Class"/>
+    <keyword type="function" name="gst_vaapi_decoder_mpeg2_new ()" link="libs-GstVaapiDecoderMpeg2.html#gst-vaapi-decoder-mpeg2-new"/>
+    <keyword type="struct" name="struct GstVaapiDecoderMpeg4" link="libs-GstVaapiDecoderMpeg4.html#GstVaapiDecoderMpeg4"/>
+    <keyword type="struct" name="struct GstVaapiDecoderMpeg4Class" link="libs-GstVaapiDecoderMpeg4.html#GstVaapiDecoderMpeg4Class"/>
+    <keyword type="function" name="gst_vaapi_decoder_mpeg4_new ()" link="libs-GstVaapiDecoderMpeg4.html#gst-vaapi-decoder-mpeg4-new"/>
+    <keyword type="struct" name="struct GstVaapiDecoderH264" link="libs-GstVaapiDecoderH264.html#GstVaapiDecoderH264"/>
+    <keyword type="struct" name="struct GstVaapiDecoderH264Class" link="libs-GstVaapiDecoderH264.html#GstVaapiDecoderH264Class"/>
+    <keyword type="function" name="gst_vaapi_decoder_h264_new ()" link="libs-GstVaapiDecoderH264.html#gst-vaapi-decoder-h264-new"/>
+    <keyword type="struct" name="struct GstVaapiDecoderVC1" link="libs-GstVaapiDecoderVC1.html#GstVaapiDecoderVC1"/>
+    <keyword type="struct" name="struct GstVaapiDecoderVC1Class" link="libs-GstVaapiDecoderVC1.html#GstVaapiDecoderVC1Class"/>
+    <keyword type="function" name="gst_vaapi_decoder_vc1_new ()" link="libs-GstVaapiDecoderVC1.html#gst-vaapi-decoder-vc1-new"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_get_context ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-get-context"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_get_surface ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-get-surface"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_get_surface_id ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-get-surface-id"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_get_user_data ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-get-user-data"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_new ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-new"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_ref ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-ref"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_replace ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-replace"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_set_context ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-set-context"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_set_surface ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-set-surface"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_set_user_data ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-set-user-data"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_unref ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-unref"/>
+    <keyword type="constant" name="GST_VAAPI_CHROMA_TYPE_YUV420" link="libs-gstvaapisurface.html#GST-VAAPI-CHROMA-TYPE-YUV420:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_CHROMA_TYPE_YUV422" link="libs-gstvaapisurface.html#GST-VAAPI-CHROMA-TYPE-YUV422:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_CHROMA_TYPE_YUV444" link="libs-gstvaapisurface.html#GST-VAAPI-CHROMA-TYPE-YUV444:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_SURFACE_STATUS_IDLE" link="libs-gstvaapisurface.html#GST-VAAPI-SURFACE-STATUS-IDLE:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_SURFACE_STATUS_RENDERING" link="libs-gstvaapisurface.html#GST-VAAPI-SURFACE-STATUS-RENDERING:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_SURFACE_STATUS_DISPLAYING" link="libs-gstvaapisurface.html#GST-VAAPI-SURFACE-STATUS-DISPLAYING:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_SURFACE_STATUS_SKIPPED" link="libs-gstvaapisurface.html#GST-VAAPI-SURFACE-STATUS-SKIPPED:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PICTURE_STRUCTURE_TOP_FIELD" link="libs-gstvaapisurface.html#GST-VAAPI-PICTURE-STRUCTURE-TOP-FIELD:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PICTURE_STRUCTURE_BOTTOM_FIELD" link="libs-gstvaapisurface.html#GST-VAAPI-PICTURE-STRUCTURE-BOTTOM-FIELD:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PICTURE_STRUCTURE_FRAME" link="libs-gstvaapisurface.html#GST-VAAPI-PICTURE-STRUCTURE-FRAME:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_COLOR_STANDARD_ITUR_BT_601" link="libs-gstvaapisurface.html#GST-VAAPI-COLOR-STANDARD-ITUR-BT-601:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_COLOR_STANDARD_ITUR_BT_709" link="libs-gstvaapisurface.html#GST-VAAPI-COLOR-STANDARD-ITUR-BT-709:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_IMAGE_NV12" link="libs-GstVaapiImageFormat.html#GST-VAAPI-IMAGE-NV12:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_IMAGE_YV12" link="libs-GstVaapiImageFormat.html#GST-VAAPI-IMAGE-YV12:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_IMAGE_I420" link="libs-GstVaapiImageFormat.html#GST-VAAPI-IMAGE-I420:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_IMAGE_AYUV" link="libs-GstVaapiImageFormat.html#GST-VAAPI-IMAGE-AYUV:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_IMAGE_ARGB" link="libs-GstVaapiImageFormat.html#GST-VAAPI-IMAGE-ARGB:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_IMAGE_RGBA" link="libs-GstVaapiImageFormat.html#GST-VAAPI-IMAGE-RGBA:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_IMAGE_ABGR" link="libs-GstVaapiImageFormat.html#GST-VAAPI-IMAGE-ABGR:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_IMAGE_BGRA" link="libs-GstVaapiImageFormat.html#GST-VAAPI-IMAGE-BGRA:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_CODEC_MPEG1" link="libs-GstVaapiProfile.html#GST-VAAPI-CODEC-MPEG1:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_CODEC_MPEG2" link="libs-GstVaapiProfile.html#GST-VAAPI-CODEC-MPEG2:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_CODEC_MPEG4" link="libs-GstVaapiProfile.html#GST-VAAPI-CODEC-MPEG4:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_CODEC_H263" link="libs-GstVaapiProfile.html#GST-VAAPI-CODEC-H263:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_CODEC_H264" link="libs-GstVaapiProfile.html#GST-VAAPI-CODEC-H264:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_CODEC_WMV3" link="libs-GstVaapiProfile.html#GST-VAAPI-CODEC-WMV3:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_CODEC_VC1" link="libs-GstVaapiProfile.html#GST-VAAPI-CODEC-VC1:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_CODEC_JPEG" link="libs-GstVaapiProfile.html#GST-VAAPI-CODEC-JPEG:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_UNKNOWN" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-UNKNOWN:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_MPEG1" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-MPEG1:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_MPEG2_SIMPLE" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-MPEG2-SIMPLE:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_MPEG2_MAIN" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-MPEG2-MAIN:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_MPEG2_HIGH" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-MPEG2-HIGH:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_MPEG4_SIMPLE" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-MPEG4-SIMPLE:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_MPEG4_ADVANCED_SIMPLE" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-MPEG4-ADVANCED-SIMPLE:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_MPEG4_MAIN" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-MPEG4-MAIN:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_H263_BASELINE" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-H263-BASELINE:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_H264_BASELINE" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-H264-BASELINE:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_H264_MAIN" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-H264-MAIN:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_H264_HIGH" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-H264-HIGH:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_VC1_SIMPLE" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-VC1-SIMPLE:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_VC1_MAIN" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-VC1-MAIN:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_VC1_ADVANCED" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-VC1-ADVANCED:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_PROFILE_JPEG_BASELINE" link="libs-GstVaapiProfile.html#GST-VAAPI-PROFILE-JPEG-BASELINE:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_ENTRYPOINT_VLD" link="libs-GstVaapiProfile.html#GST-VAAPI-ENTRYPOINT-VLD:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_ENTRYPOINT_IDCT" link="libs-GstVaapiProfile.html#GST-VAAPI-ENTRYPOINT-IDCT:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_ENTRYPOINT_MOCO" link="libs-GstVaapiProfile.html#GST-VAAPI-ENTRYPOINT-MOCO:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_ENTRYPOINT_SLICE_ENCODE" link="libs-GstVaapiProfile.html#GST-VAAPI-ENTRYPOINT-SLICE-ENCODE:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_SUCCESS" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-SUCCESS:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_END_OF_STREAM" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-END-OF-STREAM:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_ERROR_ALLOCATION_FAILED" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-ERROR-ALLOCATION-FAILED:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_ERROR_INIT_FAILED" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-ERROR-INIT-FAILED:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_CODEC" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-ERROR-UNSUPPORTED-CODEC:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-ERROR-NO-DATA:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_ERROR_NO_SURFACE" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-ERROR-NO-SURFACE:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_ERROR_INVALID_SURFACE" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-ERROR-INVALID-SURFACE:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_ERROR_BITSTREAM_PARSER" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-ERROR-BITSTREAM-PARSER:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_PROFILE" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-ERROR-UNSUPPORTED-PROFILE:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_CHROMA_FORMAT" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-ERROR-UNSUPPORTED-CHROMA-FORMAT:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_ERROR_INVALID_PARAMETER" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-ERROR-INVALID-PARAMETER:CAPS"/>
+    <keyword type="constant" name="GST_VAAPI_DECODER_STATUS_ERROR_UNKNOWN" link="libs-gstvaapidecoder.html#GST-VAAPI-DECODER-STATUS-ERROR-UNKNOWN:CAPS"/>
+  </functions>
+</book>

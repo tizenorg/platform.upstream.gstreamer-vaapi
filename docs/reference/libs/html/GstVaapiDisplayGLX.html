@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiDisplayGLX</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="GstVaapiDisplayX11.html" title="GstVaapiDisplayX11">
+<link rel="next" href="GstVaapiWindow.html" title="GstVaapiWindow">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiDisplayX11.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiWindow.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiDisplayGLX.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiDisplayGLX.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiDisplayGLX.object-hierarchy" class="shortcut">Object Hierarchy</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiDisplayGLX"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiDisplayGLX.top_of_page"></a>GstVaapiDisplayGLX</span></h2>
+<p>GstVaapiDisplayGLX — VA/GLX display abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiDisplayGLX.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiDisplayGLX.html#GstVaapiDisplayGLX-struct" title="struct GstVaapiDisplayGLX">GstVaapiDisplayGLX</a>;
+struct              <a class="link" href="GstVaapiDisplayGLX.html#GstVaapiDisplayGLXClass" title="struct GstVaapiDisplayGLXClass">GstVaapiDisplayGLXClass</a>;
+<a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   <a class="link" href="GstVaapiDisplayGLX.html#gst-vaapi-display-glx-new" title="gst_vaapi_display_glx_new ()">gst_vaapi_display_glx_new</a>           (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *display_name</code></em>);
+<a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   <a class="link" href="GstVaapiDisplayGLX.html#gst-vaapi-display-glx-new-with-display" title="gst_vaapi_display_glx_new_with_display ()">gst_vaapi_display_glx_new_with_display</a>
+                                                        (<em class="parameter"><code><span class="type">Display</span> *x11_display</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplayGLX.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay">GstVaapiDisplay</a>
+         +----<a class="link" href="GstVaapiDisplayX11.html" title="GstVaapiDisplayX11">GstVaapiDisplayX11</a>
+               +----GstVaapiDisplayGLX
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplayGLX.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplayGLX.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiDisplayGLX-struct"></a><h3>struct GstVaapiDisplayGLX</h3>
+<pre class="programlisting">struct GstVaapiDisplayGLX;</pre>
+<p>
+VA/GLX display wrapper.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplayGLXClass"></a><h3>struct GstVaapiDisplayGLXClass</h3>
+<pre class="programlisting">struct GstVaapiDisplayGLXClass {
+};
+</pre>
+<p>
+VA/GLX display wrapper clas.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-glx-new"></a><h3>gst_vaapi_display_glx_new ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   gst_vaapi_display_glx_new           (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *display_name</code></em>);</pre>
+<p>
+Opens an X11 <span class="type">Display</span> using <em class="parameter"><code>display_name</code></em> and returns a newly
+allocated <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> object. The X11 display will be cloed
+when the reference count of the object reaches zero.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display_name</code></em> :</span></p></td>
+<td>the X11 display name</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a newly allocated <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-glx-new-with-display"></a><h3>gst_vaapi_display_glx_new_with_display ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   gst_vaapi_display_glx_new_with_display
+                                                        (<em class="parameter"><code><span class="type">Display</span> *x11_display</code></em>);</pre>
+<p>
+Creates a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> based on the X11 <em class="parameter"><code>x11_display</code></em>
+display. The caller still owns the display and must call
+<code class="function">XCloseDisplay()</code> when all <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> references are
+released. Doing so too early can yield undefined behaviour.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>x11_display</code></em> :</span></p></td>
+<td>an X11 <span class="type">Display</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a newly allocated <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

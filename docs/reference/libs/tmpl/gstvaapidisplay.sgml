@@ -1,0 +1,311 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiDisplay
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiDisplay ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiDisplay:brightness ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDisplay:contrast ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDisplay:display ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDisplay:display-type ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDisplay:height ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDisplay:hue ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDisplay:render-mode ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDisplay:rotation ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDisplay:saturation ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDisplay:width ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GstVaapiDisplayClass ##### -->
+<para>
+
+</para>
+
+@open_display: 
+@close_display: 
+@lock: 
+@unlock: 
+@sync: 
+@flush: 
+@get_display: 
+@get_size: 
+@get_size_mm: 
+
+<!-- ##### FUNCTION gst_vaapi_display_new_with_display ##### -->
+<para>
+
+</para>
+
+@va_display: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_lock ##### -->
+<para>
+
+</para>
+
+@display: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_unlock ##### -->
+<para>
+
+</para>
+
+@display: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_sync ##### -->
+<para>
+
+</para>
+
+@display: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_flush ##### -->
+<para>
+
+</para>
+
+@display: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_get_display ##### -->
+<para>
+
+</para>
+
+@display: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_get_width ##### -->
+<para>
+
+</para>
+
+@display: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_get_height ##### -->
+<para>
+
+</para>
+
+@display: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_get_size ##### -->
+<para>
+
+</para>
+
+@display: 
+@pwidth: 
+@pheight: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_get_pixel_aspect_ratio ##### -->
+<para>
+
+</para>
+
+@display: 
+@par_n: 
+@par_d: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_get_decode_caps ##### -->
+<para>
+
+</para>
+
+@display: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_has_decoder ##### -->
+<para>
+
+</para>
+
+@display: 
+@profile: 
+@entrypoint: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_get_encode_caps ##### -->
+<para>
+
+</para>
+
+@display: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_has_encoder ##### -->
+<para>
+
+</para>
+
+@display: 
+@profile: 
+@entrypoint: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_get_image_caps ##### -->
+<para>
+
+</para>
+
+@display: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_has_image_format ##### -->
+<para>
+
+</para>
+
+@display: 
+@format: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_get_subpicture_caps ##### -->
+<para>
+
+</para>
+
+@display: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_has_subpicture_format ##### -->
+<para>
+
+</para>
+
+@display: 
+@format: 
+@flags_ptr: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_has_property ##### -->
+<para>
+
+</para>
+
+@display: 
+@name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_get_rotation ##### -->
+<para>
+
+</para>
+
+@display: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_set_rotation ##### -->
+<para>
+
+</para>
+
+@display: 
+@rotation: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_get_render_mode ##### -->
+<para>
+
+</para>
+
+@display: 
+@pmode: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_set_render_mode ##### -->
+<para>
+
+</para>
+
+@display: 
+@mode: 
+@Returns: 
+
+

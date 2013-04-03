@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Basic data structures</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="next" href="libs-gstvaapivalue.html" title="gstvaapivalue">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="ch01.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="libs-gstvaapivalue.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#libs-Basic-data-structures.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#libs-Basic-data-structures.description" class="shortcut">Description</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="libs-Basic-data-structures"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libs-Basic-data-structures.top_of_page"></a>Basic data structures</span></h2>
+<p>Basic data structures</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="libs-Basic-data-structures.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">typedef             <a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID">GstVaapiID</a>;
+#define             <a class="link" href="libs-Basic-data-structures.html#GST-VAAPI-ID-FORMAT:CAPS" title="GST_VAAPI_ID_FORMAT">GST_VAAPI_ID_FORMAT</a>
+#define             <a class="link" href="libs-Basic-data-structures.html#GST-VAAPI-ID-ARGS:CAPS" title="GST_VAAPI_ID_ARGS()">GST_VAAPI_ID_ARGS</a>                   (id)
+#define             <a class="link" href="libs-Basic-data-structures.html#GST-VAAPI-ID:CAPS" title="GST_VAAPI_ID()">GST_VAAPI_ID</a>                        (id)
+#define             <a class="link" href="libs-Basic-data-structures.html#GST-VAAPI-ID-NONE:CAPS" title="GST_VAAPI_ID_NONE">GST_VAAPI_ID_NONE</a>
+struct              <a class="link" href="libs-Basic-data-structures.html#GstVaapiPoint" title="struct GstVaapiPoint">GstVaapiPoint</a>;
+struct              <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle">GstVaapiRectangle</a>;
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-Basic-data-structures.description"></a><h2>Description</h2>
+<p>
+</p>
+</div>
+<div class="refsect1">
+<a name="libs-Basic-data-structures.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiID"></a><h3>GstVaapiID</h3>
+<pre class="programlisting">typedef guint32 GstVaapiID;
+</pre>
+<p>
+An integer large enough to hold a generic VA id or a pointer
+wherever necessary.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GST-VAAPI-ID-FORMAT:CAPS"></a><h3>GST_VAAPI_ID_FORMAT</h3>
+<pre class="programlisting">#define GST_VAAPI_ID_FORMAT "p"
+</pre>
+<p>
+Can be used together with <a class="link" href="libs-Basic-data-structures.html#GST-VAAPI-ID-ARGS:CAPS" title="GST_VAAPI_ID_ARGS()"><span class="type">GST_VAAPI_ID_ARGS</span></a> to properly output an
+integer value in a <code class="function">printf()</code>-style text message.
+</p>
+<div class="informalexample"><pre class="programlisting">
+printf("id: %" GST_VAAPI_ID_FORMAT "\n", GST_VAAPI_ID_ARGS(id));
+</pre></div>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GST-VAAPI-ID-ARGS:CAPS"></a><h3>GST_VAAPI_ID_ARGS()</h3>
+<pre class="programlisting">#define GST_VAAPI_ID_ARGS(id) GUINT_TO_POINTER(id)
+</pre>
+<p>
+Can be used together with <a class="link" href="libs-Basic-data-structures.html#GST-VAAPI-ID-FORMAT:CAPS" title="GST_VAAPI_ID_FORMAT"><span class="type">GST_VAAPI_ID_FORMAT</span></a> to properly output
+an integer value in a <code class="function">printf()</code>-style text message.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>id</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GST-VAAPI-ID:CAPS"></a><h3>GST_VAAPI_ID()</h3>
+<pre class="programlisting">#define GST_VAAPI_ID(id) ((GstVaapiID)(id))
+</pre>
+<p>
+Macro that creates a <a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> from <em class="parameter"><code>id</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>id</code></em> :</span></p></td>
+<td>an arbitrary integer value</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GST-VAAPI-ID-NONE:CAPS"></a><h3>GST_VAAPI_ID_NONE</h3>
+<pre class="programlisting">#define GST_VAAPI_ID_NONE GST_VAAPI_ID(0)
+</pre>
+<p>
+Macro that evaluates to the default <a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> value.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiPoint"></a><h3>struct GstVaapiPoint</h3>
+<pre class="programlisting">struct GstVaapiPoint {
+    guint32 x;
+    guint32 y;
+};
+</pre>
+<p>
+A location within a surface.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="GstVaapiPoint.x"></a>x</code></em>;</span></p></td>
+<td>X coordinate</td>
+</tr>
+<tr>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="GstVaapiPoint.y"></a>y</code></em>;</span></p></td>
+<td>Y coordinate</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiRectangle"></a><h3>struct GstVaapiRectangle</h3>
+<pre class="programlisting">struct GstVaapiRectangle {
+    guint32 x;
+    guint32 y;
+    guint32 width;
+    guint32 height;
+};
+</pre>
+<p>
+A rectangle region within a surface.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="GstVaapiRectangle.x"></a>x</code></em>;</span></p></td>
+<td>X coordinate</td>
+</tr>
+<tr>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="GstVaapiRectangle.y"></a>y</code></em>;</span></p></td>
+<td>Y coordinate</td>
+</tr>
+<tr>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="GstVaapiRectangle.width"></a>width</code></em>;</span></p></td>
+<td>region width</td>
+</tr>
+<tr>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="GstVaapiRectangle.height"></a>height</code></em>;</span></p></td>
+<td>region height</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

@@ -1,0 +1,904 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiDisplay</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="libs-gstvaapiparamspecs.html" title="gstvaapiparamspecs">
+<link rel="next" href="GstVaapiDisplayX11.html" title="GstVaapiDisplayX11">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="libs-gstvaapiparamspecs.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiDisplayX11.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiDisplay.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiDisplay.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiDisplay.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GstVaapiDisplay.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiDisplay"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiDisplay.top_of_page"></a>GstVaapiDisplay</span></h2>
+<p>GstVaapiDisplay — VA display abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiDisplay.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiDisplay.html#GstVaapiDisplay-struct" title="struct GstVaapiDisplay">GstVaapiDisplay</a>;
+struct              <a class="link" href="GstVaapiDisplay.html#GstVaapiDisplayClass" title="struct GstVaapiDisplayClass">GstVaapiDisplayClass</a>;
+<a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-new-with-display" title="gst_vaapi_display_new_with_display ()">gst_vaapi_display_new_with_display</a>  (<em class="parameter"><code><span class="type">VADisplay</span> va_display</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-lock" title="gst_vaapi_display_lock ()">gst_vaapi_display_lock</a>              (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-unlock" title="gst_vaapi_display_unlock ()">gst_vaapi_display_unlock</a>            (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-sync" title="gst_vaapi_display_sync ()">gst_vaapi_display_sync</a>              (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-flush" title="gst_vaapi_display_flush ()">gst_vaapi_display_flush</a>             (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<span class="returnvalue">VADisplay</span>           <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-get-display" title="gst_vaapi_display_get_display ()">gst_vaapi_display_get_display</a>       (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-get-width" title="gst_vaapi_display_get_width ()">gst_vaapi_display_get_width</a>         (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-get-height" title="gst_vaapi_display_get_height ()">gst_vaapi_display_get_height</a>        (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-get-size" title="gst_vaapi_display_get_size ()">gst_vaapi_display_get_size</a>          (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-get-pixel-aspect-ratio" title="gst_vaapi_display_get_pixel_aspect_ratio ()">gst_vaapi_display_get_pixel_aspect_ratio</a>
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *par_n</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *par_d</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-get-decode-caps" title="gst_vaapi_display_get_decode_caps ()">gst_vaapi_display_get_decode_caps</a>   (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-has-decoder" title="gst_vaapi_display_has_decoder ()">gst_vaapi_display_has_decoder</a>       (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a> entrypoint</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-get-encode-caps" title="gst_vaapi_display_get_encode_caps ()">gst_vaapi_display_get_encode_caps</a>   (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-has-encoder" title="gst_vaapi_display_has_encoder ()">gst_vaapi_display_has_encoder</a>       (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a> entrypoint</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-get-image-caps" title="gst_vaapi_display_get_image_caps ()">gst_vaapi_display_get_image_caps</a>    (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-has-image-format" title="gst_vaapi_display_has_image_format ()">gst_vaapi_display_has_image_format</a>  (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-get-subpicture-caps" title="gst_vaapi_display_get_subpicture_caps ()">gst_vaapi_display_get_subpicture_caps</a>
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-has-subpicture-format" title="gst_vaapi_display_has_subpicture_format ()">gst_vaapi_display_has_subpicture_format</a>
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *flags_ptr</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-has-property" title="gst_vaapi_display_has_property ()">gst_vaapi_display_has_property</a>      (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
+<span class="returnvalue">GstVaapiRotation</span>    <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-get-rotation" title="gst_vaapi_display_get_rotation ()">gst_vaapi_display_get_rotation</a>      (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-set-rotation" title="gst_vaapi_display_set_rotation ()">gst_vaapi_display_set_rotation</a>      (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiRotation</span> rotation</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-get-render-mode" title="gst_vaapi_display_get_render_mode ()">gst_vaapi_display_get_render_mode</a>   (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiRenderMode</span> *pmode</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-set-render-mode" title="gst_vaapi_display_set_render_mode ()">gst_vaapi_display_set_render_mode</a>   (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiRenderMode</span> mode</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplay.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----GstVaapiDisplay
+         +----<a class="link" href="GstVaapiDisplayX11.html" title="GstVaapiDisplayX11">GstVaapiDisplayX11</a>
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplay.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GstVaapiDisplay.html#GstVaapiDisplay--brightness" title='The "brightness" property'>brightness</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write
+  "<a class="link" href="GstVaapiDisplay.html#GstVaapiDisplay--contrast" title='The "contrast" property'>contrast</a>"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write
+  "<a class="link" href="GstVaapiDisplay.html#GstVaapiDisplay--display" title='The "display" property'>display</a>"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiDisplay.html#GstVaapiDisplay--display-type" title='The "display-type" property'>display-type</a>"             <span class="type">GstVaapiDisplayType</span>   : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiDisplay.html#GstVaapiDisplay--height" title='The "height" property'>height</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read
+  "<a class="link" href="GstVaapiDisplay.html#GstVaapiDisplay--hue" title='The "hue" property'>hue</a>"                      <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write
+  "<a class="link" href="GstVaapiDisplay.html#GstVaapiDisplay--render-mode" title='The "render-mode" property'>render-mode</a>"              <span class="type">GstVaapiRenderMode</span>    : Read / Write
+  "<a class="link" href="GstVaapiDisplay.html#GstVaapiDisplay--rotation" title='The "rotation" property'>rotation</a>"                 <span class="type">GstVaapiRotation</span>      : Read / Write
+  "<a class="link" href="GstVaapiDisplay.html#GstVaapiDisplay--saturation" title='The "saturation" property'>saturation</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write
+  "<a class="link" href="GstVaapiDisplay.html#GstVaapiDisplay--width" title='The "width" property'>width</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplay.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplay.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiDisplay-struct"></a><h3>struct GstVaapiDisplay</h3>
+<pre class="programlisting">struct GstVaapiDisplay;</pre>
+<p>
+Base class for VA displays.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplayClass"></a><h3>struct GstVaapiDisplayClass</h3>
+<pre class="programlisting">struct GstVaapiDisplayClass {
+    gboolean   (*open_display)  (GstVaapiDisplay *display);
+    void       (*close_display) (GstVaapiDisplay *display);
+    void       (*lock)          (GstVaapiDisplay *display);
+    void       (*unlock)        (GstVaapiDisplay *display);
+    void       (*sync)          (GstVaapiDisplay *display);
+    void       (*flush)         (GstVaapiDisplay *display);
+    gboolean   (*get_display)   (GstVaapiDisplay *display,
+                                 GstVaapiDisplayInfo *info);
+    void       (*get_size)      (GstVaapiDisplay *display,
+                                 guint *pwidth, guint *pheight);
+    void       (*get_size_mm)   (GstVaapiDisplay *display,
+                                 guint *pwidth, guint *pheight);
+};
+</pre>
+<p>
+Base class for VA displays.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiDisplayClass.open-display"></a>open_display</code></em> ()</span></p></td>
+<td>virtual function to open a display</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiDisplayClass.close-display"></a>close_display</code></em> ()</span></p></td>
+<td>virtual function to close a display</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiDisplayClass.lock"></a>lock</code></em> ()</span></p></td>
+<td>(optional) virtual function to lock a display</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiDisplayClass.unlock"></a>unlock</code></em> ()</span></p></td>
+<td>(optional) virtual function to unlock a display</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiDisplayClass.sync"></a>sync</code></em> ()</span></p></td>
+<td>(optional) virtual function to sync a display</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiDisplayClass.flush"></a>flush</code></em> ()</span></p></td>
+<td>(optional) virtual function to flush pending requests of a display</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiDisplayClass.get-display"></a>get_display</code></em> ()</span></p></td>
+<td>virtual function to retrieve the <span class="type">GstVaapiDisplayInfo</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiDisplayClass.get-size"></a>get_size</code></em> ()</span></p></td>
+<td>virtual function to retrieve the display dimensions, in pixels</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiDisplayClass.get-size-mm"></a>get_size_mm</code></em> ()</span></p></td>
+<td>virtual function to retrieve the display dimensions, in millimeters</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-new-with-display"></a><h3>gst_vaapi_display_new_with_display ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   gst_vaapi_display_new_with_display  (<em class="parameter"><code><span class="type">VADisplay</span> va_display</code></em>);</pre>
+<p>
+Creates a new <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>, using <em class="parameter"><code>va_display</code></em> as the VA
+display.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>va_display</code></em> :</span></p></td>
+<td>a <span class="type">VADisplay</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly created <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-lock"></a><h3>gst_vaapi_display_lock ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_display_lock              (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Locks <em class="parameter"><code>display</code></em>. If <em class="parameter"><code>display</code></em> is already locked by another thread,
+the current thread will block until <em class="parameter"><code>display</code></em> is unlocked by the
+other thread.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-unlock"></a><h3>gst_vaapi_display_unlock ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_display_unlock            (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Unlocks <em class="parameter"><code>display</code></em>. If another thread is blocked in a
+<a class="link" href="GstVaapiDisplay.html#gst-vaapi-display-lock" title="gst_vaapi_display_lock ()"><code class="function">gst_vaapi_display_lock()</code></a> call for <em class="parameter"><code>display</code></em>, it will be woken and
+can lock <em class="parameter"><code>display</code></em> itself.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-sync"></a><h3>gst_vaapi_display_sync ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_display_sync              (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Flushes any requests queued for the windowing system and waits until
+all requests have been handled. This is often used for making sure
+that the display is synchronized with the current state of the program.
+</p>
+<p>
+This is most useful for X11. On windowing systems where requests are
+handled synchronously, this function will do nothing.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-flush"></a><h3>gst_vaapi_display_flush ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_display_flush             (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Flushes any requests queued for the windowing system.
+</p>
+<p>
+This is most useful for X11. On windowing systems where requests
+are handled synchronously, this function will do nothing.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-get-display"></a><h3>gst_vaapi_display_get_display ()</h3>
+<pre class="programlisting"><span class="returnvalue">VADisplay</span>           gst_vaapi_display_get_display       (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Returns the <span class="type">VADisplay</span> bound to <em class="parameter"><code>display</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <span class="type">VADisplay</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-get-width"></a><h3>gst_vaapi_display_get_width ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_display_get_width         (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Retrieves the width of a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the width of the <em class="parameter"><code>display</code></em>, in pixels</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-get-height"></a><h3>gst_vaapi_display_get_height ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_display_get_height        (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Retrieves the height of a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the height of the <em class="parameter"><code>display</code></em>, in pixels</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-get-size"></a><h3>gst_vaapi_display_get_size ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_display_get_size          (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);</pre>
+<p>
+Retrieves the dimensions of a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pwidth</code></em> :</span></p></td>
+<td>return location for the width, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pheight</code></em> :</span></p></td>
+<td>return location for the height, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-get-pixel-aspect-ratio"></a><h3>gst_vaapi_display_get_pixel_aspect_ratio ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_display_get_pixel_aspect_ratio
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *par_n</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *par_d</code></em>);</pre>
+<p>
+Retrieves the pixel aspect ratio of a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>par_n</code></em> :</span></p></td>
+<td>return location for the numerator of pixel aspect ratio, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>par_d</code></em> :</span></p></td>
+<td>return location for the denominator of pixel aspect ratio, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-get-decode-caps"></a><h3>gst_vaapi_display_get_decode_caps ()</h3>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_vaapi_display_get_decode_caps   (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Gets the supported profiles for decoding as <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> capabilities.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a newly allocated <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> object, possibly empty</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-has-decoder"></a><h3>gst_vaapi_display_has_decoder ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_display_has_decoder       (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a> entrypoint</code></em>);</pre>
+<p>
+Returns whether VA <em class="parameter"><code>display</code></em> supports <em class="parameter"><code>profile</code></em> for decoding at the
+specified <em class="parameter"><code>entrypoint</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>profile</code></em> :</span></p></td>
+<td>a <span class="type">VAProfile</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>entrypoint</code></em> :</span></p></td>
+<td>a <span class="type">GstVaaiEntrypoint</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if VA <em class="parameter"><code>display</code></em> supports <em class="parameter"><code>profile</code></em> for decoding.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-get-encode-caps"></a><h3>gst_vaapi_display_get_encode_caps ()</h3>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_vaapi_display_get_encode_caps   (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Gets the supported profiles for decoding as <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> capabilities.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a newly allocated <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> object, possibly empty</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-has-encoder"></a><h3>gst_vaapi_display_has_encoder ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_display_has_encoder       (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a> entrypoint</code></em>);</pre>
+<p>
+Returns whether VA <em class="parameter"><code>display</code></em> supports <em class="parameter"><code>profile</code></em> for encoding at the
+specified <em class="parameter"><code>entrypoint</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>profile</code></em> :</span></p></td>
+<td>a <span class="type">VAProfile</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>entrypoint</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if VA <em class="parameter"><code>display</code></em> supports <em class="parameter"><code>profile</code></em> for encoding.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-get-image-caps"></a><h3>gst_vaapi_display_get_image_caps ()</h3>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_vaapi_display_get_image_caps    (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Gets the supported image formats for <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-get-image" title="gst_vaapi_surface_get_image ()"><code class="function">gst_vaapi_surface_get_image()</code></a>
+or <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-put-image" title="gst_vaapi_surface_put_image ()"><code class="function">gst_vaapi_surface_put_image()</code></a> as <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> capabilities.
+</p>
+<p>
+Note that this method does not necessarily map image formats
+returned by <code class="function">vaQueryImageFormats()</code>. The set of capabilities can be
+stripped down, if gstreamer-vaapi does not support the format, or
+expanded to cover compatible formats not exposed by the underlying
+driver. e.g. I420 can be supported even if the driver only exposes
+YV12.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a newly allocated <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> object, possibly empty</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-has-image-format"></a><h3>gst_vaapi_display_has_image_format ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_display_has_image_format  (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>);</pre>
+<p>
+Returns whether VA <em class="parameter"><code>display</code></em> supports <em class="parameter"><code>format</code></em> image format.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiFormat</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if VA <em class="parameter"><code>display</code></em> supports <em class="parameter"><code>format</code></em> image format</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-get-subpicture-caps"></a><h3>gst_vaapi_display_get_subpicture_caps ()</h3>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_vaapi_display_get_subpicture_caps
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Gets the supported subpicture formats as <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> capabilities.
+</p>
+<p>
+Note that this method does not necessarily map subpicture formats
+returned by <code class="function">vaQuerySubpictureFormats()</code>. The set of capabilities can
+be stripped down if gstreamer-vaapi does not support the
+format. e.g. this is the case for paletted formats like IA44.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a newly allocated <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> object, possibly empty</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-has-subpicture-format"></a><h3>gst_vaapi_display_has_subpicture_format ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_display_has_subpicture_format
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *flags_ptr</code></em>);</pre>
+<p>
+Returns whether VA <em class="parameter"><code>display</code></em> supports <em class="parameter"><code>format</code></em> subpicture format with
+the supplied <em class="parameter"><code>flags</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiFormat</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>flags_ptr</code></em> :</span></p></td>
+<td>pointer to <span class="type">GstVaapiSubpictureFlags</span>, or zero</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if VA <em class="parameter"><code>display</code></em> supports <em class="parameter"><code>format</code></em> subpicture format</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-has-property"></a><h3>gst_vaapi_display_has_property ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_display_has_property      (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+<p>
+Returns whether VA <em class="parameter"><code>display</code></em> supports the requested property. The
+check is performed against the property <em class="parameter"><code>name</code></em>. So, the client
+application may perform this check only once and cache this
+information.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
+<td>the property name to check</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if VA <em class="parameter"><code>display</code></em> supports property <em class="parameter"><code>name</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-get-rotation"></a><h3>gst_vaapi_display_get_rotation ()</h3>
+<pre class="programlisting"><span class="returnvalue">GstVaapiRotation</span>    gst_vaapi_display_get_rotation      (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Returns the current VA <em class="parameter"><code>display</code></em> rotation angle. If the VA driver
+does not support "rotation" display attribute, then the display is
+assumed to be un-rotated.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the current <span class="type">GstVaapiRotation</span> value</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-set-rotation"></a><h3>gst_vaapi_display_set_rotation ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_display_set_rotation      (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiRotation</span> rotation</code></em>);</pre>
+<p>
+Sets the VA <em class="parameter"><code>display</code></em> rotation angle to the supplied <em class="parameter"><code>rotation</code></em>
+value. This function returns <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the rotation angle could not
+be set, e.g. the VA driver does not allow to change the display
+rotation angle.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>rotation</code></em> :</span></p></td>
+<td>the <span class="type">GstVaapiRotation</span> value to set</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if VA <em class="parameter"><code>display</code></em> rotation angle could be changed
+to the requested value</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-get-render-mode"></a><h3>gst_vaapi_display_get_render_mode ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_display_get_render_mode   (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiRenderMode</span> *pmode</code></em>);</pre>
+<p>
+Returns the current VA <em class="parameter"><code>display</code></em> rendering mode.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pmode</code></em> :</span></p></td>
+<td>return location for the VA <em class="parameter"><code>display</code></em> rendering mode</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if VA <em class="parameter"><code>display</code></em> rendering mode could be determined</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-set-render-mode"></a><h3>gst_vaapi_display_set_render_mode ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_display_set_render_mode   (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiRenderMode</span> mode</code></em>);</pre>
+<p>
+Sets the VA <em class="parameter"><code>display</code></em> rendering mode to the supplied <em class="parameter"><code>mode</code></em>. This
+function returns <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the rendering mode could not be set,
+e.g. run-time switching rendering mode is not supported.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>mode</code></em> :</span></p></td>
+<td>the <span class="type">GstVaapiRenderMode</span> to set</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if VA <em class="parameter"><code>display</code></em> rendering <em class="parameter"><code>mode</code></em> could be changed
+to the requested value</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplay.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiDisplay--brightness"></a><h3>The <code class="literal">"brightness"</code> property</h3>
+<pre class="programlisting">  "brightness"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write</pre>
+<p>
+The VA display brightness, expressed as a float value. Range is
+-1.0 to 1.0. Default value is 0.0 and represents no modification.
+</p>
+<p>Allowed values: [-1,1]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplay--contrast"></a><h3>The <code class="literal">"contrast"</code> property</h3>
+<pre class="programlisting">  "contrast"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write</pre>
+<p>
+The VA display contrast, expressed as a float value. Range is
+0.0 to 2.0. Default value is 1.0 and represents no modification.
+</p>
+<p>Allowed values: [0,2]</p>
+<p>Default value: 1</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplay--display"></a><h3>The <code class="literal">"display"</code> property</h3>
+<pre class="programlisting">  "display"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write / Construct Only</pre>
+<p>VA display.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplay--display-type"></a><h3>The <code class="literal">"display-type"</code> property</h3>
+<pre class="programlisting">  "display-type"             <span class="type">GstVaapiDisplayType</span>   : Read / Write / Construct Only</pre>
+<p>VA display type.</p>
+<p>Default value: Auto detection</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplay--height"></a><h3>The <code class="literal">"height"</code> property</h3>
+<pre class="programlisting">  "height"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read</pre>
+<p>The display height.</p>
+<p>Allowed values: &gt;= 1</p>
+<p>Default value: 1</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplay--hue"></a><h3>The <code class="literal">"hue"</code> property</h3>
+<pre class="programlisting">  "hue"                      <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write</pre>
+<p>
+The VA display hue, expressed as a float value. Range is -180.0
+to 180.0. Default value is 0.0 and represents no modification.
+</p>
+<p>Allowed values: [-180,180]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplay--render-mode"></a><h3>The <code class="literal">"render-mode"</code> property</h3>
+<pre class="programlisting">  "render-mode"              <span class="type">GstVaapiRenderMode</span>    : Read / Write</pre>
+<p>
+The VA display rendering mode, expressed as a <span class="type">GstVaapiRenderMode</span>.
+</p>
+<p>Default value: Textured-blit render mode</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplay--rotation"></a><h3>The <code class="literal">"rotation"</code> property</h3>
+<pre class="programlisting">  "rotation"                 <span class="type">GstVaapiRotation</span>      : Read / Write</pre>
+<p>
+The VA display rotation mode, expressed as a <span class="type">GstVaapiRotation</span>.
+</p>
+<p>Default value: Unrotated mode</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplay--saturation"></a><h3>The <code class="literal">"saturation"</code> property</h3>
+<pre class="programlisting">  "saturation"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write</pre>
+<p>
+The VA display saturation, expressed as a float value. Range is
+0.0 to 2.0. Default value is 1.0 and represents no modification.
+</p>
+<p>Allowed values: [0,2]</p>
+<p>Default value: 1</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplay--width"></a><h3>The <code class="literal">"width"</code> property</h3>
+<pre class="programlisting">  "width"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read</pre>
+<p>The display width.</p>
+<p>Allowed values: &gt;= 1</p>
+<p>Default value: 1</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

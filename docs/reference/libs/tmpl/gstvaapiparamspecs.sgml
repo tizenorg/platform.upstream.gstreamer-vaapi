@@ -1,0 +1,45 @@
+<!-- ##### SECTION Title ##### -->
+gstvaapiparamspecs
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiParamSpecID ##### -->
+<para>
+
+</para>
+
+@parent_instance: 
+@default_value: 
+
+<!-- ##### FUNCTION gst_vaapi_param_spec_id ##### -->
+<para>
+
+</para>
+
+@name: 
+@nick: 
+@blurb: 
+@default_value: 
+@flags: 
+@Returns: 
+
+

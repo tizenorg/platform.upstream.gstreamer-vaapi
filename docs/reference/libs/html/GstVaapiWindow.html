@@ -1,0 +1,494 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiWindow</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="GstVaapiDisplayGLX.html" title="GstVaapiDisplayGLX">
+<link rel="next" href="GstVaapiWindowX11.html" title="GstVaapiWindowX11">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiDisplayGLX.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiWindowX11.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiWindow.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiWindow.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiWindow.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GstVaapiWindow.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiWindow"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiWindow.top_of_page"></a>GstVaapiWindow</span></h2>
+<p>GstVaapiWindow — VA window abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiWindow.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiWindow.html#GstVaapiWindow-struct" title="struct GstVaapiWindow">GstVaapiWindow</a>;
+struct              <a class="link" href="GstVaapiWindow.html#GstVaapiWindowClass" title="struct GstVaapiWindowClass">GstVaapiWindowClass</a>;
+<a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-get-display" title="gst_vaapi_window_get_display ()">gst_vaapi_window_get_display</a>        (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-show" title="gst_vaapi_window_show ()">gst_vaapi_window_show</a>               (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-hide" title="gst_vaapi_window_hide ()">gst_vaapi_window_hide</a>               (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-get-fullscreen" title="gst_vaapi_window_get_fullscreen ()">gst_vaapi_window_get_fullscreen</a>     (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-set-fullscreen" title="gst_vaapi_window_set_fullscreen ()">gst_vaapi_window_set_fullscreen</a>     (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> fullscreen</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-get-width" title="gst_vaapi_window_get_width ()">gst_vaapi_window_get_width</a>          (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-get-height" title="gst_vaapi_window_get_height ()">gst_vaapi_window_get_height</a>         (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-get-size" title="gst_vaapi_window_get_size ()">gst_vaapi_window_get_size</a>           (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-set-width" title="gst_vaapi_window_set_width ()">gst_vaapi_window_set_width</a>          (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-set-height" title="gst_vaapi_window_set_height ()">gst_vaapi_window_set_height</a>         (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-set-size" title="gst_vaapi_window_set_size ()">gst_vaapi_window_set_size</a>           (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-put-surface" title="gst_vaapi_window_put_surface ()">gst_vaapi_window_put_surface</a>        (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *src_rect</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *dst_rect</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> flags</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindow.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a class="link" href="GstVaapiObject.html" title="GstVaapiObject">GstVaapiObject</a>
+         +----GstVaapiWindow
+               +----<a class="link" href="GstVaapiWindowX11.html" title="GstVaapiWindowX11">GstVaapiWindowX11</a>
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindow.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GstVaapiWindow.html#GstVaapiWindow--fullscreen" title='The "fullscreen" property'>fullscreen</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="GstVaapiWindow.html#GstVaapiWindow--height" title='The "height" property'>height</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="GstVaapiWindow.html#GstVaapiWindow--width" title='The "width" property'>width</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindow.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindow.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiWindow-struct"></a><h3>struct GstVaapiWindow</h3>
+<pre class="programlisting">struct GstVaapiWindow;</pre>
+<p>
+Base class for system-dependent windows.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiWindowClass"></a><h3>struct GstVaapiWindowClass</h3>
+<pre class="programlisting">struct GstVaapiWindowClass {
+    gboolean    (*create) (GstVaapiWindow *window, guint *width, guint *height);
+    void        (*destroy)(GstVaapiWindow *window);
+    gboolean    (*show)   (GstVaapiWindow *window);
+    gboolean    (*hide)   (GstVaapiWindow *window);
+    gboolean    (*get_geometry)  (GstVaapiWindow *window,
+                                  gint *px, gint *py,
+                                  guint *pwidth, guint *pheight);
+    gboolean    (*set_fullscreen)(GstVaapiWindow *window, gboolean fullscreen);
+    gboolean    (*resize) (GstVaapiWindow *window, guint width, guint height);
+    gboolean    (*render) (GstVaapiWindow *window,
+                           GstVaapiSurface *surface,
+                           const GstVaapiRectangle *src_rect,
+                           const GstVaapiRectangle *dst_rect,
+                           guint flags);
+};
+</pre>
+<p>
+Base class for system-dependent windows.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiWindowClass.create"></a>create</code></em> ()</span></p></td>
+<td>virtual function to create a window with width and height</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiWindowClass.destroy"></a>destroy</code></em> ()</span></p></td>
+<td>virtual function to destroy a window</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiWindowClass.show"></a>show</code></em> ()</span></p></td>
+<td>virtual function to show (map) a window</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiWindowClass.hide"></a>hide</code></em> ()</span></p></td>
+<td>virtual function to hide (unmap) a window</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiWindowClass.get-geometry"></a>get_geometry</code></em> ()</span></p></td>
+<td></td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiWindowClass.set-fullscreen"></a>set_fullscreen</code></em> ()</span></p></td>
+<td>virtual function to change window fullscreen state</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiWindowClass.resize"></a>resize</code></em> ()</span></p></td>
+<td>virtual function to resize a window</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiWindowClass.render"></a>render</code></em> ()</span></p></td>
+<td>virtual function to render a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> into a window</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-get-display"></a><h3>gst_vaapi_window_get_display ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   gst_vaapi_window_get_display        (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>);</pre>
+<p>
+Returns the <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> this <em class="parameter"><code>window</code></em> is bound to.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the parent <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-show"></a><h3>gst_vaapi_window_show ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_window_show               (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>);</pre>
+<p>
+Flags a window to be displayed. Any window that is not shown will
+not appear on the screen.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-hide"></a><h3>gst_vaapi_window_hide ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_window_hide               (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>);</pre>
+<p>
+Reverses the effects of <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-show" title="gst_vaapi_window_show ()"><code class="function">gst_vaapi_window_show()</code></a>, causing the window
+to be hidden (invisible to the user).
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-get-fullscreen"></a><h3>gst_vaapi_window_get_fullscreen ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_window_get_fullscreen     (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>);</pre>
+<p>
+Retrieves whether the <em class="parameter"><code>window</code></em> is fullscreen or not
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the window is fullscreen</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-set-fullscreen"></a><h3>gst_vaapi_window_set_fullscreen ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_window_set_fullscreen     (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> fullscreen</code></em>);</pre>
+<p>
+Requests to place the <em class="parameter"><code>window</code></em> in fullscreen or unfullscreen states.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>fullscreen</code></em> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> to request window to get fullscreen</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-get-width"></a><h3>gst_vaapi_window_get_width ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_window_get_width          (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>);</pre>
+<p>
+Retrieves the width of a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the width of the <em class="parameter"><code>window</code></em>, in pixels</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-get-height"></a><h3>gst_vaapi_window_get_height ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_window_get_height         (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>);</pre>
+<p>
+Retrieves the height of a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the height of the <em class="parameter"><code>window</code></em>, in pixels</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-get-size"></a><h3>gst_vaapi_window_get_size ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_window_get_size           (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);</pre>
+<p>
+Retrieves the dimensions of a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pwidth</code></em> :</span></p></td>
+<td>return location for the width, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pheight</code></em> :</span></p></td>
+<td>return location for the height, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-set-width"></a><h3>gst_vaapi_window_set_width ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_window_set_width          (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>);</pre>
+<p>
+Resizes the <em class="parameter"><code>window</code></em> to match the specified <em class="parameter"><code>width</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>width</code></em> :</span></p></td>
+<td>requested new width for the window, in pixels</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-set-height"></a><h3>gst_vaapi_window_set_height ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_window_set_height         (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);</pre>
+<p>
+Resizes the <em class="parameter"><code>window</code></em> to match the specified <em class="parameter"><code>height</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>height</code></em> :</span></p></td>
+<td>requested new height for the window, in pixels</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-set-size"></a><h3>gst_vaapi_window_set_size ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_window_set_size           (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);</pre>
+<p>
+Resizes the <em class="parameter"><code>window</code></em> to match the specified <em class="parameter"><code>width</code></em> and <em class="parameter"><code>height</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>width</code></em> :</span></p></td>
+<td>requested new width for the window, in pixels</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>height</code></em> :</span></p></td>
+<td>requested new height for the window, in pixels</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-put-surface"></a><h3>gst_vaapi_window_put_surface ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_window_put_surface        (<em class="parameter"><code><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> *window</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *src_rect</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *dst_rect</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> flags</code></em>);</pre>
+<p>
+Renders the <em class="parameter"><code>surface</code></em> region specified by <em class="parameter"><code>src_rect</code></em> into the <em class="parameter"><code>window</code></em>
+region specified by <em class="parameter"><code>dst_rect</code></em>. The <em class="parameter"><code>flags</code></em> specify how de-interlacing
+(if needed), color space conversion, scaling and other postprocessing
+transformations are performed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>src_rect</code></em> :</span></p></td>
+<td>the sub-rectangle of the source surface to
+extract and process. If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, the entire surface will be used.</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>dst_rect</code></em> :</span></p></td>
+<td>the sub-rectangle of the destination
+window into which the surface is rendered. If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, the entire
+window will be used.</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>flags</code></em> :</span></p></td>
+<td>postprocessing flags. See <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurfaceRenderFlags" title="enum GstVaapiSurfaceRenderFlags"><span class="type">GstVaapiSurfaceRenderFlags</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindow.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiWindow--fullscreen"></a><h3>The <code class="literal">"fullscreen"</code> property</h3>
+<pre class="programlisting">  "fullscreen"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<p>The fullscreen state of the window.</p>
+<p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiWindow--height"></a><h3>The <code class="literal">"height"</code> property</h3>
+<pre class="programlisting">  "height"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<p>The window height.</p>
+<p>Allowed values: &gt;= 1</p>
+<p>Default value: 1</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiWindow--width"></a><h3>The <code class="literal">"width"</code> property</h3>
+<pre class="programlisting">  "width"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<p>The window width.</p>
+<p>Allowed values: &gt;= 1</p>
+<p>Default value: 1</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

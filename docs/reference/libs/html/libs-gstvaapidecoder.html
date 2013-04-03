@@ -1,0 +1,417 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiDecoder</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="GstVaapiContext.html" title="GstVaapiContext">
+<link rel="next" href="libs-GstVaapiDecoderJpeg.html" title="GstVaapiDecoderJpeg">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiContext.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="libs-GstVaapiDecoderJpeg.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#libs-gstvaapidecoder.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#libs-gstvaapidecoder.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#libs-gstvaapidecoder.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#libs-gstvaapidecoder.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="libs-gstvaapidecoder"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libs-gstvaapidecoder.top_of_page"></a>GstVaapiDecoder</span></h2>
+<p>GstVaapiDecoder — VA decoder abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="libs-gstvaapidecoder.synopsis"></a><h2>Synopsis</h2>
+<a name="GstVaapiDecoder"></a><pre class="synopsis">enum                <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus">GstVaapiDecoderStatus</a>;
+struct              <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder-struct" title="struct GstVaapiDecoder">GstVaapiDecoder</a>;
+struct              <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderClass" title="struct GstVaapiDecoderClass">GstVaapiDecoderClass</a>;
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-caps" title="gst_vaapi_decoder_get_caps ()">gst_vaapi_decoder_get_caps</a>          (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);
+<a class="link" href="libs-GstVaapiProfile.html#GstVaapiCodec" title="enum GstVaapiCodec"><span class="returnvalue">GstVaapiCodec</span></a>       <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-codec" title="gst_vaapi_decoder_get_codec ()">gst_vaapi_decoder_get_codec</a>         (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);
+<span class="returnvalue">GstVideoCodecState</span> * <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-codec-state" title="gst_vaapi_decoder_get_codec_state ()">gst_vaapi_decoder_get_codec_state</a>  (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-put-buffer" title="gst_vaapi_decoder_put_buffer ()">gst_vaapi_decoder_put_buffer</a>        (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buf</code></em>);
+<a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-surface" title="gst_vaapi_decoder_get_surface ()">gst_vaapi_decoder_get_surface</a>     (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiSurfaceProxy</span> **out_proxy_ptr</code></em>);
+<a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-frame" title="gst_vaapi_decoder_get_frame ()">gst_vaapi_decoder_get_frame</a>       (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoCodecFrame</span> **out_frame_ptr</code></em>);
+<a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-parse" title="gst_vaapi_decoder_parse ()">gst_vaapi_decoder_parse</a>           (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoCodecFrame</span> *frame</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstAdapter.html"><span class="type">GstAdapter</span></a> *adapter</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> at_eos</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *got_unit_size_ptr</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *got_frame_ptr</code></em>);
+<a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-decode" title="gst_vaapi_decoder_decode ()">gst_vaapi_decoder_decode</a>          (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoCodecFrame</span> *frame</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapidecoder.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----GstVaapiDecoder
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapidecoder.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder--caps" title='The "caps" property'>caps</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write / Construct Only
+  "<a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder--display" title='The "display" property'>display</a>"                  <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>*      : Read / Write / Construct Only
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapidecoder.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapidecoder.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiDecoderStatus"></a><h3>enum GstVaapiDecoderStatus</h3>
+<pre class="programlisting">typedef enum {
+    GST_VAAPI_DECODER_STATUS_SUCCESS = 0,
+    GST_VAAPI_DECODER_STATUS_END_OF_STREAM,
+    GST_VAAPI_DECODER_STATUS_ERROR_ALLOCATION_FAILED,
+    GST_VAAPI_DECODER_STATUS_ERROR_INIT_FAILED,
+    GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_CODEC,
+    GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA,
+    GST_VAAPI_DECODER_STATUS_ERROR_NO_SURFACE,
+    GST_VAAPI_DECODER_STATUS_ERROR_INVALID_SURFACE,
+    GST_VAAPI_DECODER_STATUS_ERROR_BITSTREAM_PARSER,
+    GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_PROFILE,
+    GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_CHROMA_FORMAT,
+    GST_VAAPI_DECODER_STATUS_ERROR_INVALID_PARAMETER,
+    GST_VAAPI_DECODER_STATUS_ERROR_UNKNOWN = -1
+} GstVaapiDecoderStatus;
+</pre>
+<p>
+Decoder status for <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-surface" title="gst_vaapi_decoder_get_surface ()"><code class="function">gst_vaapi_decoder_get_surface()</code></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-SUCCESS:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_SUCCESS</code></span></p></td>
+<td>Success.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-END-OF-STREAM:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_END_OF_STREAM</code></span></p></td>
+<td>End-Of-Stream.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-ERROR-ALLOCATION-FAILED:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_ERROR_ALLOCATION_FAILED</code></span></p></td>
+<td>No memory left.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-ERROR-INIT-FAILED:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_ERROR_INIT_FAILED</code></span></p></td>
+<td>Decoder initialization failure.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-ERROR-UNSUPPORTED-CODEC:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_CODEC</code></span></p></td>
+<td>Unsupported codec.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-ERROR-NO-DATA:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA</code></span></p></td>
+<td>Not enough input data to decode.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-ERROR-NO-SURFACE:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_ERROR_NO_SURFACE</code></span></p></td>
+<td>No surface left to hold the decoded picture.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-ERROR-INVALID-SURFACE:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_ERROR_INVALID_SURFACE</code></span></p></td>
+<td>Invalid surface.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-ERROR-BITSTREAM-PARSER:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_ERROR_BITSTREAM_PARSER</code></span></p></td>
+<td>Invalid or unsupported bitstream data.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-ERROR-UNSUPPORTED-PROFILE:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_PROFILE</code></span></p></td>
+<td>Unsupported codec profile.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-ERROR-UNSUPPORTED-CHROMA-FORMAT:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_CHROMA_FORMAT</code></span></p></td>
+<td>Unsupported chroma format.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-ERROR-INVALID-PARAMETER:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_ERROR_INVALID_PARAMETER</code></span></p></td>
+<td>Unsupported parameter.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-DECODER-STATUS-ERROR-UNKNOWN:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_DECODER_STATUS_ERROR_UNKNOWN</code></span></p></td>
+<td>Unknown error.
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDecoder-struct"></a><h3>struct GstVaapiDecoder</h3>
+<pre class="programlisting">struct GstVaapiDecoder;</pre>
+<p>
+A VA decoder base instance.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDecoderClass"></a><h3>struct GstVaapiDecoderClass</h3>
+<pre class="programlisting">struct GstVaapiDecoderClass {
+};
+</pre>
+<p>
+A VA decoder base class.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-decoder-get-caps"></a><h3>gst_vaapi_decoder_get_caps ()</h3>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_vaapi_decoder_get_caps          (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);</pre>
+<p>
+Retrieves the <em class="parameter"><code>decoder</code></em> caps. The deocder owns the returned caps, so
+use <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#gst-caps-ref"><code class="function">gst_caps_ref()</code></a> whenever necessary.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>decoder</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <em class="parameter"><code>decoder</code></em> caps</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-decoder-get-codec"></a><h3>gst_vaapi_decoder_get_codec ()</h3>
+<pre class="programlisting"><a class="link" href="libs-GstVaapiProfile.html#GstVaapiCodec" title="enum GstVaapiCodec"><span class="returnvalue">GstVaapiCodec</span></a>       gst_vaapi_decoder_get_codec         (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);</pre>
+<p>
+Retrieves the <em class="parameter"><code>decoder</code></em> codec type.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>decoder</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-GstVaapiProfile.html#GstVaapiCodec" title="enum GstVaapiCodec"><span class="type">GstVaapiCodec</span></a> type for <em class="parameter"><code>decoder</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-decoder-get-codec-state"></a><h3>gst_vaapi_decoder_get_codec_state ()</h3>
+<pre class="programlisting"><span class="returnvalue">GstVideoCodecState</span> * gst_vaapi_decoder_get_codec_state  (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);</pre>
+<p>
+Retrieves the <em class="parameter"><code>decoder</code></em> codec state. The caller owns an extra reference
+to the <span class="type">GstVideoCodecState</span>, so <code class="function">gst_video_codec_state_unref()</code> shall be
+called after usage.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>decoder</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <span class="type">GstVideoCodecState</span> object for <em class="parameter"><code>decoder</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-decoder-put-buffer"></a><h3>gst_vaapi_decoder_put_buffer ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_decoder_put_buffer        (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buf</code></em>);</pre>
+<p>
+Queues a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> to the HW decoder. The decoder holds a
+reference to <em class="parameter"><code>buf</code></em>.
+</p>
+<p>
+Caller can notify an End-Of-Stream with <em class="parameter"><code>buf</code></em> set to <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. However,
+if an empty buffer is passed, i.e. a buffer with <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> data pointer
+or size equals to zero, then the function ignores this buffer and
+returns <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>decoder</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>buf</code></em> :</span></p></td>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-decoder-get-surface"></a><h3>gst_vaapi_decoder_get_surface ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> gst_vaapi_decoder_get_surface     (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiSurfaceProxy</span> **out_proxy_ptr</code></em>);</pre>
+<p>
+Flushes encoded buffers to the decoder and returns a decoded
+surface, if any.
+</p>
+<p>
+On successful return, *<em class="parameter"><code>out_proxy_ptr</code></em> contains the decoded surface
+as a <span class="type">GstVaapiSurfaceProxy</span>. The caller owns this object, so
+<a class="link" href="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-unref" title="gst_vaapi_surface_proxy_unref ()"><code class="function">gst_vaapi_surface_proxy_unref()</code></a> shall be called after usage.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>decoder</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>out_proxy_ptr</code></em> :</span></p></td>
+<td>the next decoded surface as a <span class="type">GstVaapiSurfaceProxy</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="type">GstVaapiDecoderStatus</span></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-decoder-get-frame"></a><h3>gst_vaapi_decoder_get_frame ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> gst_vaapi_decoder_get_frame       (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoCodecFrame</span> **out_frame_ptr</code></em>);</pre>
+<p>
+On successful return, *<em class="parameter"><code>out_frame_ptr</code></em> contains the next decoded
+frame available as a <span class="type">GstVideoCodecFrame</span>. The caller owns this
+object, so <code class="function">gst_video_codec_frame_unref()</code> shall be called after
+usage. Otherwise, <em class="parameter"><code>GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA</code></em> is
+returned if no decoded frame is available.
+</p>
+<p>
+The actual surface is available as a <span class="type">GstVaapiSurfaceProxy</span> attached
+to the user-data anchor of the output frame. Ownership of the proxy
+is transferred to the frame.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>decoder</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>out_frame_ptr</code></em> :</span></p></td>
+<td>the next decoded frame as a <span class="type">GstVideoCodecFrame</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="type">GstVaapiDecoderStatus</span></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-decoder-parse"></a><h3>gst_vaapi_decoder_parse ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> gst_vaapi_decoder_parse           (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoCodecFrame</span> *frame</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstAdapter.html"><span class="type">GstAdapter</span></a> *adapter</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> at_eos</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *got_unit_size_ptr</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *got_frame_ptr</code></em>);</pre>
+<p>
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-decoder-decode"></a><h3>gst_vaapi_decoder_decode ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> gst_vaapi_decoder_decode          (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoCodecFrame</span> *frame</code></em>);</pre>
+<p>
+</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapidecoder.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiDecoder--caps"></a><h3>The <code class="literal">"caps"</code> property</h3>
+<pre class="programlisting">  "caps"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write / Construct Only</pre>
+<p>The decoder caps.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDecoder--display"></a><h3>The <code class="literal">"display"</code> property</h3>
+<pre class="programlisting">  "display"                  <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>*      : Read / Write / Construct Only</pre>
+<p>
+The <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> this decoder is bound to.
+</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

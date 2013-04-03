@@ -1,0 +1,340 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiImageFormat</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="libs-gstvaapiimage.html" title="GstVaapiImage">
+<link rel="next" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="libs-gstvaapiimage.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiSubpicture.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#libs-GstVaapiImageFormat.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#libs-GstVaapiImageFormat.description" class="shortcut">Description</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="libs-GstVaapiImageFormat"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libs-GstVaapiImageFormat.top_of_page"></a>GstVaapiImageFormat</span></h2>
+<p>GstVaapiImageFormat — VA image format abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="libs-GstVaapiImageFormat.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">enum                <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat">GstVaapiImageFormat</a>;
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-is-rgb" title="gst_vaapi_image_format_is_rgb ()">gst_vaapi_image_format_is_rgb</a>       (<em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-is-yuv" title="gst_vaapi_image_format_is_yuv ()">gst_vaapi_image_format_is_yuv</a>       (<em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>);
+<a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="returnvalue">GstVaapiImageFormat</span></a> <a class="link" href="libs-GstVaapiImageFormat.html#gst-vaapi-image-format" title="gst_vaapi_image_format ()">gst_vaapi_image_format</a>              (<em class="parameter"><code>const <span class="type">VAImageFormat</span> *va_format</code></em>);
+<a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="returnvalue">GstVaapiImageFormat</span></a> <a class="link" href="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-from-caps" title="gst_vaapi_image_format_from_caps ()">gst_vaapi_image_format_from_caps</a>    (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);
+<a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="returnvalue">GstVaapiImageFormat</span></a> <a class="link" href="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-from-fourcc" title="gst_vaapi_image_format_from_fourcc ()">gst_vaapi_image_format_from_fourcc</a>  (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> fourcc</code></em>);
+<a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="returnvalue">GstVaapiImageFormat</span></a> <a class="link" href="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-from-video" title="gst_vaapi_image_format_from_video ()">gst_vaapi_image_format_from_video</a>   (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideo.html#GstVideoFormat"><span class="type">GstVideoFormat</span></a> format</code></em>);
+const <span class="returnvalue">VAImageFormat</span> * <a class="link" href="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-get-va-format" title="gst_vaapi_image_format_get_va_format ()">gst_vaapi_image_format_get_va_format</a>
+                                                        (<em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-get-caps" title="gst_vaapi_image_format_get_caps ()">gst_vaapi_image_format_get_caps</a>     (<em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="libs-GstVaapiImageFormat.html#gst-vaapi-image-format-get-score" title="gst_vaapi_image_format_get_score ()">gst_vaapi_image_format_get_score</a>    (<em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-GstVaapiImageFormat.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="libs-GstVaapiImageFormat.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiImageFormat"></a><h3>enum GstVaapiImageFormat</h3>
+<pre class="programlisting">typedef enum {
+    GST_VAAPI_IMAGE_NV12 = GST_MAKE_FOURCC('N','V','1','2'),
+    GST_VAAPI_IMAGE_YV12 = GST_MAKE_FOURCC('Y','V','1','2'),
+    GST_VAAPI_IMAGE_I420 = GST_MAKE_FOURCC('I','4','2','0'),
+    GST_VAAPI_IMAGE_AYUV = GST_MAKE_FOURCC('A','Y','U','V'),
+    GST_VAAPI_IMAGE_ARGB = GST_MAKE_FOURCC('A','R','G','B'),
+    GST_VAAPI_IMAGE_RGBA = GST_MAKE_FOURCC('R','G','B','A'),
+    GST_VAAPI_IMAGE_ABGR = GST_MAKE_FOURCC('A','B','G','R'),
+    GST_VAAPI_IMAGE_BGRA = GST_MAKE_FOURCC('B','G','R','A'),
+} GstVaapiImageFormat;
+</pre>
+<p>
+The set of all image formats for <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GST-VAAPI-IMAGE-NV12:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_IMAGE_NV12</code></span></p></td>
+<td>  planar YUV 4:2:0, 12-bit, 1 plane for Y and 1 plane for UV
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-IMAGE-YV12:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_IMAGE_YV12</code></span></p></td>
+<td>  planar YUV 4:2:0, 12-bit, 3 planes for Y V U
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-IMAGE-I420:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_IMAGE_I420</code></span></p></td>
+<td>  planar YUV 4:2:0, 12-bit, 3 planes for Y U V
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-IMAGE-AYUV:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_IMAGE_AYUV</code></span></p></td>
+<td>  packed YUV 4:4:4, 32-bit, A Y U V, native endian byte-order
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-IMAGE-ARGB:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_IMAGE_ARGB</code></span></p></td>
+<td>  packed RGB 8:8:8, 32-bit, A R G B
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-IMAGE-RGBA:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_IMAGE_RGBA</code></span></p></td>
+<td>  packed RGB 8:8:8, 32-bit, R G B A
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-IMAGE-ABGR:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_IMAGE_ABGR</code></span></p></td>
+<td>  packed RGB 8:8:8, 32-bit, A B G R
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-IMAGE-BGRA:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_IMAGE_BGRA</code></span></p></td>
+<td>  packed RGB 8:8:8, 32-bit, B G R A
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-format-is-rgb"></a><h3>gst_vaapi_image_format_is_rgb ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_image_format_is_rgb       (<em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>);</pre>
+<p>
+Checks whether the format is an RGB format.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>format</code></em> is RGB format</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-format-is-yuv"></a><h3>gst_vaapi_image_format_is_yuv ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_image_format_is_yuv       (<em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>);</pre>
+<p>
+Checks whether the format is an YUV format.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>format</code></em> is YUV format</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-format"></a><h3>gst_vaapi_image_format ()</h3>
+<pre class="programlisting"><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="returnvalue">GstVaapiImageFormat</span></a> gst_vaapi_image_format              (<em class="parameter"><code>const <span class="type">VAImageFormat</span> *va_format</code></em>);</pre>
+<p>
+Converts a VA image format into the corresponding <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>.
+If the image format cannot be represented by <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>,
+then zero is returned.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>va_format</code></em> :</span></p></td>
+<td>a <span class="type">VAImageFormat</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> describing the <em class="parameter"><code>va_format</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-format-from-caps"></a><h3>gst_vaapi_image_format_from_caps ()</h3>
+<pre class="programlisting"><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="returnvalue">GstVaapiImageFormat</span></a> gst_vaapi_image_format_from_caps    (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);</pre>
+<p>
+Converts <em class="parameter"><code>caps</code></em> into the corresponding <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>. If the
+image format cannot be represented by <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>, then
+zero is returned.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>caps</code></em> :</span></p></td>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> describing the <em class="parameter"><code>caps</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-format-from-fourcc"></a><h3>gst_vaapi_image_format_from_fourcc ()</h3>
+<pre class="programlisting"><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="returnvalue">GstVaapiImageFormat</span></a> gst_vaapi_image_format_from_fourcc  (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> fourcc</code></em>);</pre>
+<p>
+Converts a FOURCC value into the corresponding <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>.
+If the image format cannot be represented by <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>,
+then zero is returned.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>fourcc</code></em> :</span></p></td>
+<td>a FOURCC value</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> describing the FOURCC value</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-format-from-video"></a><h3>gst_vaapi_image_format_from_video ()</h3>
+<pre class="programlisting"><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="returnvalue">GstVaapiImageFormat</span></a> gst_vaapi_image_format_from_video   (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideo.html#GstVideoFormat"><span class="type">GstVideoFormat</span></a> format</code></em>);</pre>
+<p>
+Converts a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideo.html#GstVideoFormat"><span class="type">GstVideoFormat</span></a> into the corresponding
+<a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>.  If the image format cannot be represented by
+<a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>, then zero is returned.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideo.html#GstVideoFormat"><span class="type">GstVideoFormat</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> describing the video format</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-format-get-va-format"></a><h3>gst_vaapi_image_format_get_va_format ()</h3>
+<pre class="programlisting">const <span class="returnvalue">VAImageFormat</span> * gst_vaapi_image_format_get_va_format
+                                                        (<em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>);</pre>
+<p>
+Converts a <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> into the corresponding VA image
+format. If no matching VA image format was found, <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> is returned
+and this error must be reported to be fixed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the VA image format, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if none was found</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-format-get-caps"></a><h3>gst_vaapi_image_format_get_caps ()</h3>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_vaapi_image_format_get_caps     (<em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>);</pre>
+<p>
+Converts a <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> into the corresponding <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>. If
+no matching caps were found, <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> is returned.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if none was found</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-format-get-score"></a><h3>gst_vaapi_image_format_get_score ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_image_format_get_score    (<em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>);</pre>
+<p>
+Determines how "native" is this <em class="parameter"><code>format</code></em>. The lower is the returned
+score, the best format this is for the underlying hardware.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <em class="parameter"><code>format</code></em> score, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Limits-of-Basic-Types.html#G-MAXUINT:CAPS"><code class="literal">G_MAXUINT</code></a> if none was found</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!-- ##### SECTION Title ##### -->
+gstvaapivalue
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### MACRO GST_VAAPI_TYPE_ID ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### FUNCTION gst_vaapi_value_get_id ##### -->
+<para>
+
+</para>
+
+@value: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_value_set_id ##### -->
+<para>
+
+</para>
+
+@value: 
+@id: 
+
+

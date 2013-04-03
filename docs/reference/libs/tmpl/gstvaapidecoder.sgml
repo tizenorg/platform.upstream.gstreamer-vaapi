@@ -1,0 +1,146 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiDecoder
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### ENUM GstVaapiDecoderStatus ##### -->
+<para>
+
+</para>
+
+@GST_VAAPI_DECODER_STATUS_SUCCESS: 
+@GST_VAAPI_DECODER_STATUS_END_OF_STREAM: 
+@GST_VAAPI_DECODER_STATUS_ERROR_ALLOCATION_FAILED: 
+@GST_VAAPI_DECODER_STATUS_ERROR_INIT_FAILED: 
+@GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_CODEC: 
+@GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA: 
+@GST_VAAPI_DECODER_STATUS_ERROR_NO_SURFACE: 
+@GST_VAAPI_DECODER_STATUS_ERROR_INVALID_SURFACE: 
+@GST_VAAPI_DECODER_STATUS_ERROR_BITSTREAM_PARSER: 
+@GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_PROFILE: 
+@GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_CHROMA_FORMAT: 
+@GST_VAAPI_DECODER_STATUS_ERROR_INVALID_PARAMETER: 
+@GST_VAAPI_DECODER_STATUS_ERROR_UNKNOWN: 
+
+<!-- ##### STRUCT GstVaapiDecoder ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiDecoder:caps ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDecoder:display ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GstVaapiDecoderClass ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_decoder_get_caps ##### -->
+<para>
+
+</para>
+
+@decoder: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_decoder_get_codec ##### -->
+<para>
+
+</para>
+
+@decoder: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_decoder_get_codec_state ##### -->
+<para>
+
+</para>
+
+@decoder: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_decoder_put_buffer ##### -->
+<para>
+
+</para>
+
+@decoder: 
+@buf: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_decoder_get_surface ##### -->
+<para>
+
+</para>
+
+@decoder: 
+@out_proxy_ptr: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_decoder_get_frame ##### -->
+<para>
+
+</para>
+
+@decoder: 
+@out_frame_ptr: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_decoder_parse ##### -->
+<para>
+
+</para>
+
+@decoder: 
+@frame: 
+@adapter: 
+@at_eos: 
+@got_unit_size_ptr: 
+@got_frame_ptr: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_decoder_decode ##### -->
+<para>
+
+</para>
+
+@decoder: 
+@frame: 
+@Returns: 
+
+

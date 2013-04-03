@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiObject</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX">
+<link rel="next" href="libs-gstvaapisurface.html" title="GstVaapiSurface">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiWindowGLX.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="libs-gstvaapisurface.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiObject.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiObject.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiObject.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GstVaapiObject.properties" class="shortcut">Properties</a>
+                   | 
+                  <a href="#GstVaapiObject.signals" class="shortcut">Signals</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiObject"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiObject.top_of_page"></a>GstVaapiObject</span></h2>
+<p>GstVaapiObject — Base VA object</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiObject.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiObject.html#GstVaapiObject-struct" title="struct GstVaapiObject">GstVaapiObject</a>;
+struct              <a class="link" href="GstVaapiObject.html#GstVaapiObjectClass" title="struct GstVaapiObjectClass">GstVaapiObjectClass</a>;
+<a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   <a class="link" href="GstVaapiObject.html#gst-vaapi-object-get-display" title="gst_vaapi_object_get_display ()">gst_vaapi_object_get_display</a>        (<em class="parameter"><code><a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a> *object</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiObject.html#gst-vaapi-object-lock-display" title="gst_vaapi_object_lock_display ()">gst_vaapi_object_lock_display</a>       (<em class="parameter"><code><a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a> *object</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiObject.html#gst-vaapi-object-unlock-display" title="gst_vaapi_object_unlock_display ()">gst_vaapi_object_unlock_display</a>     (<em class="parameter"><code><a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a> *object</code></em>);
+<a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="returnvalue">GstVaapiID</span></a>          <a class="link" href="GstVaapiObject.html#gst-vaapi-object-get-id" title="gst_vaapi_object_get_id ()">gst_vaapi_object_get_id</a>             (<em class="parameter"><code><a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a> *object</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiObject.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----GstVaapiObject
+         +----<a class="link" href="GstVaapiContext.html" title="GstVaapiContext">GstVaapiContext</a>
+         +----<a class="link" href="libs-gstvaapiimage.html#GstVaapiImage">GstVaapiImage</a>
+         +----<a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture">GstVaapiSubpicture</a>
+         +----<a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface">GstVaapiSurface</a>
+         +----<a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow">GstVaapiWindow</a>
+         +----<a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture">GstVaapiTexture</a>
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiObject.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GstVaapiObject.html#GstVaapiObject--display" title='The "display" property'>display</a>"                  <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>*      : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiObject.html#GstVaapiObject--id" title='The "id" property'>id</a>"                       <a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a>            : Read / Write / Construct Only
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiObject.signals"></a><h2>Signals</h2>
+<pre class="synopsis">
+  "<a class="link" href="GstVaapiObject.html#GstVaapiObject-destroy" title='The "destroy" signal'>destroy</a>"                                        : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-NO-HOOKS:CAPS"><code class="literal">No Hooks</code></a>
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiObject.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="GstVaapiObject.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiObject-struct"></a><h3>struct GstVaapiObject</h3>
+<pre class="programlisting">struct GstVaapiObject;</pre>
+<p>
+VA object base.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiObjectClass"></a><h3>struct GstVaapiObjectClass</h3>
+<pre class="programlisting">struct GstVaapiObjectClass {
+    void (*destroy)(GstVaapiObject *oject);
+};
+</pre>
+<p>
+VA object base class.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiObjectClass.destroy"></a>destroy</code></em> ()</span></p></td>
+<td>signal class handler for <a class="link" href="GstVaapiObject.html#GstVaapiObject-destroy" title='The "destroy" signal'><span class="type">"destroy"</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-object-get-display"></a><h3>gst_vaapi_object_get_display ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   gst_vaapi_object_get_display        (<em class="parameter"><code><a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a> *object</code></em>);</pre>
+<p>
+Returns the <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> this <em class="parameter"><code>object</code></em> is bound to.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>object</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the parent <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-object-lock-display"></a><h3>gst_vaapi_object_lock_display ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_object_lock_display       (<em class="parameter"><code><a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a> *object</code></em>);</pre>
+<p>
+Locks <em class="parameter"><code>object</code></em> parent display. If display is already locked by
+another thread, the current thread will block until display is
+unlocked by the other thread.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>object</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-object-unlock-display"></a><h3>gst_vaapi_object_unlock_display ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_object_unlock_display     (<em class="parameter"><code><a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a> *object</code></em>);</pre>
+<p>
+Unlocks <em class="parameter"><code>object</code></em> parent display. If another thread is blocked in a
+<a class="link" href="GstVaapiObject.html#gst-vaapi-object-lock-display" title="gst_vaapi_object_lock_display ()"><code class="function">gst_vaapi_object_lock_display()</code></a> call, it will be woken and can lock
+display itself.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>object</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-object-get-id"></a><h3>gst_vaapi_object_get_id ()</h3>
+<pre class="programlisting"><a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="returnvalue">GstVaapiID</span></a>          gst_vaapi_object_get_id             (<em class="parameter"><code><a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a> *object</code></em>);</pre>
+<p>
+Returns the <a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> contained in the <em class="parameter"><code>object</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>object</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> of the <em class="parameter"><code>object</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1">
+<a name="GstVaapiObject.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiObject--display"></a><h3>The <code class="literal">"display"</code> property</h3>
+<pre class="programlisting">  "display"                  <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>*      : Read / Write / Construct Only</pre>
+<p>
+The <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> this object is bound to.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiObject--id"></a><h3>The <code class="literal">"id"</code> property</h3>
+<pre class="programlisting">  "id"                       <a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a>            : Read / Write / Construct Only</pre>
+<p>
+The <a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> contained in this object.
+</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="GstVaapiObject.signal-details"></a><h2>Signal Details</h2>
+<div class="refsect2">
+<a name="GstVaapiObject-destroy"></a><h3>The <code class="literal">"destroy"</code> signal</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a> *object,
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>        user_data)      : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-NO-HOOKS:CAPS"><code class="literal">No Hooks</code></a></pre>
+<p>
+The ::destroy signal is emitted when an object is destroyed,
+when the user released the last reference to <em class="parameter"><code>object</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>object</code></em> :</span></p></td>
+<td>the object which received the signal</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
+<td>user data set when the signal handler was connected.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

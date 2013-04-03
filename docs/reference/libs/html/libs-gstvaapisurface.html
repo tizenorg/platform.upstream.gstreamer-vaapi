@@ -1,0 +1,663 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiSurface</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="GstVaapiObject.html" title="GstVaapiObject">
+<link rel="next" href="libs-gstvaapiimage.html" title="GstVaapiImage">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiObject.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="libs-gstvaapiimage.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#libs-gstvaapisurface.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#libs-gstvaapisurface.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#libs-gstvaapisurface.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#libs-gstvaapisurface.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="libs-gstvaapisurface"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libs-gstvaapisurface.top_of_page"></a>GstVaapiSurface</span></h2>
+<p>GstVaapiSurface — VA surface abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="libs-gstvaapisurface.synopsis"></a><h2>Synopsis</h2>
+<a name="GstVaapiSurface"></a><pre class="synopsis">enum                <a class="link" href="libs-gstvaapisurface.html#GstVaapiChromaType" title="enum GstVaapiChromaType">GstVaapiChromaType</a>;
+enum                <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurfaceStatus" title="enum GstVaapiSurfaceStatus">GstVaapiSurfaceStatus</a>;
+enum                <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurfaceRenderFlags" title="enum GstVaapiSurfaceRenderFlags">GstVaapiSurfaceRenderFlags</a>;
+struct              <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface-struct" title="struct GstVaapiSurface">GstVaapiSurface</a>;
+struct              <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurfaceClass" title="struct GstVaapiSurfaceClass">GstVaapiSurfaceClass</a>;
+<a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="returnvalue">GstVaapiSurface</span></a> *   <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-new" title="gst_vaapi_surface_new ()">gst_vaapi_surface_new</a>               (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiChromaType" title="enum GstVaapiChromaType"><span class="type">GstVaapiChromaType</span></a> chroma_type</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);
+<a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="returnvalue">GstVaapiID</span></a>          <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-get-id" title="gst_vaapi_surface_get_id ()">gst_vaapi_surface_get_id</a>            (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);
+<a class="link" href="libs-gstvaapisurface.html#GstVaapiChromaType" title="enum GstVaapiChromaType"><span class="returnvalue">GstVaapiChromaType</span></a>  <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-get-chroma-type" title="gst_vaapi_surface_get_chroma_type ()">gst_vaapi_surface_get_chroma_type</a>   (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-get-width" title="gst_vaapi_surface_get_width ()">gst_vaapi_surface_get_width</a>         (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-get-height" title="gst_vaapi_surface_get_height ()">gst_vaapi_surface_get_height</a>        (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-get-size" title="gst_vaapi_surface_get_size ()">gst_vaapi_surface_get_size</a>          (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);
+<a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="returnvalue">GstVaapiImage</span></a> *     <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-derive-image" title="gst_vaapi_surface_derive_image ()">gst_vaapi_surface_derive_image</a>      (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-get-image" title="gst_vaapi_surface_get_image ()">gst_vaapi_surface_get_image</a>         (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-put-image" title="gst_vaapi_surface_put_image ()">gst_vaapi_surface_put_image</a>         (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-associate-subpicture" title="gst_vaapi_surface_associate_subpicture ()">gst_vaapi_surface_associate_subpicture</a>
+                                                        (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *src_rect</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *dst_rect</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-deassociate-subpicture" title="gst_vaapi_surface_deassociate_subpicture ()">gst_vaapi_surface_deassociate_subpicture</a>
+                                                        (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-sync" title="gst_vaapi_surface_sync ()">gst_vaapi_surface_sync</a>              (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-query-status" title="gst_vaapi_surface_query_status ()">gst_vaapi_surface_query_status</a>      (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurfaceStatus" title="enum GstVaapiSurfaceStatus"><span class="type">GstVaapiSurfaceStatus</span></a> *pstatus</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapisurface.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a class="link" href="GstVaapiObject.html" title="GstVaapiObject">GstVaapiObject</a>
+         +----GstVaapiSurface
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapisurface.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface--chroma-type" title='The "chroma-type" property'>chroma-type</a>"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+  "<a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface--height" title='The "height" property'>height</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+  "<a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface--parent-context" title='The "parent-context" property'>parent-context</a>"           <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>*      : Read / Write / Construct Only
+  "<a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface--width" title='The "width" property'>width</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapisurface.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapisurface.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiChromaType"></a><h3>enum GstVaapiChromaType</h3>
+<pre class="programlisting">typedef enum {
+    GST_VAAPI_CHROMA_TYPE_YUV420 = 1,
+    GST_VAAPI_CHROMA_TYPE_YUV422,
+    GST_VAAPI_CHROMA_TYPE_YUV444
+} GstVaapiChromaType;
+</pre>
+<p>
+The set of all chroma types for <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GST-VAAPI-CHROMA-TYPE-YUV420:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_CHROMA_TYPE_YUV420</code></span></p></td>
+<td>4:2:0 chroma format
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-CHROMA-TYPE-YUV422:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_CHROMA_TYPE_YUV422</code></span></p></td>
+<td>4:2:2 chroma format
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-CHROMA-TYPE-YUV444:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_CHROMA_TYPE_YUV444</code></span></p></td>
+<td>4:4:4 chroma format
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSurfaceStatus"></a><h3>enum GstVaapiSurfaceStatus</h3>
+<pre class="programlisting">typedef enum {
+    GST_VAAPI_SURFACE_STATUS_IDLE       = 1 &lt;&lt; 0,
+    GST_VAAPI_SURFACE_STATUS_RENDERING  = 1 &lt;&lt; 1,
+    GST_VAAPI_SURFACE_STATUS_DISPLAYING = 1 &lt;&lt; 2,
+    GST_VAAPI_SURFACE_STATUS_SKIPPED    = 1 &lt;&lt; 3
+} GstVaapiSurfaceStatus;
+</pre>
+<p>
+The set of all surface status for <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GST-VAAPI-SURFACE-STATUS-IDLE:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_SURFACE_STATUS_IDLE</code></span></p></td>
+<td>  the surface is not being rendered or displayed
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-SURFACE-STATUS-RENDERING:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_SURFACE_STATUS_RENDERING</code></span></p></td>
+<td>  the surface is used for rendering (decoding to the surface in progress)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-SURFACE-STATUS-DISPLAYING:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_SURFACE_STATUS_DISPLAYING</code></span></p></td>
+<td>  the surface is being displayed to screen
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-SURFACE-STATUS-SKIPPED:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_SURFACE_STATUS_SKIPPED</code></span></p></td>
+<td>  indicates a skipped frame during encode
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSurfaceRenderFlags"></a><h3>enum GstVaapiSurfaceRenderFlags</h3>
+<pre class="programlisting">typedef enum {
+    GST_VAAPI_PICTURE_STRUCTURE_TOP_FIELD       = 1 &lt;&lt; 0,
+    GST_VAAPI_PICTURE_STRUCTURE_BOTTOM_FIELD    = 1 &lt;&lt; 1,
+    GST_VAAPI_PICTURE_STRUCTURE_FRAME           =
+    (
+        GST_VAAPI_PICTURE_STRUCTURE_TOP_FIELD |
+        GST_VAAPI_PICTURE_STRUCTURE_BOTTOM_FIELD
+    ),
+    GST_VAAPI_COLOR_STANDARD_ITUR_BT_601        = 1 &lt;&lt; 2,
+    GST_VAAPI_COLOR_STANDARD_ITUR_BT_709        = 1 &lt;&lt; 3,
+} GstVaapiSurfaceRenderFlags;
+</pre>
+<p>
+The set of all render flags for <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-put-surface" title="gst_vaapi_window_put_surface ()"><code class="function">gst_vaapi_window_put_surface()</code></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GST-VAAPI-PICTURE-STRUCTURE-TOP-FIELD:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PICTURE_STRUCTURE_TOP_FIELD</code></span></p></td>
+<td>  selects the top field of the surface
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PICTURE-STRUCTURE-BOTTOM-FIELD:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PICTURE_STRUCTURE_BOTTOM_FIELD</code></span></p></td>
+<td>  selects the bottom field of the surface
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PICTURE-STRUCTURE-FRAME:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PICTURE_STRUCTURE_FRAME</code></span></p></td>
+<td>  selects the entire surface
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-COLOR-STANDARD-ITUR-BT-601:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_COLOR_STANDARD_ITUR_BT_601</code></span></p></td>
+<td>  uses ITU-R BT.601 standard for color space conversion
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-COLOR-STANDARD-ITUR-BT-709:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_COLOR_STANDARD_ITUR_BT_709</code></span></p></td>
+<td>  uses ITU-R BT.709 standard for color space conversion
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSurface-struct"></a><h3>struct GstVaapiSurface</h3>
+<pre class="programlisting">struct GstVaapiSurface;</pre>
+<p>
+A VA surface wrapper.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSurfaceClass"></a><h3>struct GstVaapiSurfaceClass</h3>
+<pre class="programlisting">struct GstVaapiSurfaceClass {
+};
+</pre>
+<p>
+A VA surface wrapper class.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-new"></a><h3>gst_vaapi_surface_new ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="returnvalue">GstVaapiSurface</span></a> *   gst_vaapi_surface_new               (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiChromaType" title="enum GstVaapiChromaType"><span class="type">GstVaapiChromaType</span></a> chroma_type</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);</pre>
+<p>
+Creates a new <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> with the specified chroma format and
+dimensions.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>chroma_type</code></em> :</span></p></td>
+<td>the surface chroma format</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>width</code></em> :</span></p></td>
+<td>the requested surface width</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>height</code></em> :</span></p></td>
+<td>the requested surface height</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-get-id"></a><h3>gst_vaapi_surface_get_id ()</h3>
+<pre class="programlisting"><a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="returnvalue">GstVaapiID</span></a>          gst_vaapi_surface_get_id            (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);</pre>
+<p>
+Returns the underlying VASurfaceID of the <em class="parameter"><code>surface</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the underlying VA surface id</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-get-chroma-type"></a><h3>gst_vaapi_surface_get_chroma_type ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapisurface.html#GstVaapiChromaType" title="enum GstVaapiChromaType"><span class="returnvalue">GstVaapiChromaType</span></a>  gst_vaapi_surface_get_chroma_type   (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);</pre>
+<p>
+Returns the <a class="link" href="libs-gstvaapisurface.html#GstVaapiChromaType" title="enum GstVaapiChromaType"><span class="type">GstVaapiChromaType</span></a> the <em class="parameter"><code>surface</code></em> was created with.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-gstvaapisurface.html#GstVaapiChromaType" title="enum GstVaapiChromaType"><span class="type">GstVaapiChromaType</span></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-get-width"></a><h3>gst_vaapi_surface_get_width ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_surface_get_width         (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);</pre>
+<p>
+Returns the <em class="parameter"><code>surface</code></em> width.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the surface width, in pixels</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-get-height"></a><h3>gst_vaapi_surface_get_height ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_surface_get_height        (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);</pre>
+<p>
+Returns the <em class="parameter"><code>surface</code></em> height.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the surface height, in pixels.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-get-size"></a><h3>gst_vaapi_surface_get_size ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_surface_get_size          (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);</pre>
+<p>
+Retrieves the dimensions of a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pwidth</code></em> :</span></p></td>
+<td>return location for the width, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pheight</code></em> :</span></p></td>
+<td>return location for the height, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-derive-image"></a><h3>gst_vaapi_surface_derive_image ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="returnvalue">GstVaapiImage</span></a> *     gst_vaapi_surface_derive_image      (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);</pre>
+<p>
+Derives a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> from the <em class="parameter"><code>surface</code></em>. This image buffer can
+then be mapped/unmapped for direct CPU access. This operation is
+only possible if the underlying implementation supports direct
+rendering capabilities and internal surface formats that can be
+represented with a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>.
+</p>
+<p>
+When the operation is not possible, the function returns <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> and
+the user should then fallback to using <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-get-image" title="gst_vaapi_surface_get_image ()"><code class="function">gst_vaapi_surface_get_image()</code></a>
+or <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-put-image" title="gst_vaapi_surface_put_image ()"><code class="function">gst_vaapi_surface_put_image()</code></a> to accomplish the same task in an
+indirect manner (additional copy).
+</p>
+<p>
+An image created with <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-derive-image" title="gst_vaapi_surface_derive_image ()"><code class="function">gst_vaapi_surface_derive_image()</code></a> should be
+unreferenced when it's no longer needed. The image and image buffer
+data structures will be destroyed. However, the surface contents
+will remain unchanged until destroyed through the last call to
+<a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> object, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+on failure</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-get-image"></a><h3>gst_vaapi_surface_get_image ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_surface_get_image         (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Retrieves surface data into a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>. The <em class="parameter"><code>image</code></em> must have
+a format supported by the <em class="parameter"><code>surface</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-put-image"></a><h3>gst_vaapi_surface_put_image ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_surface_put_image         (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Copies data from a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> into a <em class="parameter"><code>surface</code></em>. The <em class="parameter"><code>image</code></em> must
+have a format supported by the <em class="parameter"><code>surface</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-associate-subpicture"></a><h3>gst_vaapi_surface_associate_subpicture ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_surface_associate_subpicture
+                                                        (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *src_rect</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *dst_rect</code></em>);</pre>
+<p>
+Associates the <em class="parameter"><code>subpicture</code></em> with the <em class="parameter"><code>surface</code></em>. The <em class="parameter"><code>src_rect</code></em>
+coordinates and size are relative to the source image bound to
+<em class="parameter"><code>subpicture</code></em>. The <em class="parameter"><code>dst_rect</code></em> coordinates and size are relative to the
+target <em class="parameter"><code>surface</code></em>. Note that the <em class="parameter"><code>surface</code></em> holds an additional
+reference to the <em class="parameter"><code>subpicture</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>subpicture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>src_rect</code></em> :</span></p></td>
+<td>the sub-rectangle of the source subpicture
+image to extract and process. If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, the entire image will be used.</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>dst_rect</code></em> :</span></p></td>
+<td>the sub-rectangle of the destination
+surface into which the image is rendered. If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, the entire
+surface will be used.</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-deassociate-subpicture"></a><h3>gst_vaapi_surface_deassociate_subpicture ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_surface_deassociate_subpicture
+                                                        (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>);</pre>
+<p>
+Deassociates <em class="parameter"><code>subpicture</code></em> from <em class="parameter"><code>surface</code></em>. Other associations are kept.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>subpicture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-sync"></a><h3>gst_vaapi_surface_sync ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_surface_sync              (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);</pre>
+<p>
+Blocks until all pending operations on the <em class="parameter"><code>surface</code></em> have been
+completed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-surface-query-status"></a><h3>gst_vaapi_surface_query_status ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_surface_query_status      (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurfaceStatus" title="enum GstVaapiSurfaceStatus"><span class="type">GstVaapiSurfaceStatus</span></a> *pstatus</code></em>);</pre>
+<p>
+Finds out any pending operations on the <em class="parameter"><code>surface</code></em>. The
+<a class="link" href="libs-gstvaapisurface.html#GstVaapiSurfaceStatus" title="enum GstVaapiSurfaceStatus"><span class="type">GstVaapiSurfaceStatus</span></a> flags are returned into <em class="parameter"><code>pstatus</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pstatus</code></em> :</span></p></td>
+<td>return location for the <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurfaceStatus" title="enum GstVaapiSurfaceStatus"><span class="type">GstVaapiSurfaceStatus</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapisurface.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiSurface--chroma-type"></a><h3>The <code class="literal">"chroma-type"</code> property</h3>
+<pre class="programlisting">  "chroma-type"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The chroma type of the surface.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSurface--height"></a><h3>The <code class="literal">"height"</code> property</h3>
+<pre class="programlisting">  "height"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The height of the surface.</p>
+<p>Allowed values: &lt;= G_MAXLONG</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSurface--parent-context"></a><h3>The <code class="literal">"parent-context"</code> property</h3>
+<pre class="programlisting">  "parent-context"           <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>*      : Read / Write / Construct Only</pre>
+<p>The parent context, if any.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSurface--width"></a><h3>The <code class="literal">"width"</code> property</h3>
+<pre class="programlisting">  "width"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The width of the surface.</p>
+<p>Allowed values: &lt;= G_MAXLONG</p>
+<p>Default value: 0</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

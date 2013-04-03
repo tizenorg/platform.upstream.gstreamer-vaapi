@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>gst-plugins-vaapi Library</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="prev" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="next" href="libs-Basic-data-structures.html" title="Basic data structures">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2"><tr valign="middle">
+<td><a accesskey="p" href="index.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td> </td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="libs-Basic-data-structures.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="chapter">
+<div class="titlepage"><div><div><h2 class="title">
+<a name="idp2069656"></a>gst-plugins-vaapi Library</h2></div></div></div>
+<div class="toc"><dl>
+<dt>
+<span class="refentrytitle"><a href="libs-Basic-data-structures.html">Basic data structures</a></span><span class="refpurpose"></span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-gstvaapivalue.html">gstvaapivalue</a></span><span class="refpurpose"> — GValue implementations specific to VA-API</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-gstvaapiparamspecs.html">gstvaapiparamspecs</a></span><span class="refpurpose"> — GParamSpecs for some of our types</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiDisplay.html">GstVaapiDisplay</a></span><span class="refpurpose"> — VA display abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiDisplayX11.html">GstVaapiDisplayX11</a></span><span class="refpurpose"> — VA/X11 display abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiDisplayGLX.html">GstVaapiDisplayGLX</a></span><span class="refpurpose"> — VA/GLX display abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiWindow.html">GstVaapiWindow</a></span><span class="refpurpose"> — VA window abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiWindowX11.html">GstVaapiWindowX11</a></span><span class="refpurpose"> — VA/X11 window abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiWindowGLX.html">GstVaapiWindowGLX</a></span><span class="refpurpose"> — VA/GLX window abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiObject.html">GstVaapiObject</a></span><span class="refpurpose"> — Base VA object</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-gstvaapisurface.html">GstVaapiSurface</a></span><span class="refpurpose"> — VA surface abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-gstvaapiimage.html">GstVaapiImage</a></span><span class="refpurpose"> — VA image abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-GstVaapiImageFormat.html">GstVaapiImageFormat</a></span><span class="refpurpose"> — VA image format abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiSubpicture.html">GstVaapiSubpicture</a></span><span class="refpurpose"> — VA subpicture abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiTexture.html">GstVaapiTexture</a></span><span class="refpurpose"> — VA/GLX texture abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-GstVaapiProfile.html">GstVaapiProfile</a></span><span class="refpurpose"> — VA profile abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiVideoPool.html">GstVaapiVideoPool</a></span><span class="refpurpose"> — Video object pool abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiSurfacePool.html">GstVaapiSurfacePool</a></span><span class="refpurpose"> — VA surface pool</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiImagePool.html">GstVaapiImagePool</a></span><span class="refpurpose"> — VA image pool</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="GstVaapiContext.html">GstVaapiContext</a></span><span class="refpurpose"> — VA context abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-gstvaapidecoder.html">GstVaapiDecoder</a></span><span class="refpurpose"> — VA decoder abstraction</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-GstVaapiDecoderJpeg.html">GstVaapiDecoderJpeg</a></span><span class="refpurpose"> — JPEG decoder</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-GstVaapiDecoderMpeg2.html">GstVaapiDecoderMpeg2</a></span><span class="refpurpose"> — MPEG-2 decoder</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-GstVaapiDecoderMpeg4.html">GstVaapiDecoderMpeg4</a></span><span class="refpurpose"> — MPEG-4 decoder, include h263/divx/xvid support</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-GstVaapiDecoderH264.html">GstVaapiDecoderH264</a></span><span class="refpurpose"> — H.264 decoder</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-GstVaapiDecoderVC1.html">GstVaapiDecoderVC1</a></span><span class="refpurpose"> — VC-1 decoder</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="libs-GstVaapiSurfaceProxy.html">GstVaapiSurfaceProxy</a></span><span class="refpurpose"> — VA surface proxy</span>
+</dt>
+</dl></div>
+<span style="color: red">&lt;xi:include&gt;&lt;/xi:include&gt;</span><span style="color: red">&lt;xi:include&gt;&lt;/xi:include&gt;</span>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

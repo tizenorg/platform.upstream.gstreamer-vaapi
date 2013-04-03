@@ -1,0 +1,417 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiTexture</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture">
+<link rel="next" href="libs-GstVaapiProfile.html" title="GstVaapiProfile">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiSubpicture.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="libs-GstVaapiProfile.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiTexture.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiTexture.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiTexture.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GstVaapiTexture.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiTexture"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiTexture.top_of_page"></a>GstVaapiTexture</span></h2>
+<p>GstVaapiTexture — VA/GLX texture abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiTexture.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiTexture.html#GstVaapiTexture-struct" title="struct GstVaapiTexture">GstVaapiTexture</a>;
+struct              <a class="link" href="GstVaapiTexture.html#GstVaapiTextureClass" title="struct GstVaapiTextureClass">GstVaapiTextureClass</a>;
+<a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="returnvalue">GstVaapiTexture</span></a> *   <a class="link" href="GstVaapiTexture.html#gst-vaapi-texture-new" title="gst_vaapi_texture_new ()">gst_vaapi_texture_new</a>               (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLenum</span> target</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLenum</span> format</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);
+<a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="returnvalue">GstVaapiTexture</span></a> *   <a class="link" href="GstVaapiTexture.html#gst-vaapi-texture-new-with-texture" title="gst_vaapi_texture_new_with_texture ()">gst_vaapi_texture_new_with_texture</a>  (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> texture</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLenum</span> target</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLenum</span> format</code></em>);
+<span class="returnvalue">GLuint</span>              <a class="link" href="GstVaapiTexture.html#gst-vaapi-texture-get-id" title="gst_vaapi_texture_get_id ()">gst_vaapi_texture_get_id</a>            (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>);
+<span class="returnvalue">GLenum</span>              <a class="link" href="GstVaapiTexture.html#gst-vaapi-texture-get-target" title="gst_vaapi_texture_get_target ()">gst_vaapi_texture_get_target</a>        (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>);
+<span class="returnvalue">GLenum</span>              <a class="link" href="GstVaapiTexture.html#gst-vaapi-texture-get-format" title="gst_vaapi_texture_get_format ()">gst_vaapi_texture_get_format</a>        (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstVaapiTexture.html#gst-vaapi-texture-get-width" title="gst_vaapi_texture_get_width ()">gst_vaapi_texture_get_width</a>         (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstVaapiTexture.html#gst-vaapi-texture-get-height" title="gst_vaapi_texture_get_height ()">gst_vaapi_texture_get_height</a>        (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiTexture.html#gst-vaapi-texture-get-size" title="gst_vaapi_texture_get_size ()">gst_vaapi_texture_get_size</a>          (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiTexture.html#gst-vaapi-texture-put-surface" title="gst_vaapi_texture_put_surface ()">gst_vaapi_texture_put_surface</a>       (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> flags</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiTexture.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a class="link" href="GstVaapiObject.html" title="GstVaapiObject">GstVaapiObject</a>
+         +----GstVaapiTexture
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiTexture.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GstVaapiTexture.html#GstVaapiTexture--format" title='The "format" property'>format</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiTexture.html#GstVaapiTexture--height" title='The "height" property'>height</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiTexture.html#GstVaapiTexture--target" title='The "target" property'>target</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiTexture.html#GstVaapiTexture--width" title='The "width" property'>width</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiTexture.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="GstVaapiTexture.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiTexture-struct"></a><h3>struct GstVaapiTexture</h3>
+<pre class="programlisting">struct GstVaapiTexture;</pre>
+<p>
+Base class for system-dependent textures.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiTextureClass"></a><h3>struct GstVaapiTextureClass</h3>
+<pre class="programlisting">struct GstVaapiTextureClass {
+};
+</pre>
+<p>
+Base class for system-dependent textures.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-texture-new"></a><h3>gst_vaapi_texture_new ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="returnvalue">GstVaapiTexture</span></a> *   gst_vaapi_texture_new               (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLenum</span> target</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLenum</span> format</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);</pre>
+<p>
+Creates a texture with the specified dimensions, <em class="parameter"><code>target</code></em> and
+<em class="parameter"><code>format</code></em>. Note that only GL_TEXTURE_2D <em class="parameter"><code>target</code></em> and GL_RGBA or
+GL_BGRA formats are supported at this time.
+</p>
+<p>
+The application shall maintain the live GL context itself. That is,
+<a class="link" href="GstVaapiWindowGLX.html#gst-vaapi-window-glx-make-current" title="gst_vaapi_window_glx_make_current ()"><code class="function">gst_vaapi_window_glx_make_current()</code></a> must be called beforehand, or
+any other function like <code class="function">glXMakeCurrent()</code> if the context is managed
+outside of this library.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>target</code></em> :</span></p></td>
+<td>the target to which the texture is bound</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
+<td>the format of the pixel data</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>width</code></em> :</span></p></td>
+<td>the requested width, in pixels</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>height</code></em> :</span></p></td>
+<td>the requested height, in pixels</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly created <a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-texture-new-with-texture"></a><h3>gst_vaapi_texture_new_with_texture ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="returnvalue">GstVaapiTexture</span></a> *   gst_vaapi_texture_new_with_texture  (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLuint</span> texture</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLenum</span> target</code></em>,
+                                                         <em class="parameter"><code><span class="type">GLenum</span> format</code></em>);</pre>
+<p>
+Creates a texture from an existing GL texture, with the specified
+<em class="parameter"><code>target</code></em> and <em class="parameter"><code>format</code></em>. Note that only GL_TEXTURE_2D <em class="parameter"><code>target</code></em> and
+GL_RGBA or GL_BGRA formats are supported at this time. The
+dimensions will be retrieved from the <em class="parameter"><code>texture</code></em>.
+</p>
+<p>
+The application shall maintain the live GL context itself. That is,
+<a class="link" href="GstVaapiWindowGLX.html#gst-vaapi-window-glx-make-current" title="gst_vaapi_window_glx_make_current ()"><code class="function">gst_vaapi_window_glx_make_current()</code></a> must be called beforehand, or
+any other function like <code class="function">glXMakeCurrent()</code> if the context is managed
+outside of this library.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
+<td>the foreign GL texture name to use</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>target</code></em> :</span></p></td>
+<td>the target to which the texture is bound</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
+<td>the format of the pixel data</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly created <a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-texture-get-id"></a><h3>gst_vaapi_texture_get_id ()</h3>
+<pre class="programlisting"><span class="returnvalue">GLuint</span>              gst_vaapi_texture_get_id            (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>);</pre>
+<p>
+Returns the underlying texture id of the <em class="parameter"><code>texture</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the underlying texture id of the <em class="parameter"><code>texture</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-texture-get-target"></a><h3>gst_vaapi_texture_get_target ()</h3>
+<pre class="programlisting"><span class="returnvalue">GLenum</span>              gst_vaapi_texture_get_target        (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>);</pre>
+<p>
+Returns the <em class="parameter"><code>texture</code></em> target type
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the texture target</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-texture-get-format"></a><h3>gst_vaapi_texture_get_format ()</h3>
+<pre class="programlisting"><span class="returnvalue">GLenum</span>              gst_vaapi_texture_get_format        (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>);</pre>
+<p>
+Returns the <em class="parameter"><code>texture</code></em> format
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the texture format</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-texture-get-width"></a><h3>gst_vaapi_texture_get_width ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_texture_get_width         (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>);</pre>
+<p>
+Returns the <em class="parameter"><code>texture</code></em> width.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the texture width, in pixels</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-texture-get-height"></a><h3>gst_vaapi_texture_get_height ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_texture_get_height        (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>);</pre>
+<p>
+Returns the <em class="parameter"><code>texture</code></em> height.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the texture height, in pixels.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-texture-get-size"></a><h3>gst_vaapi_texture_get_size ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_texture_get_size          (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);</pre>
+<p>
+Retrieves the dimensions of a <a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pwidth</code></em> :</span></p></td>
+<td>return location for the width, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pheight</code></em> :</span></p></td>
+<td>return location for the height, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-texture-put-surface"></a><h3>gst_vaapi_texture_put_surface ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_texture_put_surface       (<em class="parameter"><code><a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a> *texture</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> flags</code></em>);</pre>
+<p>
+Renders the <em class="parameter"><code>surface</code></em> into the àtexture. The <em class="parameter"><code>flags</code></em> specify how
+de-interlacing (if needed), color space conversion, scaling and
+other postprocessing transformations are performed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>texture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiTexture.html" title="GstVaapiTexture"><span class="type">GstVaapiTexture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>flags</code></em> :</span></p></td>
+<td>postprocessing flags. See <span class="type">GstVaapiTextureRenderFlags</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1">
+<a name="GstVaapiTexture.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiTexture--format"></a><h3>The <code class="literal">"format"</code> property</h3>
+<pre class="programlisting">  "format"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The texture format.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiTexture--height"></a><h3>The <code class="literal">"height"</code> property</h3>
+<pre class="programlisting">  "height"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The texture height.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiTexture--target"></a><h3>The <code class="literal">"target"</code> property</h3>
+<pre class="programlisting">  "target"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The texture target.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiTexture--width"></a><h3>The <code class="literal">"width"</code> property</h3>
+<pre class="programlisting">  "width"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The texture width.</p>
+<p>Default value: 0</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

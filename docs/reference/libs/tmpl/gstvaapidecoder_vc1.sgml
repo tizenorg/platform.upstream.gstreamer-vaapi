@@ -1,0 +1,46 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiDecoderVC1
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiDecoderVC1 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GstVaapiDecoderVC1Class ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_decoder_vc1_new ##### -->
+<para>
+
+</para>
+
+@display: 
+@caps: 
+@Returns: 
+
+

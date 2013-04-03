@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>gstvaapiparamspecs</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="libs-gstvaapivalue.html" title="gstvaapivalue">
+<link rel="next" href="GstVaapiDisplay.html" title="GstVaapiDisplay">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="libs-gstvaapivalue.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiDisplay.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#libs-gstvaapiparamspecs.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#libs-gstvaapiparamspecs.description" class="shortcut">Description</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="libs-gstvaapiparamspecs"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libs-gstvaapiparamspecs.top_of_page"></a>gstvaapiparamspecs</span></h2>
+<p>gstvaapiparamspecs — GParamSpecs for some of our types</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="libs-gstvaapiparamspecs.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="libs-gstvaapiparamspecs.html#GstVaapiParamSpecID" title="struct GstVaapiParamSpecID">GstVaapiParamSpecID</a>;
+<a href="http://library.gnome.org/devel/gobject/unstable/gobject-GParamSpec.html#GParamSpec"><span class="returnvalue">GParamSpec</span></a> *        <a class="link" href="libs-gstvaapiparamspecs.html#gst-vaapi-param-spec-id" title="gst_vaapi_param_spec_id ()">gst_vaapi_param_spec_id</a>             (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *nick</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *blurb</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> default_value</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/gobject/unstable/gobject-GParamSpec.html#GParamFlags"><span class="type">GParamFlags</span></a> flags</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapiparamspecs.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapiparamspecs.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiParamSpecID"></a><h3>struct GstVaapiParamSpecID</h3>
+<pre class="programlisting">struct GstVaapiParamSpecID {
+    GParamSpec  parent_instance;
+
+    GstVaapiID  default_value;
+};
+</pre>
+<p>
+A GParamSpec derived structure that contains the meta data for
+<a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> properties.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-GParamSpec.html#GParamSpec"><span class="type">GParamSpec</span></a> <em class="structfield"><code><a name="GstVaapiParamSpecID.parent-instance"></a>parent_instance</code></em>;</span></p></td>
+<td>super class</td>
+</tr>
+<tr>
+<td><p><span class="term"><a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> <em class="structfield"><code><a name="GstVaapiParamSpecID.default-value"></a>default_value</code></em>;</span></p></td>
+<td>default value</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-param-spec-id"></a><h3>gst_vaapi_param_spec_id ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-GParamSpec.html#GParamSpec"><span class="returnvalue">GParamSpec</span></a> *        gst_vaapi_param_spec_id             (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *nick</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *blurb</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> default_value</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/gobject/unstable/gobject-GParamSpec.html#GParamFlags"><span class="type">GParamFlags</span></a> flags</code></em>);</pre>
+<p>
+This function creates an ID GParamSpec for use by <a class="link" href="GstVaapiObject.html" title="GstVaapiObject"><span class="type">GstVaapiObject</span></a>
+objects. This function is typically used in connection with
+<a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-class-install-property"><code class="function">g_object_class_install_property()</code></a> in a GObjects's instance_init
+function.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
+<td>canonical name of the property specified</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>nick</code></em> :</span></p></td>
+<td>nick name for the property specified</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>blurb</code></em> :</span></p></td>
+<td>description of the property specified</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>default_value</code></em> :</span></p></td>
+<td>default value</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>flags</code></em> :</span></p></td>
+<td>flags for the property specified</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a newly created parameter specification</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

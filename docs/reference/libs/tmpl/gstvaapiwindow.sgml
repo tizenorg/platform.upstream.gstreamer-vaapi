@@ -1,0 +1,171 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiWindow
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiWindow ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiWindow:fullscreen ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiWindow:height ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiWindow:width ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GstVaapiWindowClass ##### -->
+<para>
+
+</para>
+
+@create: 
+@destroy: 
+@show: 
+@hide: 
+@get_geometry: 
+@set_fullscreen: 
+@resize: 
+@render: 
+
+<!-- ##### FUNCTION gst_vaapi_window_get_display ##### -->
+<para>
+
+</para>
+
+@window: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_show ##### -->
+<para>
+
+</para>
+
+@window: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_hide ##### -->
+<para>
+
+</para>
+
+@window: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_get_fullscreen ##### -->
+<para>
+
+</para>
+
+@window: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_set_fullscreen ##### -->
+<para>
+
+</para>
+
+@window: 
+@fullscreen: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_get_width ##### -->
+<para>
+
+</para>
+
+@window: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_get_height ##### -->
+<para>
+
+</para>
+
+@window: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_get_size ##### -->
+<para>
+
+</para>
+
+@window: 
+@pwidth: 
+@pheight: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_set_width ##### -->
+<para>
+
+</para>
+
+@window: 
+@width: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_set_height ##### -->
+<para>
+
+</para>
+
+@window: 
+@height: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_set_size ##### -->
+<para>
+
+</para>
+
+@window: 
+@width: 
+@height: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_put_surface ##### -->
+<para>
+
+</para>
+
+@window: 
+@surface: 
+@src_rect: 
+@dst_rect: 
+@flags: 
+@Returns: 
+
+

@@ -1,0 +1,119 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiImageFormat
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### ENUM GstVaapiImageFormat ##### -->
+<para>
+
+</para>
+
+@GST_VAAPI_IMAGE_NV12: 
+@GST_VAAPI_IMAGE_YV12: 
+@GST_VAAPI_IMAGE_I420: 
+@GST_VAAPI_IMAGE_AYUV: 
+@GST_VAAPI_IMAGE_ARGB: 
+@GST_VAAPI_IMAGE_RGBA: 
+@GST_VAAPI_IMAGE_ABGR: 
+@GST_VAAPI_IMAGE_BGRA: 
+
+<!-- ##### FUNCTION gst_vaapi_image_format_is_rgb ##### -->
+<para>
+
+</para>
+
+@format: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_format_is_yuv ##### -->
+<para>
+
+</para>
+
+@format: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_format ##### -->
+<para>
+
+</para>
+
+@va_format: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_format_from_caps ##### -->
+<para>
+
+</para>
+
+@caps: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_format_from_fourcc ##### -->
+<para>
+
+</para>
+
+@fourcc: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_format_from_video ##### -->
+<para>
+
+</para>
+
+@format: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_format_get_va_format ##### -->
+<para>
+
+</para>
+
+@format: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_format_get_caps ##### -->
+<para>
+
+</para>
+
+@format: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_format_get_score ##### -->
+<para>
+
+</para>
+
+@format: 
+@Returns: 
+
+

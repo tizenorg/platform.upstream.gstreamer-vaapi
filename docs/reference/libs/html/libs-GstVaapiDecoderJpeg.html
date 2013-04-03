@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiDecoderJpeg</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="libs-gstvaapidecoder.html" title="GstVaapiDecoder">
+<link rel="next" href="libs-GstVaapiDecoderMpeg2.html" title="GstVaapiDecoderMpeg2">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="libs-gstvaapidecoder.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="libs-GstVaapiDecoderMpeg2.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#libs-GstVaapiDecoderJpeg.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#libs-GstVaapiDecoderJpeg.description" class="shortcut">Description</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="libs-GstVaapiDecoderJpeg"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libs-GstVaapiDecoderJpeg.top_of_page"></a>GstVaapiDecoderJpeg</span></h2>
+<p>GstVaapiDecoderJpeg — JPEG decoder</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="libs-GstVaapiDecoderJpeg.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="libs-GstVaapiDecoderJpeg.html#GstVaapiDecoderJpeg" title="struct GstVaapiDecoderJpeg">GstVaapiDecoderJpeg</a>;
+struct              <a class="link" href="libs-GstVaapiDecoderJpeg.html#GstVaapiDecoderJpegClass" title="struct GstVaapiDecoderJpegClass">GstVaapiDecoderJpegClass</a>;
+<a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="returnvalue">GstVaapiDecoder</span></a> *   <a class="link" href="libs-GstVaapiDecoderJpeg.html#gst-vaapi-decoder-jpeg-new" title="gst_vaapi_decoder_jpeg_new ()">gst_vaapi_decoder_jpeg_new</a>          (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-GstVaapiDecoderJpeg.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="libs-GstVaapiDecoderJpeg.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiDecoderJpeg"></a><h3>struct GstVaapiDecoderJpeg</h3>
+<pre class="programlisting">struct GstVaapiDecoderJpeg {
+};
+</pre>
+<p>
+A decoder based on Jpeg.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDecoderJpegClass"></a><h3>struct GstVaapiDecoderJpegClass</h3>
+<pre class="programlisting">struct GstVaapiDecoderJpegClass {
+};
+</pre>
+<p>
+A decoder class based on Jpeg.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-decoder-jpeg-new"></a><h3>gst_vaapi_decoder_jpeg_new ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="returnvalue">GstVaapiDecoder</span></a> *   gst_vaapi_decoder_jpeg_new          (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);</pre>
+<p>
+Creates a new <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> for JPEG decoding.  The <em class="parameter"><code>caps</code></em> can
+hold extra information like codec-data and pictured coded size.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>caps</code></em> :</span></p></td>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> holding codec information</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

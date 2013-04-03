@@ -1,0 +1,738 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiImage</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="libs-gstvaapisurface.html" title="GstVaapiSurface">
+<link rel="next" href="libs-GstVaapiImageFormat.html" title="GstVaapiImageFormat">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="libs-gstvaapisurface.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="libs-GstVaapiImageFormat.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#libs-gstvaapiimage.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#libs-gstvaapiimage.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#libs-gstvaapiimage.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#libs-gstvaapiimage.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="libs-gstvaapiimage"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libs-gstvaapiimage.top_of_page"></a>GstVaapiImage</span></h2>
+<p>GstVaapiImage — VA image abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="libs-gstvaapiimage.synopsis"></a><h2>Synopsis</h2>
+<a name="GstVaapiImage"></a><pre class="synopsis">#define             <a class="link" href="libs-gstvaapiimage.html#GST-VAAPI-IMAGE-FORMAT:CAPS" title="GST_VAAPI_IMAGE_FORMAT()">GST_VAAPI_IMAGE_FORMAT</a>              (image)
+#define             <a class="link" href="libs-gstvaapiimage.html#GST-VAAPI-IMAGE-WIDTH:CAPS" title="GST_VAAPI_IMAGE_WIDTH()">GST_VAAPI_IMAGE_WIDTH</a>               (image)
+#define             <a class="link" href="libs-gstvaapiimage.html#GST-VAAPI-IMAGE-HEIGHT:CAPS" title="GST_VAAPI_IMAGE_HEIGHT()">GST_VAAPI_IMAGE_HEIGHT</a>              (image)
+struct              <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage-struct" title="struct GstVaapiImage">GstVaapiImage</a>;
+struct              <a class="link" href="libs-gstvaapiimage.html#GstVaapiImageClass" title="struct GstVaapiImageClass">GstVaapiImageClass</a>;
+<a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="returnvalue">GstVaapiImage</span></a> *     <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-new" title="gst_vaapi_image_new ()">gst_vaapi_image_new</a>                 (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);
+<a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="returnvalue">GstVaapiImage</span></a> *     <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-new-with-image" title="gst_vaapi_image_new_with_image ()">gst_vaapi_image_new_with_image</a>      (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">VAImage</span> *va_image</code></em>);
+<a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="returnvalue">GstVaapiID</span></a>          <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-id" title="gst_vaapi_image_get_id ()">gst_vaapi_image_get_id</a>              (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-image" title="gst_vaapi_image_get_image ()">gst_vaapi_image_get_image</a>           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><span class="type">VAImage</span> *va_image</code></em>);
+<a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="returnvalue">GstVaapiImageFormat</span></a> <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-format" title="gst_vaapi_image_get_format ()">gst_vaapi_image_get_format</a>          (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-width" title="gst_vaapi_image_get_width ()">gst_vaapi_image_get_width</a>           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-height" title="gst_vaapi_image_get_height ()">gst_vaapi_image_get_height</a>          (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-size" title="gst_vaapi_image_get_size ()">gst_vaapi_image_get_size</a>            (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-is-linear" title="gst_vaapi_image_is_linear ()">gst_vaapi_image_is_linear</a>           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-is-mapped" title="gst_vaapi_image_is_mapped ()">gst_vaapi_image_is_mapped</a>           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-map" title="gst_vaapi_image_map ()">gst_vaapi_image_map</a>                 (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-unmap" title="gst_vaapi_image_unmap ()">gst_vaapi_image_unmap</a>               (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-plane-count" title="gst_vaapi_image_get_plane_count ()">gst_vaapi_image_get_plane_count</a>     (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guchar"><span class="returnvalue">guchar</span></a> *            <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-plane" title="gst_vaapi_image_get_plane ()">gst_vaapi_image_get_plane</a>           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> plane</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-pitch" title="gst_vaapi_image_get_pitch ()">gst_vaapi_image_get_pitch</a>           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> plane</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-data-size" title="gst_vaapi_image_get_data_size ()">gst_vaapi_image_get_data_size</a>       (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-buffer" title="gst_vaapi_image_get_buffer ()">gst_vaapi_image_get_buffer</a>          (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *rect</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-raw" title="gst_vaapi_image_get_raw ()">gst_vaapi_image_get_raw</a>             (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiImageRaw</span> *dst_image</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *rect</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-update-from-buffer" title="gst_vaapi_image_update_from_buffer ()">gst_vaapi_image_update_from_buffer</a>  (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *rect</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapiimage.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a class="link" href="GstVaapiObject.html" title="GstVaapiObject">GstVaapiObject</a>
+         +----GstVaapiImage
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapiimage.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="libs-gstvaapiimage.html#GstVaapiImage--format" title='The "format" property'>format</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+  "<a class="link" href="libs-gstvaapiimage.html#GstVaapiImage--height" title='The "height" property'>height</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+  "<a class="link" href="libs-gstvaapiimage.html#GstVaapiImage--image" title='The "image" property'>image</a>"                    <span class="type">VAImage</span>*              : Read / Write / Construct Only
+  "<a class="link" href="libs-gstvaapiimage.html#GstVaapiImage--width" title='The "width" property'>width</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapiimage.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapiimage.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GST-VAAPI-IMAGE-FORMAT:CAPS"></a><h3>GST_VAAPI_IMAGE_FORMAT()</h3>
+<pre class="programlisting">#define GST_VAAPI_IMAGE_FORMAT(image)   gst_vaapi_image_get_format(image)
+</pre>
+<p>
+Macro that evaluates to the <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> of <em class="parameter"><code>image</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GST-VAAPI-IMAGE-WIDTH:CAPS"></a><h3>GST_VAAPI_IMAGE_WIDTH()</h3>
+<pre class="programlisting">#define GST_VAAPI_IMAGE_WIDTH(image)    gst_vaapi_image_get_width(image)
+</pre>
+<p>
+Macro that evaluates to the width of <em class="parameter"><code>image</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GST-VAAPI-IMAGE-HEIGHT:CAPS"></a><h3>GST_VAAPI_IMAGE_HEIGHT()</h3>
+<pre class="programlisting">#define GST_VAAPI_IMAGE_HEIGHT(image)   gst_vaapi_image_get_height(image)
+</pre>
+<p>
+Macro that evaluates to the height of <em class="parameter"><code>image</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiImage-struct"></a><h3>struct GstVaapiImage</h3>
+<pre class="programlisting">struct GstVaapiImage;</pre>
+<p>
+A VA image wrapper
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiImageClass"></a><h3>struct GstVaapiImageClass</h3>
+<pre class="programlisting">struct GstVaapiImageClass {
+};
+</pre>
+<p>
+A VA image wrapper class
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-new"></a><h3>gst_vaapi_image_new ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="returnvalue">GstVaapiImage</span></a> *     gst_vaapi_image_new                 (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> format</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);</pre>
+<p>
+Creates a new <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> with the specified format and
+dimensions.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>width</code></em> :</span></p></td>
+<td>the requested image width</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>height</code></em> :</span></p></td>
+<td>the requested image height</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-new-with-image"></a><h3>gst_vaapi_image_new_with_image ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="returnvalue">GstVaapiImage</span></a> *     gst_vaapi_image_new_with_image      (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">VAImage</span> *va_image</code></em>);</pre>
+<p>
+Creates a new <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> from a foreign VA image. The image
+format and dimensions will be extracted from <em class="parameter"><code>va_image</code></em>. This
+function is mainly used by <a class="link" href="libs-gstvaapisurface.html#gst-vaapi-surface-derive-image" title="gst_vaapi_surface_derive_image ()"><code class="function">gst_vaapi_surface_derive_image()</code></a> to bind
+a VA image to a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> object.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>va_image</code></em> :</span></p></td>
+<td>a VA image</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-get-id"></a><h3>gst_vaapi_image_get_id ()</h3>
+<pre class="programlisting"><a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="returnvalue">GstVaapiID</span></a>          gst_vaapi_image_get_id              (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Returns the underlying VAImageID of the <em class="parameter"><code>image</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the underlying VA image id</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-get-image"></a><h3>gst_vaapi_image_get_image ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_image_get_image           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><span class="type">VAImage</span> *va_image</code></em>);</pre>
+<p>
+Fills <em class="parameter"><code>va_image</code></em> with the VA image used internally.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>va_image</code></em> :</span></p></td>
+<td>a VA image</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-get-format"></a><h3>gst_vaapi_image_get_format ()</h3>
+<pre class="programlisting"><a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="returnvalue">GstVaapiImageFormat</span></a> gst_vaapi_image_get_format          (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Returns the <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> the <em class="parameter"><code>image</code></em> was created with.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-get-width"></a><h3>gst_vaapi_image_get_width ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_image_get_width           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Returns the <em class="parameter"><code>image</code></em> width.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the image width, in pixels</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-get-height"></a><h3>gst_vaapi_image_get_height ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_image_get_height          (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Returns the <em class="parameter"><code>image</code></em> height.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the image height, in pixels.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-get-size"></a><h3>gst_vaapi_image_get_size ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_image_get_size            (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);</pre>
+<p>
+Retrieves the dimensions of a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pwidth</code></em> :</span></p></td>
+<td>return location for the width, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pheight</code></em> :</span></p></td>
+<td>return location for the height, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-is-linear"></a><h3>gst_vaapi_image_is_linear ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_image_is_linear           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Checks whether the <em class="parameter"><code>image</code></em> has data planes allocated from a single
+buffer and offsets into that buffer are in increasing order with
+the number of planes.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if image data planes are allocated from a single buffer</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-is-mapped"></a><h3>gst_vaapi_image_is_mapped ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_image_is_mapped           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Checks whether the <em class="parameter"><code>image</code></em> is currently mapped or not.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the <em class="parameter"><code>image</code></em> is mapped</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-map"></a><h3>gst_vaapi_image_map ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_image_map                 (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Maps the image data buffer. The actual pixels are returned by the
+<a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-plane" title="gst_vaapi_image_get_plane ()"><code class="function">gst_vaapi_image_get_plane()</code></a> function.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-unmap"></a><h3>gst_vaapi_image_unmap ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_image_unmap               (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Unmaps the image data buffer. Pointers to pixels returned by
+<a class="link" href="libs-gstvaapiimage.html#gst-vaapi-image-get-plane" title="gst_vaapi_image_get_plane ()"><code class="function">gst_vaapi_image_get_plane()</code></a> are then no longer valid.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-get-plane-count"></a><h3>gst_vaapi_image_get_plane_count ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_image_get_plane_count     (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Retrieves the number of planes available in the <em class="parameter"><code>image</code></em>. The <em class="parameter"><code>image</code></em>
+must be mapped for this function to work properly.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the number of planes available in the <em class="parameter"><code>image</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-get-plane"></a><h3>gst_vaapi_image_get_plane ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guchar"><span class="returnvalue">guchar</span></a> *            gst_vaapi_image_get_plane           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> plane</code></em>);</pre>
+<p>
+Retrieves the pixels data to the specified <em class="parameter"><code>plane</code></em>. The <em class="parameter"><code>image</code></em> must
+be mapped for this function to work properly.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>plane</code></em> :</span></p></td>
+<td>the requested plane number</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the pixels data of the specified <em class="parameter"><code>plane</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-get-pitch"></a><h3>gst_vaapi_image_get_pitch ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_image_get_pitch           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> plane</code></em>);</pre>
+<p>
+Retrieves the line size (stride) of the specified <em class="parameter"><code>plane</code></em>. The
+<em class="parameter"><code>image</code></em> must be mapped for this function to work properly.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>plane</code></em> :</span></p></td>
+<td>the requested plane number</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the line size (stride) of the specified plane</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-get-data-size"></a><h3>gst_vaapi_image_get_data_size ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_image_get_data_size       (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Retrieves the underlying image data size. This function could be
+used to determine whether the image has a compatible layout with
+another image structure.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the whole image data size of the <em class="parameter"><code>image</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-get-buffer"></a><h3>gst_vaapi_image_get_buffer ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_image_get_buffer          (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *rect</code></em>);</pre>
+<p>
+Transfers pixels data contained in the <em class="parameter"><code>image</code></em> into the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a>.
+Both image structures shall have the same format.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>rect</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> expressing a region, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> for the
+whole image</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-get-raw"></a><h3>gst_vaapi_image_get_raw ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_image_get_raw             (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiImageRaw</span> *dst_image</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *rect</code></em>);</pre>
+<p>
+Transfers pixels data contained in the <em class="parameter"><code>image</code></em> into the <span class="type">GstVaapiImageRaw</span>.
+Both image structures shall have the same format.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>dst_image</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiImageRaw</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>rect</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> expressing a region, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> for the
+whole image</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-image-update-from-buffer"></a><h3>gst_vaapi_image_update_from_buffer ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_image_update_from_buffer  (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> *rect</code></em>);</pre>
+<p>
+Transfers pixels data contained in the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> into the
+<em class="parameter"><code>image</code></em>. Both image structures shall have the same format.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>rect</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-Basic-data-structures.html#GstVaapiRectangle" title="struct GstVaapiRectangle"><span class="type">GstVaapiRectangle</span></a> expressing a region, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> for the
+whole image</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1">
+<a name="libs-gstvaapiimage.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiImage--format"></a><h3>The <code class="literal">"format"</code> property</h3>
+<pre class="programlisting">  "format"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>
+The <a class="link" href="libs-GstVaapiImageFormat.html#GstVaapiImageFormat" title="enum GstVaapiImageFormat"><span class="type">GstVaapiImageFormat</span></a> of the image
+</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiImage--height"></a><h3>The <code class="literal">"height"</code> property</h3>
+<pre class="programlisting">  "height"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The image height.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiImage--image"></a><h3>The <code class="literal">"image"</code> property</h3>
+<pre class="programlisting">  "image"                    <span class="type">VAImage</span>*              : Read / Write / Construct Only</pre>
+<p>The underlying VA image.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiImage--width"></a><h3>The <code class="literal">"width"</code> property</h3>
+<pre class="programlisting">  "width"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The image width.</p>
+<p>Default value: 0</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

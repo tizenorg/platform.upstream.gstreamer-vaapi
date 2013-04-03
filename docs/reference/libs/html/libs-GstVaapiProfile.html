@@ -1,0 +1,446 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiProfile</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="GstVaapiTexture.html" title="GstVaapiTexture">
+<link rel="next" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiTexture.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiVideoPool.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#libs-GstVaapiProfile.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#libs-GstVaapiProfile.description" class="shortcut">Description</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="libs-GstVaapiProfile"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libs-GstVaapiProfile.top_of_page"></a>GstVaapiProfile</span></h2>
+<p>GstVaapiProfile — VA profile abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="libs-GstVaapiProfile.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">enum                <a class="link" href="libs-GstVaapiProfile.html#GstVaapiCodec" title="enum GstVaapiCodec">GstVaapiCodec</a>;
+enum                <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile">GstVaapiProfile</a>;
+enum                <a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint">GstVaapiEntrypoint</a>;
+<a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="returnvalue">GstVaapiProfile</span></a>     <a class="link" href="libs-GstVaapiProfile.html#gst-vaapi-profile" title="gst_vaapi_profile ()">gst_vaapi_profile</a>                   (<em class="parameter"><code><span class="type">VAProfile</span> profile</code></em>);
+<a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="returnvalue">GstVaapiProfile</span></a>     <a class="link" href="libs-GstVaapiProfile.html#gst-vaapi-profile-from-caps" title="gst_vaapi_profile_from_caps ()">gst_vaapi_profile_from_caps</a>         (<em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);
+<span class="returnvalue">VAProfile</span>           <a class="link" href="libs-GstVaapiProfile.html#gst-vaapi-profile-get-va-profile" title="gst_vaapi_profile_get_va_profile ()">gst_vaapi_profile_get_va_profile</a>    (<em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="libs-GstVaapiProfile.html#gst-vaapi-profile-get-caps" title="gst_vaapi_profile_get_caps ()">gst_vaapi_profile_get_caps</a>          (<em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>);
+<a class="link" href="libs-GstVaapiProfile.html#GstVaapiCodec" title="enum GstVaapiCodec"><span class="returnvalue">GstVaapiCodec</span></a>       <a class="link" href="libs-GstVaapiProfile.html#gst-vaapi-profile-get-codec" title="gst_vaapi_profile_get_codec ()">gst_vaapi_profile_get_codec</a>         (<em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>);
+<a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="returnvalue">GstVaapiEntrypoint</span></a>  <a class="link" href="libs-GstVaapiProfile.html#gst-vaapi-entrypoint" title="gst_vaapi_entrypoint ()">gst_vaapi_entrypoint</a>                (<em class="parameter"><code><span class="type">VAEntrypoint</span> entrypoint</code></em>);
+<span class="returnvalue">VAEntrypoint</span>        <a class="link" href="libs-GstVaapiProfile.html#gst-vaapi-entrypoint-get-va-entrypoint" title="gst_vaapi_entrypoint_get_va_entrypoint ()">gst_vaapi_entrypoint_get_va_entrypoint</a>
+                                                        (<em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a> entrypoint</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-GstVaapiProfile.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="libs-GstVaapiProfile.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiCodec"></a><h3>enum GstVaapiCodec</h3>
+<pre class="programlisting">typedef enum {
+    GST_VAAPI_CODEC_MPEG1       = GST_MAKE_FOURCC('M','P','1',0),
+    GST_VAAPI_CODEC_MPEG2       = GST_MAKE_FOURCC('M','P','2',0),
+    GST_VAAPI_CODEC_MPEG4       = GST_MAKE_FOURCC('M','P','4',0),
+    GST_VAAPI_CODEC_H263        = GST_MAKE_FOURCC('2','6','3',0),
+    GST_VAAPI_CODEC_H264        = GST_MAKE_FOURCC('2','6','4',0),
+    GST_VAAPI_CODEC_WMV3        = GST_MAKE_FOURCC('W','M','V',0),
+    GST_VAAPI_CODEC_VC1         = GST_MAKE_FOURCC('V','C','1',0),
+    GST_VAAPI_CODEC_JPEG        = GST_MAKE_FOURCC('J','P','G',0),
+} GstVaapiCodec;
+</pre>
+<p>
+The set of all codecs for <a class="link" href="libs-GstVaapiProfile.html#GstVaapiCodec" title="enum GstVaapiCodec"><span class="type">GstVaapiCodec</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GST-VAAPI-CODEC-MPEG1:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_CODEC_MPEG1</code></span></p></td>
+<td>MPEG-1 (ISO/IEC 11172)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-CODEC-MPEG2:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_CODEC_MPEG2</code></span></p></td>
+<td>MPEG-2 (ISO/IEC 13818-2)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-CODEC-MPEG4:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_CODEC_MPEG4</code></span></p></td>
+<td>MPEG-4 Part 2 (ISO/IEC 14496-2)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-CODEC-H263:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_CODEC_H263</code></span></p></td>
+<td>H.263
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-CODEC-H264:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_CODEC_H264</code></span></p></td>
+<td>H.264 aka MPEG-4 Part 10 (ISO/IEC 14496-10)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-CODEC-WMV3:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_CODEC_WMV3</code></span></p></td>
+<td>Windows Media Video 9. VC-1 Simple or Main profile (SMPTE 421M)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-CODEC-VC1:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_CODEC_VC1</code></span></p></td>
+<td>VC-1 Advanced profile (SMPTE 421M)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-CODEC-JPEG:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_CODEC_JPEG</code></span></p></td>
+<td>JPEG (ITU-T 81)
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiProfile"></a><h3>enum GstVaapiProfile</h3>
+<pre class="programlisting">typedef enum {
+    GST_VAAPI_PROFILE_UNKNOWN               = 0,
+    GST_VAAPI_PROFILE_MPEG1                 = GST_VAAPI_MAKE_PROFILE(MPEG1,1),
+    GST_VAAPI_PROFILE_MPEG2_SIMPLE          = GST_VAAPI_MAKE_PROFILE(MPEG2,1),
+    GST_VAAPI_PROFILE_MPEG2_MAIN            = GST_VAAPI_MAKE_PROFILE(MPEG2,2),
+    GST_VAAPI_PROFILE_MPEG2_HIGH            = GST_VAAPI_MAKE_PROFILE(MPEG2,3),
+    GST_VAAPI_PROFILE_MPEG4_SIMPLE          = GST_VAAPI_MAKE_PROFILE(MPEG4,1),
+    GST_VAAPI_PROFILE_MPEG4_ADVANCED_SIMPLE = GST_VAAPI_MAKE_PROFILE(MPEG4,2),
+    GST_VAAPI_PROFILE_MPEG4_MAIN            = GST_VAAPI_MAKE_PROFILE(MPEG4,3),
+    GST_VAAPI_PROFILE_H263_BASELINE         = GST_VAAPI_MAKE_PROFILE(H263,1),
+    GST_VAAPI_PROFILE_H264_BASELINE         = GST_VAAPI_MAKE_PROFILE(H264,1),
+    GST_VAAPI_PROFILE_H264_MAIN             = GST_VAAPI_MAKE_PROFILE(H264,2),
+    GST_VAAPI_PROFILE_H264_HIGH             = GST_VAAPI_MAKE_PROFILE(H264,3),
+    GST_VAAPI_PROFILE_VC1_SIMPLE            = GST_VAAPI_MAKE_PROFILE(VC1,1),
+    GST_VAAPI_PROFILE_VC1_MAIN              = GST_VAAPI_MAKE_PROFILE(VC1,2),
+    GST_VAAPI_PROFILE_VC1_ADVANCED          = GST_VAAPI_MAKE_PROFILE(VC1,3),
+    GST_VAAPI_PROFILE_JPEG_BASELINE         = GST_VAAPI_MAKE_PROFILE(JPEG,1),
+} GstVaapiProfile;
+</pre>
+<p>
+The set of all profiles for <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-UNKNOWN:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_UNKNOWN</code></span></p></td>
+<td>  Unknown profile, used for initializers
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-MPEG1:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_MPEG1</code></span></p></td>
+<td>  MPEG-1
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-MPEG2-SIMPLE:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_MPEG2_SIMPLE</code></span></p></td>
+<td>  MPEG-2 simple profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-MPEG2-MAIN:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_MPEG2_MAIN</code></span></p></td>
+<td>  MPEG-2 main profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-MPEG2-HIGH:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_MPEG2_HIGH</code></span></p></td>
+<td>  MPEG-2 high profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-MPEG4-SIMPLE:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_MPEG4_SIMPLE</code></span></p></td>
+<td>  MPEG-4 Part-2 simple profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-MPEG4-ADVANCED-SIMPLE:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_MPEG4_ADVANCED_SIMPLE</code></span></p></td>
+<td>  MPEG-4 Part-2 advanced simple profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-MPEG4-MAIN:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_MPEG4_MAIN</code></span></p></td>
+<td>  MPEG-4 Part-2 main profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-H263-BASELINE:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_H263_BASELINE</code></span></p></td>
+<td>  H.263 baseline profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-H264-BASELINE:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_H264_BASELINE</code></span></p></td>
+<td>  H.264 (MPEG-4 Part-10) baseline profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-H264-MAIN:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_H264_MAIN</code></span></p></td>
+<td>  H.264 (MPEG-4 Part-10) main profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-H264-HIGH:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_H264_HIGH</code></span></p></td>
+<td>  H.264 (MPEG-4 Part-10) high profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-VC1-SIMPLE:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_VC1_SIMPLE</code></span></p></td>
+<td>  VC-1 simple profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-VC1-MAIN:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_VC1_MAIN</code></span></p></td>
+<td>  VC-1 main profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-VC1-ADVANCED:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_VC1_ADVANCED</code></span></p></td>
+<td>  VC-1 advanced profile
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-PROFILE-JPEG-BASELINE:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_PROFILE_JPEG_BASELINE</code></span></p></td>
+<td>  JPEG baseline profile
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiEntrypoint"></a><h3>enum GstVaapiEntrypoint</h3>
+<pre class="programlisting">typedef enum {
+    GST_VAAPI_ENTRYPOINT_VLD = 1,
+    GST_VAAPI_ENTRYPOINT_IDCT,
+    GST_VAAPI_ENTRYPOINT_MOCO,
+    GST_VAAPI_ENTRYPOINT_SLICE_ENCODE
+} GstVaapiEntrypoint;
+</pre>
+<p>
+The set of all entrypoints for <a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a>
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GST-VAAPI-ENTRYPOINT-VLD:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_ENTRYPOINT_VLD</code></span></p></td>
+<td>Variable Length Decoding
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-ENTRYPOINT-IDCT:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_ENTRYPOINT_IDCT</code></span></p></td>
+<td>Inverse Decrete Cosine Transform
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-ENTRYPOINT-MOCO:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_ENTRYPOINT_MOCO</code></span></p></td>
+<td>Motion Compensation
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VAAPI-ENTRYPOINT-SLICE-ENCODE:CAPS"></a><span class="term"><code class="literal">GST_VAAPI_ENTRYPOINT_SLICE_ENCODE</code></span></p></td>
+<td>Encode Slice
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-profile"></a><h3>gst_vaapi_profile ()</h3>
+<pre class="programlisting"><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="returnvalue">GstVaapiProfile</span></a>     gst_vaapi_profile                   (<em class="parameter"><code><span class="type">VAProfile</span> profile</code></em>);</pre>
+<p>
+Converts a VA profile into the corresponding <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a>. If
+the profile cannot be represented by <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a>, then zero is
+returned.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>profile</code></em> :</span></p></td>
+<td>a <span class="type">VAProfile</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> describing the <em class="parameter"><code>profile</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-profile-from-caps"></a><h3>gst_vaapi_profile_from_caps ()</h3>
+<pre class="programlisting"><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="returnvalue">GstVaapiProfile</span></a>     gst_vaapi_profile_from_caps         (<em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);</pre>
+<p>
+Converts <em class="parameter"><code>caps</code></em> into the corresponding <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a>. If the
+profile cannot be represented by <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a>, then zero is
+returned.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>caps</code></em> :</span></p></td>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> describing the <em class="parameter"><code>caps</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-profile-get-va-profile"></a><h3>gst_vaapi_profile_get_va_profile ()</h3>
+<pre class="programlisting"><span class="returnvalue">VAProfile</span>           gst_vaapi_profile_get_va_profile    (<em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>);</pre>
+<p>
+Converts a <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> into the corresponding VA profile. If
+no matching VA profile was found, -1 is returned and this error
+must be reported to be fixed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>profile</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the VA profile, or -1 if none was found</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-profile-get-caps"></a><h3>gst_vaapi_profile_get_caps ()</h3>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_vaapi_profile_get_caps          (<em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>);</pre>
+<p>
+Converts a <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> into the corresponding <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>. If no
+matching caps were found, <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> is returned.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>profile</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if none was found</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-profile-get-codec"></a><h3>gst_vaapi_profile_get_codec ()</h3>
+<pre class="programlisting"><a class="link" href="libs-GstVaapiProfile.html#GstVaapiCodec" title="enum GstVaapiCodec"><span class="returnvalue">GstVaapiCodec</span></a>       gst_vaapi_profile_get_codec         (<em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>);</pre>
+<p>
+Extracts the <a class="link" href="libs-GstVaapiProfile.html#GstVaapiCodec" title="enum GstVaapiCodec"><span class="type">GstVaapiCodec</span></a> from <em class="parameter"><code>profile</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>profile</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-GstVaapiProfile.html#GstVaapiCodec" title="enum GstVaapiCodec"><span class="type">GstVaapiCodec</span></a> from <em class="parameter"><code>profile</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-entrypoint"></a><h3>gst_vaapi_entrypoint ()</h3>
+<pre class="programlisting"><a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="returnvalue">GstVaapiEntrypoint</span></a>  gst_vaapi_entrypoint                (<em class="parameter"><code><span class="type">VAEntrypoint</span> entrypoint</code></em>);</pre>
+<p>
+Converts a VA entry-point into the corresponding <a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a>.
+If the entry-point cannot be represented by <a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a>,
+then zero is returned.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>entrypoint</code></em> :</span></p></td>
+<td>a <span class="type">VAEntrypoint</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a> describing the <em class="parameter"><code>entrypoint</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-entrypoint-get-va-entrypoint"></a><h3>gst_vaapi_entrypoint_get_va_entrypoint ()</h3>
+<pre class="programlisting"><span class="returnvalue">VAEntrypoint</span>        gst_vaapi_entrypoint_get_va_entrypoint
+                                                        (<em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a> entrypoint</code></em>);</pre>
+<p>
+Converts a <a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a> into the corresponding VA
+entry-point. If no matching VA entry-point was found, -1 is
+returned and this error must be reported to be fixed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>entrypoint</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the VA entry-point, or -1 if none was found</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiObject
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiObject ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SIGNAL GstVaapiObject::destroy ##### -->
+<para>
+
+</para>
+
+@gstvaapiobject: the object which received the signal.
+
+<!-- ##### ARG GstVaapiObject:display ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiObject:id ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GstVaapiObjectClass ##### -->
+<para>
+
+</para>
+
+@destroy: 
+
+<!-- ##### FUNCTION gst_vaapi_object_get_display ##### -->
+<para>
+
+</para>
+
+@object: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_object_lock_display ##### -->
+<para>
+
+</para>
+
+@object: 
+
+
+<!-- ##### FUNCTION gst_vaapi_object_unlock_display ##### -->
+<para>
+
+</para>
+
+@object: 
+
+
+<!-- ##### FUNCTION gst_vaapi_object_get_id ##### -->
+<para>
+
+</para>
+
+@object: 
+@Returns: 
+
+

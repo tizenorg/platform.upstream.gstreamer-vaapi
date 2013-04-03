@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiPostproc</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Plugins Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Plugins">
+<link rel="prev" href="GstVaapiDecode.html" title="GstVaapiDecode">
+<link rel="next" href="GstVaapiDownload.html" title="GstVaapiDownload">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiDecode.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Plugins Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiDownload.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiPostproc.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiPostproc.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiPostproc.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GstVaapiPostproc.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
+                   | 
+                  <a href="#GstVaapiPostproc.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiPostproc"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiPostproc.top_of_page"></a>GstVaapiPostproc</span></h2>
+<p>GstVaapiPostproc — A video postprocessing filter</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiPostproc.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiPostproc.html#GstVaapiPostproc-struct" title="struct GstVaapiPostproc">GstVaapiPostproc</a>;
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiPostproc.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----GstVaapiPostproc
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiPostproc.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
+<p>
+GstVaapiPostproc implements
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstImplementsInterface.html">GstImplementsInterface</a> and  GstVideoContext.</p>
+</div>
+<div class="refsect1">
+<a name="GstVaapiPostproc.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GstVaapiPostproc.html#GstVaapiPostproc--deinterlace" title='The "deinterlace" property'>deinterlace</a>"              <span class="type">GstVaapiDeinterlaceMode</span>  : Read / Write
+  "<a class="link" href="GstVaapiPostproc.html#GstVaapiPostproc--deinterlace-method" title='The "deinterlace-method" property'>deinterlace-method</a>"       <span class="type">GstVaapiDeinterlaceMethod</span>  : Read / Write
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiPostproc.description"></a><h2>Description</h2>
+<p>
+vaapipostproc consists in various postprocessing algorithms to be
+applied to VA surfaces. So far, only basic bob deinterlacing is
+implemented.
+</p>
+</div>
+<div class="refsect1">
+<a name="GstVaapiPostproc.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiPostproc-struct"></a><h3>struct GstVaapiPostproc</h3>
+<pre class="programlisting">struct GstVaapiPostproc;</pre>
+<p>
+</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="GstVaapiPostproc.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiPostproc--deinterlace"></a><h3>The <code class="literal">"deinterlace"</code> property</h3>
+<pre class="programlisting">  "deinterlace"              <span class="type">GstVaapiDeinterlaceMode</span>  : Read / Write</pre>
+<p>Deinterlace mode to use.</p>
+<p>Default value: Auto detection</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiPostproc--deinterlace-method"></a><h3>The <code class="literal">"deinterlace-method"</code> property</h3>
+<pre class="programlisting">  "deinterlace-method"       <span class="type">GstVaapiDeinterlaceMethod</span>  : Read / Write</pre>
+<p>
+This selects the deinterlacing method to apply.
+</p>
+<p>Default value: Bob deinterlacing</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

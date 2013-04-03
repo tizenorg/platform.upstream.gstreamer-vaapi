@@ -1,0 +1,146 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiVideoPool
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiVideoPool ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiVideoPool:capacity ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiVideoPool:caps ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiVideoPool:display ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GstVaapiVideoPoolClass ##### -->
+<para>
+
+</para>
+
+@set_caps: 
+@alloc_object: 
+
+<!-- ##### FUNCTION gst_vaapi_video_pool_get_display ##### -->
+<para>
+
+</para>
+
+@pool: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_pool_get_caps ##### -->
+<para>
+
+</para>
+
+@pool: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_pool_get_object ##### -->
+<para>
+
+</para>
+
+@pool: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_pool_put_object ##### -->
+<para>
+
+</para>
+
+@pool: 
+@object: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_pool_add_object ##### -->
+<para>
+
+</para>
+
+@pool: 
+@object: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_pool_add_objects ##### -->
+<para>
+
+</para>
+
+@pool: 
+@objects: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_pool_get_capacity ##### -->
+<para>
+
+</para>
+
+@pool: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_pool_set_capacity ##### -->
+<para>
+
+</para>
+
+@pool: 
+@capacity: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_pool_get_size ##### -->
+<para>
+
+</para>
+
+@pool: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_pool_reserve ##### -->
+<para>
+
+</para>
+
+@pool: 
+@n: 
+@Returns: 
+
+

@@ -1,0 +1,403 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiVideoPool</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="libs-GstVaapiProfile.html" title="GstVaapiProfile">
+<link rel="next" href="GstVaapiSurfacePool.html" title="GstVaapiSurfacePool">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="libs-GstVaapiProfile.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiSurfacePool.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiVideoPool.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiVideoPool.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiVideoPool.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GstVaapiVideoPool.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiVideoPool"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiVideoPool.top_of_page"></a>GstVaapiVideoPool</span></h2>
+<p>GstVaapiVideoPool — Video object pool abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiVideoPool.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiVideoPool.html#GstVaapiVideoPool-struct" title="struct GstVaapiVideoPool">GstVaapiVideoPool</a>;
+struct              <a class="link" href="GstVaapiVideoPool.html#GstVaapiVideoPoolClass" title="struct GstVaapiVideoPoolClass">GstVaapiVideoPoolClass</a>;
+<a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-get-display" title="gst_vaapi_video_pool_get_display ()">gst_vaapi_video_pool_get_display</a>    (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-get-caps" title="gst_vaapi_video_pool_get_caps ()">gst_vaapi_video_pool_get_caps</a>       (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>            <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-get-object" title="gst_vaapi_video_pool_get_object ()">gst_vaapi_video_pool_get_object</a>     (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-put-object" title="gst_vaapi_video_pool_put_object ()">gst_vaapi_video_pool_put_object</a>     (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> object</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-add-object" title="gst_vaapi_video_pool_add_object ()">gst_vaapi_video_pool_add_object</a>     (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> object</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-add-objects" title="gst_vaapi_video_pool_add_objects ()">gst_vaapi_video_pool_add_objects</a>    (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Pointer-Arrays.html#GPtrArray"><span class="type">GPtrArray</span></a> *objects</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-get-capacity" title="gst_vaapi_video_pool_get_capacity ()">gst_vaapi_video_pool_get_capacity</a>   (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-set-capacity" title="gst_vaapi_video_pool_set_capacity ()">gst_vaapi_video_pool_set_capacity</a>   (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> capacity</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-get-size" title="gst_vaapi_video_pool_get_size ()">gst_vaapi_video_pool_get_size</a>       (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-reserve" title="gst_vaapi_video_pool_reserve ()">gst_vaapi_video_pool_reserve</a>        (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> n</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiVideoPool.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----GstVaapiVideoPool
+         +----<a class="link" href="GstVaapiImagePool.html" title="GstVaapiImagePool">GstVaapiImagePool</a>
+         +----<a class="link" href="GstVaapiSurfacePool.html" title="GstVaapiSurfacePool">GstVaapiSurfacePool</a>
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiVideoPool.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GstVaapiVideoPool.html#GstVaapiVideoPool--capacity" title='The "capacity" property'>capacity</a>"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="GstVaapiVideoPool.html#GstVaapiVideoPool--caps" title='The "caps" property'>caps</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiVideoPool.html#GstVaapiVideoPool--display" title='The "display" property'>display</a>"                  <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>*      : Read / Write / Construct Only
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiVideoPool.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="GstVaapiVideoPool.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiVideoPool-struct"></a><h3>struct GstVaapiVideoPool</h3>
+<pre class="programlisting">struct GstVaapiVideoPool;</pre>
+<p>
+A pool of lazily allocated video objects. e.g. surfaces, images.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiVideoPoolClass"></a><h3>struct GstVaapiVideoPoolClass</h3>
+<pre class="programlisting">struct GstVaapiVideoPoolClass {
+    void     (*set_caps)    (GstVaapiVideoPool *pool, GstCaps *caps);
+    gpointer (*alloc_object)(GstVaapiVideoPool *pool, GstVaapiDisplay *display);
+};
+</pre>
+<p>
+A pool base class used to hold video objects. e.g. surfaces, images.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiVideoPoolClass.set-caps"></a>set_caps</code></em> ()</span></p></td>
+<td>virtual function for notifying the subclass of the
+negotiated caps</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="structfield"><code><a name="GstVaapiVideoPoolClass.alloc-object"></a>alloc_object</code></em> ()</span></p></td>
+<td>virtual function for allocating a video pool object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-pool-get-display"></a><h3>gst_vaapi_video_pool_get_display ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   gst_vaapi_video_pool_get_display    (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);</pre>
+<p>
+Retrieves the <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> the <em class="parameter"><code>pool</code></em> is bound to. The <em class="parameter"><code>pool</code></em>
+owns the returned object and it shall not be unref'ed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> the <em class="parameter"><code>pool</code></em> is bound to</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-pool-get-caps"></a><h3>gst_vaapi_video_pool_get_caps ()</h3>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_vaapi_video_pool_get_caps       (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);</pre>
+<p>
+Retrieves the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> the <em class="parameter"><code>pool</code></em> was created with. The <em class="parameter"><code>pool</code></em> owns
+the returned object and it shall not be unref'ed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> the <em class="parameter"><code>pool</code></em> was created with</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-pool-get-object"></a><h3>gst_vaapi_video_pool_get_object ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>            gst_vaapi_video_pool_get_object     (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);</pre>
+<p>
+Retrieves a new object from the <em class="parameter"><code>pool</code></em>, or allocates a new one if
+none was found. The <em class="parameter"><code>pool</code></em> holds a reference on the returned object
+and thus shall be released through <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-put-object" title="gst_vaapi_video_pool_put_object ()"><code class="function">gst_vaapi_video_pool_put_object()</code></a>
+when it's no longer needed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a possibly newly allocated object, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-pool-put-object"></a><h3>gst_vaapi_video_pool_put_object ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_video_pool_put_object     (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> object</code></em>);</pre>
+<p>
+Pushes the <em class="parameter"><code>object</code></em> back into the pool. The <em class="parameter"><code>object</code></em> shall be
+obtained from the <em class="parameter"><code>pool</code></em> through <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-get-object" title="gst_vaapi_video_pool_get_object ()"><code class="function">gst_vaapi_video_pool_get_object()</code></a>.
+Calling this function with an arbitrary object yields undefined
+behaviour.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>object</code></em> :</span></p></td>
+<td>the object to add back to the pool</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-pool-add-object"></a><h3>gst_vaapi_video_pool_add_object ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_video_pool_add_object     (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> object</code></em>);</pre>
+<p>
+Adds the <em class="parameter"><code>object</code></em> to the pool. The pool then holds a reference on
+the <em class="parameter"><code>object</code></em>. This operation does not change the capacity of the
+pool.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>object</code></em> :</span></p></td>
+<td>the object to add to the pool</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-pool-add-objects"></a><h3>gst_vaapi_video_pool_add_objects ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_video_pool_add_objects    (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Pointer-Arrays.html#GPtrArray"><span class="type">GPtrArray</span></a> *objects</code></em>);</pre>
+<p>
+Adds the <em class="parameter"><code>objects</code></em> to the pool. The pool then holds a reference on
+the <em class="parameter"><code>objects</code></em>. This operation does not change the capacity of the
+pool and is just a wrapper around <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-add-object" title="gst_vaapi_video_pool_add_object ()"><code class="function">gst_vaapi_video_pool_add_object()</code></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>objects</code></em> :</span></p></td>
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Pointer-Arrays.html#GPtrArray"><span class="type">GPtrArray</span></a> of objects</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-pool-get-capacity"></a><h3>gst_vaapi_video_pool_get_capacity ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_video_pool_get_capacity   (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);</pre>
+<p>
+Returns the maximum number of objects in the pool. i.e. the maximum
+number of objects that can be returned by <a class="link" href="GstVaapiVideoPool.html#gst-vaapi-video-pool-get-object" title="gst_vaapi_video_pool_get_object ()"><code class="function">gst_vaapi_video_pool_get_object()</code></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the capacity of the pool</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-pool-set-capacity"></a><h3>gst_vaapi_video_pool_set_capacity ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_video_pool_set_capacity   (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> capacity</code></em>);</pre>
+<p>
+Sets the maximum number of objects that can be allocated in the pool.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>capacity</code></em> :</span></p></td>
+<td>the maximal capacity of the pool</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-pool-get-size"></a><h3>gst_vaapi_video_pool_get_size ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_video_pool_get_size       (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);</pre>
+<p>
+Returns the number of free objects available in the pool.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>number of free objects in the pool</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-pool-reserve"></a><h3>gst_vaapi_video_pool_reserve ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_video_pool_reserve        (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> n</code></em>);</pre>
+<p>
+Pre-allocates up to <em class="parameter"><code>n</code></em> objects in the pool. If <em class="parameter"><code>n</code></em> is less than or
+equal to the number of free and used objects in the pool, this call
+has no effect. Otherwise, it is a request for allocation of
+additional objects.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>n</code></em> :</span></p></td>
+<td>the number of objects to pre-allocate</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1">
+<a name="GstVaapiVideoPool.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiVideoPool--capacity"></a><h3>The <code class="literal">"capacity"</code> property</h3>
+<pre class="programlisting">  "capacity"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<p>The maximum number of objects in the pool.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiVideoPool--caps"></a><h3>The <code class="literal">"caps"</code> property</h3>
+<pre class="programlisting">  "caps"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write / Construct Only</pre>
+<p>The video object capabilities.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiVideoPool--display"></a><h3>The <code class="literal">"display"</code> property</h3>
+<pre class="programlisting">  "display"                  <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>*      : Read / Write / Construct Only</pre>
+<p>
+The <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> this pool is bound to.
+</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

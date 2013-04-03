@@ -1,0 +1,46 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiSurfacePool
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiSurfacePool ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GstVaapiSurfacePoolClass ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_pool_new ##### -->
+<para>
+
+</para>
+
+@display: 
+@caps: 
+@Returns: 
+
+

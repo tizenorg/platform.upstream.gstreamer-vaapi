@@ -1,0 +1,513 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiContext</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="GstVaapiImagePool.html" title="GstVaapiImagePool">
+<link rel="next" href="libs-gstvaapidecoder.html" title="GstVaapiDecoder">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiImagePool.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="libs-gstvaapidecoder.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiContext.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiContext.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiContext.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GstVaapiContext.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiContext"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiContext.top_of_page"></a>GstVaapiContext</span></h2>
+<p>GstVaapiContext — VA context abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiContext.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiContext.html#GstVaapiContext-struct" title="struct GstVaapiContext">GstVaapiContext</a>;
+struct              <a class="link" href="GstVaapiContext.html#GstVaapiContextClass" title="struct GstVaapiContextClass">GstVaapiContextClass</a>;
+<a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="returnvalue">GstVaapiContext</span></a> *   <a class="link" href="GstVaapiContext.html#gst-vaapi-context-new" title="gst_vaapi_context_new ()">gst_vaapi_context_new</a>               (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a> entrypoint</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiContext.html#gst-vaapi-context-reset" title="gst_vaapi_context_reset ()">gst_vaapi_context_reset</a>             (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a> entrypoint</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);
+<a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="returnvalue">GstVaapiID</span></a>          <a class="link" href="GstVaapiContext.html#gst-vaapi-context-get-id" title="gst_vaapi_context_get_id ()">gst_vaapi_context_get_id</a>            (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);
+<a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="returnvalue">GstVaapiProfile</span></a>     <a class="link" href="GstVaapiContext.html#gst-vaapi-context-get-profile" title="gst_vaapi_context_get_profile ()">gst_vaapi_context_get_profile</a>       (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiContext.html#gst-vaapi-context-set-profile" title="gst_vaapi_context_set_profile ()">gst_vaapi_context_set_profile</a>       (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>);
+<a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="returnvalue">GstVaapiEntrypoint</span></a>  <a class="link" href="GstVaapiContext.html#gst-vaapi-context-get-entrypoint" title="gst_vaapi_context_get_entrypoint ()">gst_vaapi_context_get_entrypoint</a>    (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiContext.html#gst-vaapi-context-get-size" title="gst_vaapi_context_get_size ()">gst_vaapi_context_get_size</a>          (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);
+<a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="returnvalue">GstVaapiSurface</span></a> *   <a class="link" href="GstVaapiContext.html#gst-vaapi-context-get-surface" title="gst_vaapi_context_get_surface ()">gst_vaapi_context_get_surface</a>       (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstVaapiContext.html#gst-vaapi-context-get-surface-count" title="gst_vaapi_context_get_surface_count ()">gst_vaapi_context_get_surface_count</a> (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiContext.html#gst-vaapi-context-put-surface" title="gst_vaapi_context_put_surface ()">gst_vaapi_context_put_surface</a>       (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);
+<a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="returnvalue">GstVaapiSurface</span></a> *   <a class="link" href="GstVaapiContext.html#gst-vaapi-context-find-surface-by-id" title="gst_vaapi_context_find_surface_by_id ()">gst_vaapi_context_find_surface_by_id</a>
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> id</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiContext.html#gst-vaapi-context-apply-composition" title="gst_vaapi_context_apply_composition ()">gst_vaapi_context_apply_composition</a> (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoOverlayComposition</span> *composition</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiContext.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a class="link" href="GstVaapiObject.html" title="GstVaapiObject">GstVaapiObject</a>
+         +----GstVaapiContext
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiContext.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GstVaapiContext.html#GstVaapiContext--entrypoint" title='The "entrypoint" property'>entrypoint</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiContext.html#GstVaapiContext--height" title='The "height" property'>height</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiContext.html#GstVaapiContext--profile" title='The "profile" property'>profile</a>"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="GstVaapiContext.html#GstVaapiContext--ref-frames" title='The "ref-frames" property'>ref-frames</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiContext.html#GstVaapiContext--width" title='The "width" property'>width</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiContext.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="GstVaapiContext.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiContext-struct"></a><h3>struct GstVaapiContext</h3>
+<pre class="programlisting">struct GstVaapiContext;</pre>
+<p>
+A VA context wrapper.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiContextClass"></a><h3>struct GstVaapiContextClass</h3>
+<pre class="programlisting">struct GstVaapiContextClass {
+};
+</pre>
+<p>
+A VA context wrapper class.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-context-new"></a><h3>gst_vaapi_context_new ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="returnvalue">GstVaapiContext</span></a> *   gst_vaapi_context_new               (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a> entrypoint</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);</pre>
+<p>
+Creates a new <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> with the specified codec <em class="parameter"><code>profile</code></em>
+and <em class="parameter"><code>entrypoint</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>profile</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>entrypoint</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>width</code></em> :</span></p></td>
+<td>coded width from the bitstream</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>height</code></em> :</span></p></td>
+<td>coded height from the bitstream</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-context-reset"></a><h3>gst_vaapi_context_reset ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_context_reset             (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a> entrypoint</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);</pre>
+<p>
+Resets <em class="parameter"><code>context</code></em> to the specified codec <em class="parameter"><code>profile</code></em> and <em class="parameter"><code>entrypoint</code></em>.
+The surfaces will be reallocated if the coded size changed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>profile</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>entrypoint</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="type">GstVaapiEntrypoint</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>width</code></em> :</span></p></td>
+<td>coded width from the bitstream</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>height</code></em> :</span></p></td>
+<td>coded height from the bitstream</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-context-get-id"></a><h3>gst_vaapi_context_get_id ()</h3>
+<pre class="programlisting"><a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="returnvalue">GstVaapiID</span></a>          gst_vaapi_context_get_id            (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);</pre>
+<p>
+Returns the underlying VAContextID of the <em class="parameter"><code>context</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the underlying VA context id</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-context-get-profile"></a><h3>gst_vaapi_context_get_profile ()</h3>
+<pre class="programlisting"><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="returnvalue">GstVaapiProfile</span></a>     gst_vaapi_context_get_profile       (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);</pre>
+<p>
+Returns the VA profile used by the <em class="parameter"><code>context</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the VA profile used by the <em class="parameter"><code>context</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-context-set-profile"></a><h3>gst_vaapi_context_set_profile ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_context_set_profile       (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> profile</code></em>);</pre>
+<p>
+Sets the new <em class="parameter"><code>profile</code></em> to use with the <em class="parameter"><code>context</code></em>. If <em class="parameter"><code>profile</code></em> matches
+the previous profile, this call has no effect. Otherwise, the
+underlying VA context is recreated, while keeping the previously
+allocated surfaces.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>profile</code></em> :</span></p></td>
+<td>the new <a class="link" href="libs-GstVaapiProfile.html#GstVaapiProfile" title="enum GstVaapiProfile"><span class="type">GstVaapiProfile</span></a> to use</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-context-get-entrypoint"></a><h3>gst_vaapi_context_get_entrypoint ()</h3>
+<pre class="programlisting"><a class="link" href="libs-GstVaapiProfile.html#GstVaapiEntrypoint" title="enum GstVaapiEntrypoint"><span class="returnvalue">GstVaapiEntrypoint</span></a>  gst_vaapi_context_get_entrypoint    (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);</pre>
+<p>
+Returns the VA entrypoint used by the <em class="parameter"><code>context</code></em>
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the VA entrypoint used by the <em class="parameter"><code>context</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-context-get-size"></a><h3>gst_vaapi_context_get_size ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_context_get_size          (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);</pre>
+<p>
+Retrieves the size of the surfaces attached to <em class="parameter"><code>context</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pwidth</code></em> :</span></p></td>
+<td>return location for the width, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pheight</code></em> :</span></p></td>
+<td>return location for the height, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-context-get-surface"></a><h3>gst_vaapi_context_get_surface ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="returnvalue">GstVaapiSurface</span></a> *   gst_vaapi_context_get_surface       (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);</pre>
+<p>
+Acquires a free surface. The returned surface but be released with
+<a class="link" href="GstVaapiContext.html#gst-vaapi-context-put-surface" title="gst_vaapi_context_put_surface ()"><code class="function">gst_vaapi_context_put_surface()</code></a>. This function returns <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if
+there is no free surface available in the pool. The surfaces are
+pre-allocated during context creation though.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a free surface, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if none is available</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-context-get-surface-count"></a><h3>gst_vaapi_context_get_surface_count ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_context_get_surface_count (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);</pre>
+<p>
+Retrieves the number of free surfaces left in the pool.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the number of free surfaces available in the pool</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-context-put-surface"></a><h3>gst_vaapi_context_put_surface ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_context_put_surface       (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);</pre>
+<p>
+Releases a surface acquired by <a class="link" href="GstVaapiContext.html#gst-vaapi-context-get-surface" title="gst_vaapi_context_get_surface ()"><code class="function">gst_vaapi_context_get_surface()</code></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>the <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> to release</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-context-find-surface-by-id"></a><h3>gst_vaapi_context_find_surface_by_id ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="returnvalue">GstVaapiSurface</span></a> *   gst_vaapi_context_find_surface_by_id
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> id</code></em>);</pre>
+<p>
+Finds VA surface by <em class="parameter"><code>id</code></em> in the list of surfaces attached to the <em class="parameter"><code>context</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>id</code></em> :</span></p></td>
+<td>the VA surface id to find</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the matching <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> object, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if
+none was found</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-context-apply-composition"></a><h3>gst_vaapi_context_apply_composition ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_context_apply_composition (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoOverlayComposition</span> *composition</code></em>);</pre>
+<p>
+Applies video composition planes to all surfaces bound to <em class="parameter"><code>context</code></em>.
+This helper function resets any additional subpictures the user may
+have associated himself. A <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> <em class="parameter"><code>composition</code></em> will also clear all
+the existing subpictures.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>composition</code></em> :</span></p></td>
+<td>a <span class="type">GstVideoOverlayComposition</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if all composition planes could be applied,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1">
+<a name="GstVaapiContext.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiContext--entrypoint"></a><h3>The <code class="literal">"entrypoint"</code> property</h3>
+<pre class="programlisting">  "entrypoint"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The decoder entrypoint.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiContext--height"></a><h3>The <code class="literal">"height"</code> property</h3>
+<pre class="programlisting">  "height"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The height of the decoded surfaces.</p>
+<p>Allowed values: &lt;= G_MAXLONG</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiContext--profile"></a><h3>The <code class="literal">"profile"</code> property</h3>
+<pre class="programlisting">  "profile"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<p>The profile used for decoding.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiContext--ref-frames"></a><h3>The <code class="literal">"ref-frames"</code> property</h3>
+<pre class="programlisting">  "ref-frames"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The number of reference frames.</p>
+<p>Allowed values: &lt;= G_MAXLONG</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiContext--width"></a><h3>The <code class="literal">"width"</code> property</h3>
+<pre class="programlisting">  "width"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>The width of decoded surfaces.</p>
+<p>Allowed values: &lt;= G_MAXLONG</p>
+<p>Default value: 0</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

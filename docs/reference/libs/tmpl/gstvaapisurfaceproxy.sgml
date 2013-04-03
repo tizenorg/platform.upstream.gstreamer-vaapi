@@ -1,0 +1,124 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiSurfaceProxy
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_proxy_get_context ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_proxy_get_surface ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_proxy_get_surface_id ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_proxy_get_user_data ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_proxy_new ##### -->
+<para>
+
+</para>
+
+@context: 
+@surface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_proxy_ref ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_proxy_replace ##### -->
+<para>
+
+</para>
+
+@old_proxy_ptr: 
+@new_proxy: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_proxy_set_context ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@context: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_proxy_set_surface ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@surface: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_proxy_set_user_data ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@user_data: 
+@destroy_notify: 
+
+
+<!-- ##### FUNCTION gst_vaapi_surface_proxy_unref ##### -->
+<para>
+
+</para>
+
+@proxy: 
+
+

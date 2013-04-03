@@ -1,0 +1,133 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiProfile
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### ENUM GstVaapiCodec ##### -->
+<para>
+
+</para>
+
+@GST_VAAPI_CODEC_MPEG1: 
+@GST_VAAPI_CODEC_MPEG2: 
+@GST_VAAPI_CODEC_MPEG4: 
+@GST_VAAPI_CODEC_H263: 
+@GST_VAAPI_CODEC_H264: 
+@GST_VAAPI_CODEC_WMV3: 
+@GST_VAAPI_CODEC_VC1: 
+@GST_VAAPI_CODEC_JPEG: 
+
+<!-- ##### ENUM GstVaapiProfile ##### -->
+<para>
+
+</para>
+
+@GST_VAAPI_PROFILE_UNKNOWN: 
+@GST_VAAPI_PROFILE_MPEG1: 
+@GST_VAAPI_PROFILE_MPEG2_SIMPLE: 
+@GST_VAAPI_PROFILE_MPEG2_MAIN: 
+@GST_VAAPI_PROFILE_MPEG2_HIGH: 
+@GST_VAAPI_PROFILE_MPEG4_SIMPLE: 
+@GST_VAAPI_PROFILE_MPEG4_ADVANCED_SIMPLE: 
+@GST_VAAPI_PROFILE_MPEG4_MAIN: 
+@GST_VAAPI_PROFILE_H263_BASELINE: 
+@GST_VAAPI_PROFILE_H264_BASELINE: 
+@GST_VAAPI_PROFILE_H264_MAIN: 
+@GST_VAAPI_PROFILE_H264_HIGH: 
+@GST_VAAPI_PROFILE_VC1_SIMPLE: 
+@GST_VAAPI_PROFILE_VC1_MAIN: 
+@GST_VAAPI_PROFILE_VC1_ADVANCED: 
+@GST_VAAPI_PROFILE_JPEG_BASELINE: 
+
+<!-- ##### ENUM GstVaapiEntrypoint ##### -->
+<para>
+
+</para>
+
+@GST_VAAPI_ENTRYPOINT_VLD: 
+@GST_VAAPI_ENTRYPOINT_IDCT: 
+@GST_VAAPI_ENTRYPOINT_MOCO: 
+@GST_VAAPI_ENTRYPOINT_SLICE_ENCODE: 
+
+<!-- ##### FUNCTION gst_vaapi_profile ##### -->
+<para>
+
+</para>
+
+@profile: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_profile_from_caps ##### -->
+<para>
+
+</para>
+
+@caps: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_profile_get_va_profile ##### -->
+<para>
+
+</para>
+
+@profile: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_profile_get_caps ##### -->
+<para>
+
+</para>
+
+@profile: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_profile_get_codec ##### -->
+<para>
+
+</para>
+
+@profile: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_entrypoint ##### -->
+<para>
+
+</para>
+
+@entrypoint: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_entrypoint_get_va_entrypoint ##### -->
+<para>
+
+</para>
+
+@entrypoint: 
+@Returns: 
+
+

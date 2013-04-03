@@ -1,0 +1,46 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiDecoderH264
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiDecoderH264 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GstVaapiDecoderH264Class ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_decoder_h264_new ##### -->
+<para>
+
+</para>
+
+@display: 
+@caps: 
+@Returns: 
+
+

@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiWindowX11</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="GstVaapiWindow.html" title="GstVaapiWindow">
+<link rel="next" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiWindow.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiWindowGLX.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiWindowX11.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiWindowX11.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiWindowX11.object-hierarchy" class="shortcut">Object Hierarchy</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiWindowX11"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiWindowX11.top_of_page"></a>GstVaapiWindowX11</span></h2>
+<p>GstVaapiWindowX11 — VA/X11 window abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiWindowX11.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiWindowX11.html#GstVaapiWindowX11-struct" title="struct GstVaapiWindowX11">GstVaapiWindowX11</a>;
+struct              <a class="link" href="GstVaapiWindowX11.html#GstVaapiWindowX11Class" title="struct GstVaapiWindowX11Class">GstVaapiWindowX11Class</a>;
+#define             <a class="link" href="GstVaapiWindowX11.html#GST-VAAPI-WINDOW-XWINDOW:CAPS" title="GST_VAAPI_WINDOW_XWINDOW()">GST_VAAPI_WINDOW_XWINDOW</a>            (window)
+<a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="returnvalue">GstVaapiWindow</span></a> *    <a class="link" href="GstVaapiWindowX11.html#gst-vaapi-window-x11-new" title="gst_vaapi_window_x11_new ()">gst_vaapi_window_x11_new</a>            (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);
+<a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="returnvalue">GstVaapiWindow</span></a> *    <a class="link" href="GstVaapiWindowX11.html#gst-vaapi-window-x11-new-with-xid" title="gst_vaapi_window_x11_new_with_xid ()">gst_vaapi_window_x11_new_with_xid</a>   (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">Window</span> xid</code></em>);
+<span class="returnvalue">Window</span>              <a class="link" href="GstVaapiWindowX11.html#gst-vaapi-window-x11-get-xid" title="gst_vaapi_window_x11_get_xid ()">gst_vaapi_window_x11_get_xid</a>        (<em class="parameter"><code><a class="link" href="GstVaapiWindowX11.html" title="GstVaapiWindowX11"><span class="type">GstVaapiWindowX11</span></a> *window</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiWindowX11.html#gst-vaapi-window-x11-is-foreign-xid" title="gst_vaapi_window_x11_is_foreign_xid ()">gst_vaapi_window_x11_is_foreign_xid</a> (<em class="parameter"><code><a class="link" href="GstVaapiWindowX11.html" title="GstVaapiWindowX11"><span class="type">GstVaapiWindowX11</span></a> *window</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindowX11.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a class="link" href="GstVaapiObject.html" title="GstVaapiObject">GstVaapiObject</a>
+         +----<a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow">GstVaapiWindow</a>
+               +----GstVaapiWindowX11
+                     +----<a class="link" href="GstVaapiWindowGLX.html" title="GstVaapiWindowGLX">GstVaapiWindowGLX</a>
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindowX11.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="GstVaapiWindowX11.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiWindowX11-struct"></a><h3>struct GstVaapiWindowX11</h3>
+<pre class="programlisting">struct GstVaapiWindowX11;</pre>
+<p>
+An X11 <span class="type">Window</span> wrapper.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiWindowX11Class"></a><h3>struct GstVaapiWindowX11Class</h3>
+<pre class="programlisting">struct GstVaapiWindowX11Class {
+};
+</pre>
+<p>
+An X11 <span class="type">Window</span> wrapper class.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GST-VAAPI-WINDOW-XWINDOW:CAPS"></a><h3>GST_VAAPI_WINDOW_XWINDOW()</h3>
+<pre class="programlisting">#define             GST_VAAPI_WINDOW_XWINDOW(window)</pre>
+<p>
+Macro that evaluates to the underlying X11 <span class="type">Window</span> of <em class="parameter"><code>window</code></em>
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-x11-new"></a><h3>gst_vaapi_window_x11_new ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="returnvalue">GstVaapiWindow</span></a> *    gst_vaapi_window_x11_new            (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> width</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> height</code></em>);</pre>
+<p>
+Creates a window with the specified <em class="parameter"><code>width</code></em> and <em class="parameter"><code>height</code></em>. The window
+will be attached to the <em class="parameter"><code>display</code></em> and remains invisible to the user
+until <a class="link" href="GstVaapiWindow.html#gst-vaapi-window-show" title="gst_vaapi_window_show ()"><code class="function">gst_vaapi_window_show()</code></a> is called.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>width</code></em> :</span></p></td>
+<td>the requested window width, in pixels</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>height</code></em> :</span></p></td>
+<td>the requested windo height, in pixels</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-x11-new-with-xid"></a><h3>gst_vaapi_window_x11_new_with_xid ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="returnvalue">GstVaapiWindow</span></a> *    gst_vaapi_window_x11_new_with_xid   (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">Window</span> xid</code></em>);</pre>
+<p>
+Creates a <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> using the X11 <span class="type">Window</span> <em class="parameter"><code>xid</code></em>. The caller
+still owns the window and must call <code class="function">XDestroyWindow()</code> when all
+<a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> references are released. Doing so too early can
+yield undefined behaviour.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>xid</code></em> :</span></p></td>
+<td>an X11 <span class="type">Window</span> id</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a class="link" href="GstVaapiWindow.html" title="GstVaapiWindow"><span class="type">GstVaapiWindow</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-x11-get-xid"></a><h3>gst_vaapi_window_x11_get_xid ()</h3>
+<pre class="programlisting"><span class="returnvalue">Window</span>              gst_vaapi_window_x11_get_xid        (<em class="parameter"><code><a class="link" href="GstVaapiWindowX11.html" title="GstVaapiWindowX11"><span class="type">GstVaapiWindowX11</span></a> *window</code></em>);</pre>
+<p>
+Returns the underlying X11 <span class="type">Window</span> that was created by
+<a class="link" href="GstVaapiWindowX11.html#gst-vaapi-window-x11-new" title="gst_vaapi_window_x11_new ()"><code class="function">gst_vaapi_window_x11_new()</code></a> or that was bound with
+<a class="link" href="GstVaapiWindowX11.html#gst-vaapi-window-x11-new-with-xid" title="gst_vaapi_window_x11_new_with_xid ()"><code class="function">gst_vaapi_window_x11_new_with_xid()</code></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindowX11.html" title="GstVaapiWindowX11"><span class="type">GstVaapiWindowX11</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the underlying X11 <span class="type">Window</span> bound to <em class="parameter"><code>window</code></em>.</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-window-x11-is-foreign-xid"></a><h3>gst_vaapi_window_x11_is_foreign_xid ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_window_x11_is_foreign_xid (<em class="parameter"><code><a class="link" href="GstVaapiWindowX11.html" title="GstVaapiWindowX11"><span class="type">GstVaapiWindowX11</span></a> *window</code></em>);</pre>
+<p>
+Checks whether the <em class="parameter"><code>window</code></em> XID was created by <a class="link" href="GstVaapiWindowX11.html#gst-vaapi-window-x11-new" title="gst_vaapi_window_x11_new ()"><code class="function">gst_vaapi_window_x11_new()</code></a> or bound with <a class="link" href="GstVaapiWindowX11.html#gst-vaapi-window-x11-new-with-xid" title="gst_vaapi_window_x11_new_with_xid ()"><code class="function">gst_vaapi_window_x11_new_with_xid()</code></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>window</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiWindowX11.html" title="GstVaapiWindowX11"><span class="type">GstVaapiWindowX11</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the underlying X window is owned by the
+caller (foreign window)</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

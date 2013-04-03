@@ -1,0 +1,78 @@
+<!-- ##### SECTION Title ##### -->
+Basic data structures
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### TYPEDEF GstVaapiID ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### MACRO GST_VAAPI_ID_FORMAT ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO GST_VAAPI_ID_ARGS ##### -->
+<para>
+
+</para>
+
+@id: 
+
+
+<!-- ##### MACRO GST_VAAPI_ID ##### -->
+<para>
+
+</para>
+
+@id: 
+
+
+<!-- ##### MACRO GST_VAAPI_ID_NONE ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### STRUCT GstVaapiPoint ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+
+<!-- ##### STRUCT GstVaapiRectangle ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+@width: 
+@height: 
+

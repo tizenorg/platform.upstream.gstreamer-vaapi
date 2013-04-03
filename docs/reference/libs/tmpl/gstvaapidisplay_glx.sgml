@@ -1,0 +1,54 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiDisplayGLX
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiDisplayGLX ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GstVaapiDisplayGLXClass ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_display_glx_new ##### -->
+<para>
+
+</para>
+
+@display_name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_glx_new_with_display ##### -->
+<para>
+
+</para>
+
+@x11_display: 
+@Returns: 
+
+

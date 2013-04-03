@@ -1,0 +1,181 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiContext
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiContext ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiContext:entrypoint ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiContext:height ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiContext:profile ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiContext:ref-frames ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiContext:width ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GstVaapiContextClass ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_context_new ##### -->
+<para>
+
+</para>
+
+@display: 
+@profile: 
+@entrypoint: 
+@width: 
+@height: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_context_reset ##### -->
+<para>
+
+</para>
+
+@context: 
+@profile: 
+@entrypoint: 
+@width: 
+@height: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_context_get_id ##### -->
+<para>
+
+</para>
+
+@context: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_context_get_profile ##### -->
+<para>
+
+</para>
+
+@context: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_context_set_profile ##### -->
+<para>
+
+</para>
+
+@context: 
+@profile: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_context_get_entrypoint ##### -->
+<para>
+
+</para>
+
+@context: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_context_get_size ##### -->
+<para>
+
+</para>
+
+@context: 
+@pwidth: 
+@pheight: 
+
+
+<!-- ##### FUNCTION gst_vaapi_context_get_surface ##### -->
+<para>
+
+</para>
+
+@context: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_context_get_surface_count ##### -->
+<para>
+
+</para>
+
+@context: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_context_put_surface ##### -->
+<para>
+
+</para>
+
+@context: 
+@surface: 
+
+
+<!-- ##### FUNCTION gst_vaapi_context_find_surface_by_id ##### -->
+<para>
+
+</para>
+
+@context: 
+@id: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_context_apply_composition ##### -->
+<para>
+
+</para>
+
+@context: 
+@composition: 
+@Returns: 
+
+

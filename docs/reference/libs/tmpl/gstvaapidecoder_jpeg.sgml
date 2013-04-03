@@ -1,0 +1,46 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiDecoderJpeg
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiDecoderJpeg ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GstVaapiDecoderJpegClass ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_decoder_jpeg_new ##### -->
+<para>
+
+</para>
+
+@display: 
+@caps: 
+@Returns: 
+
+

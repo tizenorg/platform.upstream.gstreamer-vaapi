@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiDisplayX11</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="GstVaapiDisplay.html" title="GstVaapiDisplay">
+<link rel="next" href="GstVaapiDisplayGLX.html" title="GstVaapiDisplayGLX">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiDisplay.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiDisplayGLX.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiDisplayX11.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiDisplayX11.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiDisplayX11.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GstVaapiDisplayX11.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiDisplayX11"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiDisplayX11.top_of_page"></a>GstVaapiDisplayX11</span></h2>
+<p>GstVaapiDisplayX11 — VA/X11 display abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiDisplayX11.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiDisplayX11.html#GstVaapiDisplayX11-struct" title="struct GstVaapiDisplayX11">GstVaapiDisplayX11</a>;
+struct              <a class="link" href="GstVaapiDisplayX11.html#GstVaapiDisplayX11Class" title="struct GstVaapiDisplayX11Class">GstVaapiDisplayX11Class</a>;
+<a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   <a class="link" href="GstVaapiDisplayX11.html#gst-vaapi-display-x11-new" title="gst_vaapi_display_x11_new ()">gst_vaapi_display_x11_new</a>           (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *display_name</code></em>);
+<a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   <a class="link" href="GstVaapiDisplayX11.html#gst-vaapi-display-x11-new-with-display" title="gst_vaapi_display_x11_new_with_display ()">gst_vaapi_display_x11_new_with_display</a>
+                                                        (<em class="parameter"><code><span class="type">Display</span> *x11_display</code></em>);
+<span class="returnvalue">Display</span> *           <a class="link" href="GstVaapiDisplayX11.html#gst-vaapi-display-x11-get-display" title="gst_vaapi_display_x11_get_display ()">gst_vaapi_display_x11_get_display</a>   (<em class="parameter"><code><a class="link" href="GstVaapiDisplayX11.html" title="GstVaapiDisplayX11"><span class="type">GstVaapiDisplayX11</span></a> *display</code></em>);
+<span class="returnvalue">int</span>                 <a class="link" href="GstVaapiDisplayX11.html#gst-vaapi-display-x11-get-screen" title="gst_vaapi_display_x11_get_screen ()">gst_vaapi_display_x11_get_screen</a>    (<em class="parameter"><code><a class="link" href="GstVaapiDisplayX11.html" title="GstVaapiDisplayX11"><span class="type">GstVaapiDisplayX11</span></a> *display</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplayX11.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay">GstVaapiDisplay</a>
+         +----GstVaapiDisplayX11
+               +----<a class="link" href="GstVaapiDisplayGLX.html" title="GstVaapiDisplayGLX">GstVaapiDisplayGLX</a>
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplayX11.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GstVaapiDisplayX11.html#GstVaapiDisplayX11--display-name" title='The "display-name" property'>display-name</a>"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiDisplayX11.html#GstVaapiDisplayX11--synchronous" title='The "synchronous" property'>synchronous</a>"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="GstVaapiDisplayX11.html#GstVaapiDisplayX11--x11-display" title='The "x11-display" property'>x11-display</a>"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiDisplayX11.html#GstVaapiDisplayX11--x11-screen" title='The "x11-screen" property'>x11-screen</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write / Construct Only
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplayX11.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplayX11.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiDisplayX11-struct"></a><h3>struct GstVaapiDisplayX11</h3>
+<pre class="programlisting">struct GstVaapiDisplayX11;</pre>
+<p>
+VA/X11 display wrapper.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplayX11Class"></a><h3>struct GstVaapiDisplayX11Class</h3>
+<pre class="programlisting">struct GstVaapiDisplayX11Class {
+};
+</pre>
+<p>
+VA/X11 display wrapper clas.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-x11-new"></a><h3>gst_vaapi_display_x11_new ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   gst_vaapi_display_x11_new           (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *display_name</code></em>);</pre>
+<p>
+Opens an X11 <span class="type">Display</span> using <em class="parameter"><code>display_name</code></em> and returns a newly
+allocated <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> object. The X11 display will be cloed
+when the reference count of the object reaches zero.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display_name</code></em> :</span></p></td>
+<td>the X11 display name</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a newly allocated <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-x11-new-with-display"></a><h3>gst_vaapi_display_x11_new_with_display ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   gst_vaapi_display_x11_new_with_display
+                                                        (<em class="parameter"><code><span class="type">Display</span> *x11_display</code></em>);</pre>
+<p>
+Creates a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> based on the X11 <em class="parameter"><code>x11_display</code></em>
+display. The caller still owns the display and must call
+<code class="function">XCloseDisplay()</code> when all <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> references are
+released. Doing so too early can yield undefined behaviour.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>x11_display</code></em> :</span></p></td>
+<td>an X11 <span class="type">Display</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a newly allocated <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-x11-get-display"></a><h3>gst_vaapi_display_x11_get_display ()</h3>
+<pre class="programlisting"><span class="returnvalue">Display</span> *           gst_vaapi_display_x11_get_display   (<em class="parameter"><code><a class="link" href="GstVaapiDisplayX11.html" title="GstVaapiDisplayX11"><span class="type">GstVaapiDisplayX11</span></a> *display</code></em>);</pre>
+<p>
+Returns the underlying X11 <span class="type">Display</span> that was created by
+<a class="link" href="GstVaapiDisplayX11.html#gst-vaapi-display-x11-new" title="gst_vaapi_display_x11_new ()"><code class="function">gst_vaapi_display_x11_new()</code></a> or that was bound from
+<a class="link" href="GstVaapiDisplayX11.html#gst-vaapi-display-x11-new-with-display" title="gst_vaapi_display_x11_new_with_display ()"><code class="function">gst_vaapi_display_x11_new_with_display()</code></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplayX11.html" title="GstVaapiDisplayX11"><span class="type">GstVaapiDisplayX11</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the X11 <span class="type">Display</span> attached to <em class="parameter"><code>display</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-display-x11-get-screen"></a><h3>gst_vaapi_display_x11_get_screen ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>                 gst_vaapi_display_x11_get_screen    (<em class="parameter"><code><a class="link" href="GstVaapiDisplayX11.html" title="GstVaapiDisplayX11"><span class="type">GstVaapiDisplayX11</span></a> *display</code></em>);</pre>
+<p>
+Returns the default X11 screen that was created by
+<a class="link" href="GstVaapiDisplayX11.html#gst-vaapi-display-x11-new" title="gst_vaapi_display_x11_new ()"><code class="function">gst_vaapi_display_x11_new()</code></a> or that was bound from
+<a class="link" href="GstVaapiDisplayX11.html#gst-vaapi-display-x11-new-with-display" title="gst_vaapi_display_x11_new_with_display ()"><code class="function">gst_vaapi_display_x11_new_with_display()</code></a>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplayX11.html" title="GstVaapiDisplayX11"><span class="type">GstVaapiDisplayX11</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the X11 <span class="type">Display</span> attached to <em class="parameter"><code>display</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1">
+<a name="GstVaapiDisplayX11.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiDisplayX11--display-name"></a><h3>The <code class="literal">"display-name"</code> property</h3>
+<pre class="programlisting">  "display-name"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write / Construct Only</pre>
+<p>
+The X11 display name.
+</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplayX11--synchronous"></a><h3>The <code class="literal">"synchronous"</code> property</h3>
+<pre class="programlisting">  "synchronous"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<p>
+When enabled, runs the X display in synchronous mode. Note that
+this is used only for debugging.
+</p>
+<p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplayX11--x11-display"></a><h3>The <code class="literal">"x11-display"</code> property</h3>
+<pre class="programlisting">  "x11-display"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read / Write / Construct Only</pre>
+<p>
+The X11 <span class="type">Display</span> that was created by <a class="link" href="GstVaapiDisplayX11.html#gst-vaapi-display-x11-new" title="gst_vaapi_display_x11_new ()"><code class="function">gst_vaapi_display_x11_new()</code></a>
+or that was bound from <a class="link" href="GstVaapiDisplayX11.html#gst-vaapi-display-x11-new-with-display" title="gst_vaapi_display_x11_new_with_display ()"><code class="function">gst_vaapi_display_x11_new_with_display()</code></a>.
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiDisplayX11--x11-screen"></a><h3>The <code class="literal">"x11-screen"</code> property</h3>
+<pre class="programlisting">  "x11-screen"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write / Construct Only</pre>
+<p>
+The X11 screen that was created by <a class="link" href="GstVaapiDisplayX11.html#gst-vaapi-display-x11-new" title="gst_vaapi_display_x11_new ()"><code class="function">gst_vaapi_display_x11_new()</code></a>
+or that was bound from <a class="link" href="GstVaapiDisplayX11.html#gst-vaapi-display-x11-new-with-display" title="gst_vaapi_display_x11_new_with_display ()"><code class="function">gst_vaapi_display_x11_new_with_display()</code></a>.
+</p>
+<p>Allowed values: &gt;= 0</p>
+<p>Default value: 0</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

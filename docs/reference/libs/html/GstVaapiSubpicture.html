@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiSubpicture</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="libs-GstVaapiImageFormat.html" title="GstVaapiImageFormat">
+<link rel="next" href="GstVaapiTexture.html" title="GstVaapiTexture">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="libs-GstVaapiImageFormat.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiTexture.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiSubpicture.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiSubpicture.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiSubpicture.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GstVaapiSubpicture.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiSubpicture"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiSubpicture.top_of_page"></a>GstVaapiSubpicture</span></h2>
+<p>GstVaapiSubpicture — VA subpicture abstraction</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiSubpicture.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiSubpicture.html#GstVaapiSubpicture-struct" title="struct GstVaapiSubpicture">GstVaapiSubpicture</a>;
+struct              <a class="link" href="GstVaapiSubpicture.html#GstVaapiSubpictureClass" title="struct GstVaapiSubpictureClass">GstVaapiSubpictureClass</a>;
+<a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="returnvalue">GstVaapiSubpicture</span></a> * <a class="link" href="GstVaapiSubpicture.html#gst-vaapi-subpicture-new" title="gst_vaapi_subpicture_new ()">gst_vaapi_subpicture_new</a>           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> flags</code></em>);
+<a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="returnvalue">GstVaapiSubpicture</span></a> * <a class="link" href="GstVaapiSubpicture.html#gst-vaapi-subpicture-new-from-overlay-rectangle" title="gst_vaapi_subpicture_new_from_overlay_rectangle ()">gst_vaapi_subpicture_new_from_overlay_rectangle</a>
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoOverlayRectangle</span> *rect</code></em>);
+<a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="returnvalue">GstVaapiID</span></a>          <a class="link" href="GstVaapiSubpicture.html#gst-vaapi-subpicture-get-id" title="gst_vaapi_subpicture_get_id ()">gst_vaapi_subpicture_get_id</a>         (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstVaapiSubpicture.html#gst-vaapi-subpicture-get-flags" title="gst_vaapi_subpicture_get_flags ()">gst_vaapi_subpicture_get_flags</a>      (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="returnvalue">gfloat</span></a>              <a class="link" href="GstVaapiSubpicture.html#gst-vaapi-subpicture-get-global-alpha" title="gst_vaapi_subpicture_get_global_alpha ()">gst_vaapi_subpicture_get_global_alpha</a>
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiSubpicture.html#gst-vaapi-subpicture-set-global-alpha" title="gst_vaapi_subpicture_set_global_alpha ()">gst_vaapi_subpicture_set_global_alpha</a>
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> global_alpha</code></em>);
+<a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="returnvalue">GstVaapiImage</span></a> *     <a class="link" href="GstVaapiSubpicture.html#gst-vaapi-subpicture-get-image" title="gst_vaapi_subpicture_get_image ()">gst_vaapi_subpicture_get_image</a>      (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstVaapiSubpicture.html#gst-vaapi-subpicture-set-image" title="gst_vaapi_subpicture_set_image ()">gst_vaapi_subpicture_set_image</a>      (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiSubpicture.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a class="link" href="GstVaapiObject.html" title="GstVaapiObject">GstVaapiObject</a>
+         +----GstVaapiSubpicture
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiSubpicture.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GstVaapiSubpicture.html#GstVaapiSubpicture--flags" title='The "flags" property'>flags</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only
+  "<a class="link" href="GstVaapiSubpicture.html#GstVaapiSubpicture--global-alpha" title='The "global-alpha" property'>global-alpha</a>"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write
+  "<a class="link" href="GstVaapiSubpicture.html#GstVaapiSubpicture--image" title='The "image" property'>image</a>"                    <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>*        : Read / Write
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiSubpicture.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="GstVaapiSubpicture.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiSubpicture-struct"></a><h3>struct GstVaapiSubpicture</h3>
+<pre class="programlisting">struct GstVaapiSubpicture;</pre>
+<p>
+A VA subpicture wrapper
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSubpictureClass"></a><h3>struct GstVaapiSubpictureClass</h3>
+<pre class="programlisting">struct GstVaapiSubpictureClass {
+};
+</pre>
+<p>
+A VA subpicture wrapper class
+</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-subpicture-new"></a><h3>gst_vaapi_subpicture_new ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="returnvalue">GstVaapiSubpicture</span></a> * gst_vaapi_subpicture_new           (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> flags</code></em>);</pre>
+<p>
+Creates a new <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> with <em class="parameter"><code>image</code></em> as source pixels. The
+newly created object holds a reference on <em class="parameter"><code>image</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>flags</code></em> :</span></p></td>
+<td>
+<span class="type">GstVaapiSubpictureFlags</span>, or zero</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-subpicture-new-from-overlay-rectangle"></a><h3>gst_vaapi_subpicture_new_from_overlay_rectangle ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="returnvalue">GstVaapiSubpicture</span></a> * gst_vaapi_subpicture_new_from_overlay_rectangle
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVideoOverlayRectangle</span> *rect</code></em>);</pre>
+<p>
+Helper function that creates a new <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> from a
+<span class="type">GstVideoOverlayRectangle</span>. A new <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> is also created
+along the way and attached to the resulting subpicture. The
+subpicture holds a unique reference to the underlying image.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>rect</code></em> :</span></p></td>
+<td>a <span class="type">GstVideoOverlayRectangle</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> object</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-subpicture-get-id"></a><h3>gst_vaapi_subpicture_get_id ()</h3>
+<pre class="programlisting"><a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="returnvalue">GstVaapiID</span></a>          gst_vaapi_subpicture_get_id         (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>);</pre>
+<p>
+Returns the underlying VASubpictureID of the <em class="parameter"><code>subpicture</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>subpicture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the underlying VA subpicture id</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-subpicture-get-flags"></a><h3>gst_vaapi_subpicture_get_flags ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_subpicture_get_flags      (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>);</pre>
+<p>
+Returns the <em class="parameter"><code>subpicture</code></em> flags.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>subpicture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <em class="parameter"><code>subpicture</code></em> flags</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-subpicture-get-global-alpha"></a><h3>gst_vaapi_subpicture_get_global_alpha ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="returnvalue">gfloat</span></a>              gst_vaapi_subpicture_get_global_alpha
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>);</pre>
+<p>
+Returns the value of global_alpha, set for this <em class="parameter"><code>subpicture</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>subpicture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the global_alpha value of this <em class="parameter"><code>subpicture</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-subpicture-set-global-alpha"></a><h3>gst_vaapi_subpicture_set_global_alpha ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_subpicture_set_global_alpha
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> global_alpha</code></em>);</pre>
+<p>
+Sets the global_alpha value of <em class="parameter"><code>subpicture</code></em>. This function calls
+<code class="function">vaSetSubpictureGlobalAlpha()</code> if the format of <em class="parameter"><code>subpicture</code></em>, i.e.
+the current VA driver supports it.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>subpicture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>global_alpha</code></em> :</span></p></td>
+<td>value for global-alpha (range: 0.0 to 1.0, inclusive)</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if global_alpha could be set, <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-subpicture-get-image"></a><h3>gst_vaapi_subpicture_get_image ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="returnvalue">GstVaapiImage</span></a> *     gst_vaapi_subpicture_get_image      (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>);</pre>
+<p>
+Returns the <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> this <em class="parameter"><code>subpicture</code></em> is bound to.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>subpicture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> this <em class="parameter"><code>subpicture</code></em> is bound to</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-subpicture-set-image"></a><h3>gst_vaapi_subpicture_set_image ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_subpicture_set_image      (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Binds a new <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> to the <em class="parameter"><code>subpicture</code></em>. The reference to the
+previous image is released and a new one is acquired on <em class="parameter"><code>image</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>subpicture</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="refsect1">
+<a name="GstVaapiSubpicture.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiSubpicture--flags"></a><h3>The <code class="literal">"flags"</code> property</h3>
+<pre class="programlisting">  "flags"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct Only</pre>
+<p>
+The <span class="type">GstVaapiSubpictureFlags</span> this subpicture requires.
+</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSubpicture--global-alpha"></a><h3>The <code class="literal">"global-alpha"</code> property</h3>
+<pre class="programlisting">  "global-alpha"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write</pre>
+<p>
+The global-alpha value associated with this subpicture.
+</p>
+<p>Allowed values: [0,1]</p>
+<p>Default value: 1</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSubpicture--image"></a><h3>The <code class="literal">"image"</code> property</h3>
+<pre class="programlisting">  "image"                    <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>*        : Read / Write</pre>
+<p>
+The <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> this subpicture is bound to.
+</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

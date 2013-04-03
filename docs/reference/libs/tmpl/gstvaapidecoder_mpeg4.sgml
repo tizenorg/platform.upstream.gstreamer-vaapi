@@ -1,0 +1,46 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiDecoderMpeg4
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiDecoderMpeg4 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GstVaapiDecoderMpeg4Class ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_decoder_mpeg4_new ##### -->
+<para>
+
+</para>
+
+@display: 
+@caps: 
+@Returns: 
+
+

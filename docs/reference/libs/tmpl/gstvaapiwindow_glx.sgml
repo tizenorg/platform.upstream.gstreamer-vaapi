@@ -1,0 +1,110 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiWindowGLX
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiWindowGLX ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiWindowGLX:glx-context ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GstVaapiWindowGLXClass ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_window_glx_new ##### -->
+<para>
+
+</para>
+
+@display: 
+@width: 
+@height: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_glx_new_with_xid ##### -->
+<para>
+
+</para>
+
+@display: 
+@xid: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_glx_get_context ##### -->
+<para>
+
+</para>
+
+@window: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_glx_set_context ##### -->
+<para>
+
+</para>
+
+@window: 
+@ctx: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_glx_make_current ##### -->
+<para>
+
+</para>
+
+@window: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_glx_swap_buffers ##### -->
+<para>
+
+</para>
+
+@window: 
+
+
+<!-- ##### FUNCTION gst_vaapi_window_glx_put_texture ##### -->
+<para>
+
+</para>
+
+@window: 
+@texture: 
+@src_rect: 
+@dst_rect: 
+@Returns: 
+
+

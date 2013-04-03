@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiSink</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Plugins Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Plugins">
+<link rel="prev" href="GstVaapiUpload.html" title="GstVaapiUpload">
+<link rel="next" href="object-tree.html" title="Object Hierarchy">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiUpload.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Plugins Reference Manual</th>
+<td><a accesskey="n" href="object-tree.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GstVaapiSink.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GstVaapiSink.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GstVaapiSink.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GstVaapiSink.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
+                   | 
+                  <a href="#GstVaapiSink.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="GstVaapiSink"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GstVaapiSink.top_of_page"></a>GstVaapiSink</span></h2>
+<p>GstVaapiSink — A VA-API based videosink</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="GstVaapiSink.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">struct              <a class="link" href="GstVaapiSink.html#GstVaapiSink-struct" title="struct GstVaapiSink">GstVaapiSink</a>;
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiSink.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSink.html">GstBaseSink</a>
+                     +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideosink.html#GstVideoSink">GstVideoSink</a>
+                           +----GstVaapiSink
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiSink.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
+<p>
+GstVaapiSink implements
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstImplementsInterface.html">GstImplementsInterface</a>,  GstVideoContext and  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstxoverlay.html#GstXOverlay">GstXOverlay</a>.</p>
+</div>
+<div class="refsect1">
+<a name="GstVaapiSink.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GstVaapiSink.html#GstVaapiSink--display" title='The "display" property'>display</a>"                  <span class="type">GstVaapiDisplayType</span>   : Read / Write
+  "<a class="link" href="GstVaapiSink.html#GstVaapiSink--fullscreen" title='The "fullscreen" property'>fullscreen</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="GstVaapiSink.html#GstVaapiSink--rotation" title='The "rotation" property'>rotation</a>"                 <span class="type">GstVaapiRotation</span>      : Read / Write
+  "<a class="link" href="GstVaapiSink.html#GstVaapiSink--synchronous" title='The "synchronous" property'>synchronous</a>"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="GstVaapiSink.html#GstVaapiSink--use-reflection" title='The "use-reflection" property'>use-reflection</a>"           <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+</pre>
+</div>
+<div class="refsect1">
+<a name="GstVaapiSink.description"></a><h2>Description</h2>
+<p>
+vaapisink renders video frames to a drawable (X <span class="type">Window</span>) on a local
+display using the Video Acceleration (VA) API. The element will
+create its own internal window and render into it.
+</p>
+</div>
+<div class="refsect1">
+<a name="GstVaapiSink.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="GstVaapiSink-struct"></a><h3>struct GstVaapiSink</h3>
+<pre class="programlisting">struct GstVaapiSink;</pre>
+<p>
+</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="GstVaapiSink.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="GstVaapiSink--display"></a><h3>The <code class="literal">"display"</code> property</h3>
+<pre class="programlisting">  "display"                  <span class="type">GstVaapiDisplayType</span>   : Read / Write</pre>
+<p>display type to use.</p>
+<p>Default value: Auto detection</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSink--fullscreen"></a><h3>The <code class="literal">"fullscreen"</code> property</h3>
+<pre class="programlisting">  "fullscreen"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<p>Requests window in fullscreen state.</p>
+<p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSink--rotation"></a><h3>The <code class="literal">"rotation"</code> property</h3>
+<pre class="programlisting">  "rotation"                 <span class="type">GstVaapiRotation</span>      : Read / Write</pre>
+<p>
+The VA display rotation mode, expressed as a <span class="type">GstVaapiRotation</span>.
+</p>
+<p>Default value: Unrotated mode</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSink--synchronous"></a><h3>The <code class="literal">"synchronous"</code> property</h3>
+<pre class="programlisting">  "synchronous"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<p>
+When enabled, runs the X display in synchronous mode. Note that
+this is used only for debugging.
+</p>
+<p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="GstVaapiSink--use-reflection"></a><h3>The <code class="literal">"use-reflection"</code> property</h3>
+<pre class="programlisting">  "use-reflection"           <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<p>Enables OpenGL reflection effect.</p>
+<p>Default value: FALSE</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

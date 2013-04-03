@@ -1,0 +1,92 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiDisplayX11
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiDisplayX11 ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiDisplayX11:display-name ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDisplayX11:synchronous ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDisplayX11:x11-display ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiDisplayX11:x11-screen ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GstVaapiDisplayX11Class ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_display_x11_new ##### -->
+<para>
+
+</para>
+
+@display_name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_x11_new_with_display ##### -->
+<para>
+
+</para>
+
+@x11_display: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_x11_get_display ##### -->
+<para>
+
+</para>
+
+@display: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_display_x11_get_screen ##### -->
+<para>
+
+</para>
+
+@display: 
+@Returns: 
+
+

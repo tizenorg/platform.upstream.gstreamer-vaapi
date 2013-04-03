@@ -1,0 +1,126 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiSubpicture
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiSubpicture ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiSubpicture:flags ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiSubpicture:global-alpha ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiSubpicture:image ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GstVaapiSubpictureClass ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_subpicture_new ##### -->
+<para>
+
+</para>
+
+@image: 
+@flags: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_subpicture_new_from_overlay_rectangle ##### -->
+<para>
+
+</para>
+
+@display: 
+@rect: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_subpicture_get_id ##### -->
+<para>
+
+</para>
+
+@subpicture: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_subpicture_get_flags ##### -->
+<para>
+
+</para>
+
+@subpicture: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_subpicture_get_global_alpha ##### -->
+<para>
+
+</para>
+
+@subpicture: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_subpicture_set_global_alpha ##### -->
+<para>
+
+</para>
+
+@subpicture: 
+@global_alpha: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_subpicture_get_image ##### -->
+<para>
+
+</para>
+
+@subpicture: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_subpicture_set_image ##### -->
+<para>
+
+</para>
+
+@subpicture: 
+@image: 
+
+

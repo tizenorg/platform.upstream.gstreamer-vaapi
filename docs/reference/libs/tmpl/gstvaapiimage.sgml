@@ -1,0 +1,265 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiImage
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### MACRO GST_VAAPI_IMAGE_FORMAT ##### -->
+<para>
+
+</para>
+
+@image: 
+
+
+<!-- ##### MACRO GST_VAAPI_IMAGE_WIDTH ##### -->
+<para>
+
+</para>
+
+@image: 
+
+
+<!-- ##### MACRO GST_VAAPI_IMAGE_HEIGHT ##### -->
+<para>
+
+</para>
+
+@image: 
+
+
+<!-- ##### STRUCT GstVaapiImage ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiImage:format ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiImage:height ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiImage:image ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiImage:width ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GstVaapiImageClass ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_image_new ##### -->
+<para>
+
+</para>
+
+@display: 
+@format: 
+@width: 
+@height: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_new_with_image ##### -->
+<para>
+
+</para>
+
+@display: 
+@va_image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_get_id ##### -->
+<para>
+
+</para>
+
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_get_image ##### -->
+<para>
+
+</para>
+
+@image: 
+@va_image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_get_format ##### -->
+<para>
+
+</para>
+
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_get_width ##### -->
+<para>
+
+</para>
+
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_get_height ##### -->
+<para>
+
+</para>
+
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_get_size ##### -->
+<para>
+
+</para>
+
+@image: 
+@pwidth: 
+@pheight: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_is_linear ##### -->
+<para>
+
+</para>
+
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_is_mapped ##### -->
+<para>
+
+</para>
+
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_map ##### -->
+<para>
+
+</para>
+
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_unmap ##### -->
+<para>
+
+</para>
+
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_get_plane_count ##### -->
+<para>
+
+</para>
+
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_get_plane ##### -->
+<para>
+
+</para>
+
+@image: 
+@plane: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_get_pitch ##### -->
+<para>
+
+</para>
+
+@image: 
+@plane: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_get_data_size ##### -->
+<para>
+
+</para>
+
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_get_buffer ##### -->
+<para>
+
+</para>
+
+@image: 
+@buffer: 
+@rect: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_get_raw ##### -->
+<para>
+
+</para>
+
+@image: 
+@dst_image: 
+@rect: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_image_update_from_buffer ##### -->
+<para>
+
+</para>
+
+@image: 
+@buffer: 
+@rect: 
+@Returns: 
+
+

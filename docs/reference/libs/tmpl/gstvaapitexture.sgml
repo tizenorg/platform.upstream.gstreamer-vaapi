@@ -1,0 +1,147 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiTexture
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiTexture ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiTexture:format ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiTexture:height ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiTexture:target ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiTexture:width ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GstVaapiTextureClass ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_texture_new ##### -->
+<para>
+
+</para>
+
+@display: 
+@target: 
+@format: 
+@width: 
+@height: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_texture_new_with_texture ##### -->
+<para>
+
+</para>
+
+@display: 
+@texture: 
+@target: 
+@format: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_texture_get_id ##### -->
+<para>
+
+</para>
+
+@texture: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_texture_get_target ##### -->
+<para>
+
+</para>
+
+@texture: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_texture_get_format ##### -->
+<para>
+
+</para>
+
+@texture: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_texture_get_width ##### -->
+<para>
+
+</para>
+
+@texture: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_texture_get_height ##### -->
+<para>
+
+</para>
+
+@texture: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_texture_get_size ##### -->
+<para>
+
+</para>
+
+@texture: 
+@pwidth: 
+@pheight: 
+
+
+<!-- ##### FUNCTION gst_vaapi_texture_put_surface ##### -->
+<para>
+
+</para>
+
+@texture: 
+@surface: 
+@flags: 
+@Returns: 
+
+

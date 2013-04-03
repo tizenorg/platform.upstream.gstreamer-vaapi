@@ -1,0 +1,55 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiSink
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiSink ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiSink:display ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiSink:fullscreen ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiSink:rotation ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiSink:synchronous ##### -->
+<para>
+
+</para>
+
+<!-- ##### ARG GstVaapiSink:use-reflection ##### -->
+<para>
+
+</para>
+
