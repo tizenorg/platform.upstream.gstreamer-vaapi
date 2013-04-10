@@ -1,0 +1,4 @@
+* Mon Apr 22 2013 Patrick McCarty <patrick.mccarty@linux.intel.com> 3c1a231
+- (TZPC-1487) Imported Upstream version 0.5.3, which supports gstreamer 1.0
+- Add packaging files
+
