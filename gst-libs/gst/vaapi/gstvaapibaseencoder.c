@@ -98,6 +98,7 @@ typedef struct _GstVaapiEncoderBufferInfoClass GstVaapiEncoderBufferInfoClass;
 struct _GstVaapiEncoderBufferInfo {
   GObject              base;
   GstVaapiBaseEncoder *encoder;
+  GstBuffer           *frame;
   VABufferID          *id;
   GstClockTime         timestamp;
   GstClockTime         duration;
@@ -239,6 +240,7 @@ gst_vaapi_encoder_buffer_info_init(
 )
 {
     info->encoder   = NULL;
+    info->frame     = NULL;
     info->id        = NULL;
     info->timestamp = 0;
     info->duration  = 0;
@@ -256,6 +258,11 @@ gst_vaapi_encoder_buffer_info_finalize(GObject *object)
     if (info->is_mapped)
       gst_vaapi_encoder_buffer_info_unmap(info);
     push_idle_buffer_id(info->encoder, info->id);
+  }
+
+  if (info->frame) {
+    gst_buffer_unref(info->frame);
+    info->frame = NULL;
   }
 
   if (info->encoder) {
@@ -571,6 +578,25 @@ end:
   return ret;
 }
 
+static GstVaapiVideoBuffer *
+_get_video_buffer(
+    GstVaapiBaseEncoder* encoder,
+    GstBuffer *buf
+)
+{
+  GstVaapiBaseEncoderPrivate *priv = encoder->priv;
+  GstBuffer *video_buffer;
+
+  if (priv->buffer_sharing_flag)
+    video_buffer = (GstBuffer *)buf->data;
+  else
+    video_buffer = buf;
+
+  if (GST_VAAPI_IS_VIDEO_BUFFER(video_buffer))
+    return GST_VAAPI_VIDEO_BUFFER(video_buffer);
+  return NULL;
+}
+
 static inline guint
 get_buf_list_size(VACodedBufferSegment *buf_list)
 {
@@ -615,6 +641,8 @@ gst_vaapi_base_encoder_get_coded_buffer(
   GstVaapiBaseEncoderClass   *klass =
       GST_VAAPI_BASE_ENCODER_GET_CLASS(encoder);
   GstVaapiEncoderBufferInfo* info;
+  GstVaapiVideoBuffer *video_buffer;
+  GstVaapiSurface *surface;
   EncoderStatus ret;
   VACodedBufferSegment *buf_list = NULL;
   GstBuffer* buffer = NULL;
@@ -629,10 +657,21 @@ gst_vaapi_base_encoder_get_coded_buffer(
   ret = ENCODER_NO_ERROR;
 
   ENCODER_CHECK_STATUS(
-      info->id && *info->id != VA_INVALID_ID,
+      info->frame || (info->id && *info->id != VA_INVALID_ID),
       ENCODER_DATA_ERR,
       "get invalid buffer info"
       );
+
+  video_buffer = _get_video_buffer(encoder, info->frame);
+  ENCODER_CHECK_STATUS(video_buffer,
+                       ENCODER_DATA_ERR,
+                       "Get video buffer failed");
+  surface = gst_vaapi_video_buffer_get_surface(video_buffer);
+
+  ret = query_encoding_status(encoder, surface);
+  if (ENCODER_NO_ERROR != ret) {
+    goto end;
+  }
 
   ENCODER_CHECK_STATUS(
       gst_vaapi_encoder_buffer_info_map(info, (void**)&buf_list),
@@ -679,25 +718,6 @@ end:
     g_object_unref(info);
   }
   return ret;
-}
-
-static GstVaapiVideoBuffer *
-_get_video_buffer(
-    GstVaapiBaseEncoder* encoder,
-    GstBuffer *buf
-)
-{
-  GstVaapiBaseEncoderPrivate *priv = encoder->priv;
-  GstBuffer *video_buffer;
-
-  if (priv->buffer_sharing_flag)
-    video_buffer = (GstBuffer *)buf->data;
-  else
-    video_buffer = buf;
-
-  if (GST_VAAPI_IS_VIDEO_BUFFER(video_buffer))
-    return GST_VAAPI_VIDEO_BUFFER(video_buffer);
-  return NULL;
 }
 
 static EncoderStatus
@@ -773,15 +793,17 @@ again:
   ENCODER_CHECK_STATUS(ENCODER_NO_ERROR == ret,
                        ENCODER_PICTURE_ERR,
                        "base_prepare_encoding failed");
-
+#if 0
   /*query surface result*/
   ret = query_encoding_status(encoder, buffer_surface);
   if (ENCODER_NO_ERROR != ret) {
     goto end;
   }
+#endif
 
   /* Push coded buffer to another task */
   GstVaapiEncoderBufferInfo* info = gst_vaapi_encoder_buffer_info_new(encoder);
+  info->frame = gst_buffer_ref(pic);
   info->id = coded_buf;
   info->timestamp = GST_BUFFER_TIMESTAMP(pic);
   info->duration = GST_BUFFER_DURATION(pic);
