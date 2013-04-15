@@ -108,9 +108,11 @@ gst_vaapi_decoder_mpeg4_clear_buffer(GstVaapiDecoder *base)
     GstVaapiDecoderMpeg4Private * const priv = decoder->priv;
 
     priv->seq_pts               = GST_CLOCK_TIME_NONE;
-    priv->gop_pts               = GST_CLOCK_TIME_NONE;
+    priv->gop_pts               = 0;
     priv->max_pts               = GST_CLOCK_TIME_NONE;
     priv->pts_diff              = 0;
+    priv->last_sync_time        = 0;
+    priv->sync_time             = 0;
     priv->prev_t_ref            = -1;
     priv->calculate_pts_diff    = TRUE;
     priv->is_first_field        = FALSE;
