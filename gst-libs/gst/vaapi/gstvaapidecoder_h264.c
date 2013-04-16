@@ -3666,8 +3666,30 @@ gst_vaapi_decoder_h264_flush(GstVaapiDecoder *base_decoder)
 {
     GstVaapiDecoderH264 * const decoder =
         GST_VAAPI_DECODER_H264_CAST(base_decoder);
+    GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
+    gboolean layer_0_has_pics = TRUE;
+    gboolean layer_1_has_pics = TRUE;
 
-    dpb_flush(decoder);
+    while (layer_0_has_pics || layer_1_has_pics) {
+      if (layer_0_has_pics) {
+          priv->current_dpb_layer = &priv->dpb_layers[0];
+          layer_0_has_pics = dpb_bump(decoder) ;
+      }
+      if (layer_1_has_pics) {
+          priv->current_dpb_layer = &priv->dpb_layers[1];
+          layer_1_has_pics = dpb_bump(decoder) ;
+      }
+    }
+
+    priv->current_dpb_layer = &priv->dpb_layers[0];
+    dpb_clear(decoder);
+
+    priv->current_dpb_layer = &priv->dpb_layers[1];
+    dpb_clear(decoder);
+
+    priv->current_dpb_layer = dpb_layer;
+
     return GST_VAAPI_DECODER_STATUS_SUCCESS;
 }
 
