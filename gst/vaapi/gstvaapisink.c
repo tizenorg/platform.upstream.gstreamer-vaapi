@@ -763,6 +763,15 @@ gst_vaapisink_set_caps(GstBaseSink *base_sink, GstCaps *caps)
 
     if (!gst_video_info_from_caps(vip, caps))
         return FALSE;
+  
+    if (GST_VIDEO_INFO_IS_YUV(vip)) {
+        sink->use_video_raw = TRUE;
+        // in case _buffer_alloc is not called before
+        if (!gst_vaapi_uploader_ensure_display(sink->uploader, sink->display))
+            return GST_FLOW_NOT_SUPPORTED;
+        if (!gst_vaapi_uploader_ensure_caps(sink->uploader, caps, NULL))
+            return GST_FLOW_NOT_SUPPORTED;
+    }
     sink->use_video_raw = GST_VIDEO_INFO_IS_YUV(vip);
     sink->video_width   = GST_VIDEO_INFO_WIDTH(vip);
     sink->video_height  = GST_VIDEO_INFO_HEIGHT(vip);
