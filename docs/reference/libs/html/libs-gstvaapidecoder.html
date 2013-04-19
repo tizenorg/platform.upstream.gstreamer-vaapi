@@ -3,8 +3,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GstVaapiDecoder</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
-<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 1.0 Library Reference Manual">
 <link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
 <link rel="prev" href="GstVaapiContext.html" title="GstVaapiContext">
 <link rel="next" href="libs-GstVaapiDecoderJpeg.html" title="GstVaapiDecoderJpeg">
@@ -17,7 +17,7 @@
 <td><a accesskey="p" href="GstVaapiContext.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
 <td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
-<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<th width="100%" align="center">GStreamer VA-API Plugins 1.0 Library Reference Manual</th>
 <td><a accesskey="n" href="libs-GstVaapiDecoderJpeg.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
@@ -46,21 +46,21 @@ struct              <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDeco
 struct              <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderClass" title="struct GstVaapiDecoderClass">GstVaapiDecoderClass</a>;
 <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-caps" title="gst_vaapi_decoder_get_caps ()">gst_vaapi_decoder_get_caps</a>          (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);
 <a class="link" href="libs-GstVaapiProfile.html#GstVaapiCodec" title="enum GstVaapiCodec"><span class="returnvalue">GstVaapiCodec</span></a>       <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-codec" title="gst_vaapi_decoder_get_codec ()">gst_vaapi_decoder_get_codec</a>         (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);
-<span class="returnvalue">GstVideoCodecState</span> * <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-codec-state" title="gst_vaapi_decoder_get_codec_state ()">gst_vaapi_decoder_get_codec_state</a>  (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#GstVideoCodecState"><span class="returnvalue">GstVideoCodecState</span></a> * <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-codec-state" title="gst_vaapi_decoder_get_codec_state ()">gst_vaapi_decoder_get_codec_state</a>  (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-put-buffer" title="gst_vaapi_decoder_put_buffer ()">gst_vaapi_decoder_put_buffer</a>        (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
                                                          <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buf</code></em>);
 <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-surface" title="gst_vaapi_decoder_get_surface ()">gst_vaapi_decoder_get_surface</a>     (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
                                                          <em class="parameter"><code><span class="type">GstVaapiSurfaceProxy</span> **out_proxy_ptr</code></em>);
 <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-get-frame" title="gst_vaapi_decoder_get_frame ()">gst_vaapi_decoder_get_frame</a>       (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
-                                                         <em class="parameter"><code><span class="type">GstVideoCodecFrame</span> **out_frame_ptr</code></em>);
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#GstVideoCodecFrame"><span class="type">GstVideoCodecFrame</span></a> **out_frame_ptr</code></em>);
 <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-parse" title="gst_vaapi_decoder_parse ()">gst_vaapi_decoder_parse</a>           (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
-                                                         <em class="parameter"><code><span class="type">GstVideoCodecFrame</span> *frame</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#GstVideoCodecFrame"><span class="type">GstVideoCodecFrame</span></a> *frame</code></em>,
                                                          <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstAdapter.html"><span class="type">GstAdapter</span></a> *adapter</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> at_eos</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *got_unit_size_ptr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *got_frame_ptr</code></em>);
 <a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> <a class="link" href="libs-gstvaapidecoder.html#gst-vaapi-decoder-decode" title="gst_vaapi_decoder_decode ()">gst_vaapi_decoder_decode</a>          (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
-                                                         <em class="parameter"><code><span class="type">GstVideoCodecFrame</span> *frame</code></em>);
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#GstVideoCodecFrame"><span class="type">GstVideoCodecFrame</span></a> *frame</code></em>);
 </pre>
 </div>
 <div class="refsect1">
@@ -197,7 +197,7 @@ A VA decoder base class.
 <a name="gst-vaapi-decoder-get-caps"></a><h3>gst_vaapi_decoder_get_caps ()</h3>
 <pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_vaapi_decoder_get_caps          (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);</pre>
 <p>
-Retrieves the <em class="parameter"><code>decoder</code></em> caps. The deocder owns the returned caps, so
+Retrieves the <em class="parameter"><code>decoder</code></em> caps. The decoder owns the returned caps, so
 use <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#gst-caps-ref"><code class="function">gst_caps_ref()</code></a> whenever necessary.
 </p>
 <div class="variablelist"><table border="0">
@@ -241,11 +241,11 @@ Retrieves the <em class="parameter"><code>decoder</code></em> codec type.
 <hr>
 <div class="refsect2">
 <a name="gst-vaapi-decoder-get-codec-state"></a><h3>gst_vaapi_decoder_get_codec_state ()</h3>
-<pre class="programlisting"><span class="returnvalue">GstVideoCodecState</span> * gst_vaapi_decoder_get_codec_state  (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#GstVideoCodecState"><span class="returnvalue">GstVideoCodecState</span></a> * gst_vaapi_decoder_get_codec_state  (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>);</pre>
 <p>
-Retrieves the <em class="parameter"><code>decoder</code></em> codec state. The caller owns an extra reference
-to the <span class="type">GstVideoCodecState</span>, so <code class="function">gst_video_codec_state_unref()</code> shall be
-called after usage.
+Retrieves the <em class="parameter"><code>decoder</code></em> codec state. The decoder owns the returned
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#GstVideoCodecState"><span class="type">GstVideoCodecState</span></a> structure, so use <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#gst-video-codec-state-ref"><code class="function">gst_video_codec_state_ref()</code></a>
+whenever necessary.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -257,7 +257,7 @@ called after usage.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td>the <span class="type">GstVideoCodecState</span> object for <em class="parameter"><code>decoder</code></em>
+<td>the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#GstVideoCodecState"><span class="type">GstVideoCodecState</span></a> object for <em class="parameter"><code>decoder</code></em>
 </td>
 </tr>
 </tbody>
@@ -338,11 +338,11 @@ as a <span class="type">GstVaapiSurfaceProxy</span>. The caller owns this object
 <div class="refsect2">
 <a name="gst-vaapi-decoder-get-frame"></a><h3>gst_vaapi_decoder_get_frame ()</h3>
 <pre class="programlisting"><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> gst_vaapi_decoder_get_frame       (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
-                                                         <em class="parameter"><code><span class="type">GstVideoCodecFrame</span> **out_frame_ptr</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#GstVideoCodecFrame"><span class="type">GstVideoCodecFrame</span></a> **out_frame_ptr</code></em>);</pre>
 <p>
 On successful return, *<em class="parameter"><code>out_frame_ptr</code></em> contains the next decoded
-frame available as a <span class="type">GstVideoCodecFrame</span>. The caller owns this
-object, so <code class="function">gst_video_codec_frame_unref()</code> shall be called after
+frame available as a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#GstVideoCodecFrame"><span class="type">GstVideoCodecFrame</span></a>. The caller owns this
+object, so <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#gst-video-codec-frame-unref"><code class="function">gst_video_codec_frame_unref()</code></a> shall be called after
 usage. Otherwise, <em class="parameter"><code>GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA</code></em> is
 returned if no decoded frame is available.
 </p>
@@ -361,7 +361,7 @@ is transferred to the frame.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>out_frame_ptr</code></em> :</span></p></td>
-<td>the next decoded frame as a <span class="type">GstVideoCodecFrame</span>
+<td>the next decoded frame as a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#GstVideoCodecFrame"><span class="type">GstVideoCodecFrame</span></a>
 </td>
 </tr>
 <tr>
@@ -376,7 +376,7 @@ is transferred to the frame.
 <div class="refsect2">
 <a name="gst-vaapi-decoder-parse"></a><h3>gst_vaapi_decoder_parse ()</h3>
 <pre class="programlisting"><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> gst_vaapi_decoder_parse           (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
-                                                         <em class="parameter"><code><span class="type">GstVideoCodecFrame</span> *frame</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#GstVideoCodecFrame"><span class="type">GstVideoCodecFrame</span></a> *frame</code></em>,
                                                          <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstAdapter.html"><span class="type">GstAdapter</span></a> *adapter</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> at_eos</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *got_unit_size_ptr</code></em>,
@@ -388,7 +388,7 @@ is transferred to the frame.
 <div class="refsect2">
 <a name="gst-vaapi-decoder-decode"></a><h3>gst_vaapi_decoder_decode ()</h3>
 <pre class="programlisting"><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoderStatus" title="enum GstVaapiDecoderStatus"><span class="returnvalue">GstVaapiDecoderStatus</span></a> gst_vaapi_decoder_decode          (<em class="parameter"><code><a class="link" href="libs-gstvaapidecoder.html#GstVaapiDecoder"><span class="type">GstVaapiDecoder</span></a> *decoder</code></em>,
-                                                         <em class="parameter"><code><span class="type">GstVideoCodecFrame</span> *frame</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoutils.html#GstVideoCodecFrame"><span class="type">GstVideoCodecFrame</span></a> *frame</code></em>);</pre>
 <p>
 </p>
 </div>

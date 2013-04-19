@@ -26,11 +26,125 @@
  */
 
 #include "gst/vaapi/sysdeps.h"
-#include <gst/video/gstsurfacebuffer.h>
 #include "gstvaapivideobuffer.h"
 #if USE_GLX
 # include "gstvaapivideoconverter_glx.h"
 #endif
+
+#if GST_CHECK_VERSION(1,0,0)
+#include <gst/video/gstsurfacemeta.h>
+
+#define GST_VAAPI_SURFACE_META_CAST(obj) \
+    ((GstVaapiSurfaceMeta *)(obj))
+
+typedef struct _GstVaapiSurfaceMeta GstVaapiSurfaceMeta;
+struct _GstVaapiSurfaceMeta {
+    GstSurfaceMeta      base;
+    GstBuffer          *buffer;
+};
+
+#define GST_VAAPI_SURFACE_META_INFO gst_vaapi_surface_meta_get_info()
+static const GstMetaInfo *
+gst_vaapi_surface_meta_get_info(void);
+
+typedef GstSurfaceConverter *(*GstSurfaceConverterCreateFunc)(
+    GstSurfaceMeta *meta, const gchar *type, GValue *dest);
+
+#if USE_GLX
+static GstSurfaceConverter *
+gst_vaapi_surface_create_converter_glx(GstSurfaceMeta *base_meta,
+    const gchar *type, GValue *dest)
+{
+    GstVaapiSurfaceMeta * const meta = GST_VAAPI_SURFACE_META_CAST(base_meta);
+
+    return gst_vaapi_video_converter_glx_new(meta->buffer, type, dest);
+}
+
+#undef gst_vaapi_video_converter_glx_new
+#define gst_vaapi_video_converter_glx_new \
+    gst_vaapi_surface_create_converter_glx
+#endif
+
+static GstSurfaceConverter *
+gst_vaapi_surface_create_converter(GstSurfaceMeta *base_meta,
+    const gchar *type, GValue *dest)
+{
+    GstVaapiSurfaceMeta * const meta = GST_VAAPI_SURFACE_META_CAST(base_meta);
+    GstVaapiVideoMeta * const vmeta =
+        gst_buffer_get_vaapi_video_meta(meta->buffer);
+    GstSurfaceConverterCreateFunc func;
+
+    if (G_UNLIKELY(!vmeta))
+        return NULL;
+
+    func = (GstSurfaceConverterCreateFunc)
+        gst_vaapi_video_meta_get_surface_converter(vmeta);
+
+    return func ? func(base_meta, type, dest) : NULL;
+}
+
+static gboolean
+gst_vaapi_surface_meta_init(GstVaapiSurfaceMeta *meta, gpointer params,
+    GstBuffer *buffer)
+{
+    meta->base.create_converter = gst_vaapi_surface_create_converter;
+    meta->buffer = buffer;
+    return TRUE;
+}
+
+static void
+gst_vaapi_surface_meta_free(GstVaapiSurfaceMeta *meta, GstBuffer *buffer)
+{
+}
+
+static gboolean
+gst_vaapi_surface_meta_transform(GstBuffer *dst_buffer, GstMeta *meta,
+    GstBuffer *src_buffer, GQuark type, gpointer data)
+{
+    GstVaapiVideoMeta * const src_vmeta =
+        gst_buffer_get_vaapi_video_meta(src_buffer);
+
+    if (GST_META_TRANSFORM_IS_COPY(type)) {
+        GstVaapiSurfaceMeta * const dst_smeta = GST_VAAPI_SURFACE_META_CAST(
+            gst_buffer_add_meta(dst_buffer, GST_VAAPI_SURFACE_META_INFO, NULL));
+
+        /* Note: avoid meta lookups in gst_vaapi_surface_create_converter()
+           by directly calling the GstVaapiVideoMeta::surface_converter hook */
+        dst_smeta->base.create_converter = (GstSurfaceConverterCreateFunc)
+            gst_vaapi_video_meta_get_surface_converter(src_vmeta);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+const GstMetaInfo *
+gst_vaapi_surface_meta_get_info(void)
+{
+    static gsize g_meta_info;
+
+    if (g_once_init_enter(&g_meta_info)) {
+        gsize meta_info = GPOINTER_TO_SIZE(gst_meta_register(
+            GST_SURFACE_META_API_TYPE,
+            "GstVaapiSurfaceMeta", sizeof(GstVaapiSurfaceMeta),
+            (GstMetaInitFunction)gst_vaapi_surface_meta_init,
+            (GstMetaFreeFunction)gst_vaapi_surface_meta_free,
+            (GstMetaTransformFunction)gst_vaapi_surface_meta_transform));
+        g_once_init_leave(&g_meta_info, meta_info);
+    }
+    return GSIZE_TO_POINTER(g_meta_info);
+}
+
+static GstBuffer *
+gst_surface_buffer_new(void)
+{
+    GstBuffer * const buffer = gst_buffer_new();
+
+    if (buffer)
+        gst_buffer_add_meta(buffer, GST_VAAPI_SURFACE_META_INFO, NULL);
+    return buffer;
+}
+#else
+#include <gst/video/gstsurfacebuffer.h>
 
 #define GST_VAAPI_TYPE_VIDEO_BUFFER \
     (gst_vaapi_video_buffer_get_type())
@@ -117,6 +231,13 @@ gst_vaapi_video_buffer_init(GstVaapiVideoBuffer *buffer)
 {
 }
 
+static inline GstBuffer *
+gst_surface_buffer_new(void)
+{
+    return GST_BUFFER_CAST(gst_mini_object_new(GST_TYPE_SURFACE_BUFFER));
+}
+#endif
+
 static GFunc
 get_surface_converter(GstVaapiDisplay *display)
 {
@@ -145,7 +266,7 @@ new_vbuffer(GstVaapiVideoMeta *meta)
     gst_vaapi_video_meta_set_surface_converter(meta,
         get_surface_converter(gst_vaapi_video_meta_get_display(meta)));
 
-    buffer = GST_BUFFER_CAST(gst_mini_object_new(GST_TYPE_SURFACE_BUFFER));
+    buffer = gst_surface_buffer_new();
     if (buffer)
         gst_buffer_set_vaapi_video_meta(buffer, meta);
     gst_vaapi_video_meta_unref(meta);

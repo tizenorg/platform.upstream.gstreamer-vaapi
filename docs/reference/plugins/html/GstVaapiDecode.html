@@ -3,8 +3,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GstVaapiDecode</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
-<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Plugins Reference Manual">
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 1.0 Plugins Reference Manual">
 <link rel="up" href="ch01.html" title="gst-plugins-vaapi Plugins">
 <link rel="prev" href="ch01.html" title="gst-plugins-vaapi Plugins">
 <link rel="next" href="GstVaapiPostproc.html" title="GstVaapiPostproc">
@@ -17,7 +17,7 @@
 <td><a accesskey="p" href="ch01.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
 <td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
-<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Plugins Reference Manual</th>
+<th width="100%" align="center">GStreamer VA-API Plugins 1.0 Plugins Reference Manual</th>
 <td><a accesskey="n" href="GstVaapiPostproc.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
@@ -48,17 +48,18 @@
 <a name="GstVaapiDecode.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
-         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
-               +----GstVideoDecoder
-                     +----GstVaapiDecode
+   +----<a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GInitiallyUnowned">GInitiallyUnowned</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+                     +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-GstVideoDecoder.html#GstVideoDecoder">GstVideoDecoder</a>
+                           +----GstVaapiDecode
 </pre>
 </div>
 <div class="refsect1">
 <a name="GstVaapiDecode.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstVaapiDecode implements
- <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstImplementsInterface.html">GstImplementsInterface</a> and  GstVideoContext.</p>
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-bad-libs/html/gst-plugins-bad-libs-GstVideoContextInterface.html#GstVideoContext">GstVideoContext</a>.</p>
 </div>
 <div class="refsect1">
 <a name="GstVaapiDecode.description"></a><h2>Description</h2>

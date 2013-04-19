@@ -29,6 +29,8 @@
 #include "gstvaapicompat.h"
 #include "gstvaapidecoder.h"
 #include "gstvaapidecoder_priv.h"
+#include "gstvaapiparser_frame.h"
+#include "gstvaapisurfaceproxy_priv.h"
 #include "gstvaapiutils.h"
 #include "gstvaapi_priv.h"
 
@@ -111,7 +113,7 @@ push_buffer(GstVaapiDecoder *decoder, GstBuffer *buffer)
     }
 
     GST_DEBUG("queue encoded data buffer %p (%d bytes)",
-              buffer, GST_BUFFER_SIZE(buffer));
+              buffer, gst_buffer_get_size(buffer));
 
     g_queue_push_tail(priv->buffers, buffer);
     return TRUE;
@@ -128,7 +130,7 @@ pop_buffer(GstVaapiDecoder *decoder)
         return NULL;
 
     GST_DEBUG("dequeue buffer %p for decoding (%d bytes)",
-              buffer, GST_BUFFER_SIZE(buffer));
+              buffer, gst_buffer_get_size(buffer));
 
     return buffer;
 }
@@ -140,7 +142,7 @@ do_parse(GstVaapiDecoder *decoder,
 {
     GstVaapiDecoderPrivate * const priv = decoder->priv;
     GstVaapiParserState * const ps = &priv->parser_state;
-    GstVaapiDecoderFrame *frame;
+    GstVaapiParserFrame *frame;
     GstVaapiDecoderUnit *unit;
     GstVaapiDecoderStatus status;
 
@@ -150,7 +152,7 @@ do_parse(GstVaapiDecoder *decoder,
     frame = gst_video_codec_frame_get_user_data(base_frame);
     if (!frame) {
         GstVideoCodecState * const codec_state = priv->codec_state;
-        frame = gst_vaapi_decoder_frame_new(codec_state->info.width,
+        frame = gst_vaapi_parser_frame_new(codec_state->info.width,
             codec_state->info.height);
         if (!frame)
             return GST_VAAPI_DECODER_STATUS_ERROR_ALLOCATION_FAILED;
@@ -187,7 +189,7 @@ do_parse(GstVaapiDecoder *decoder,
     }
 
 got_unit:
-    gst_vaapi_decoder_frame_append_unit(frame, unit);
+    gst_vaapi_parser_frame_append_unit(frame, unit);
     *got_unit_size_ptr = unit->size;
     *got_frame_ptr = GST_VAAPI_DECODER_UNIT_IS_FRAME_END(unit);
     return GST_VAAPI_DECODER_STATUS_SUCCESS;
@@ -213,7 +215,7 @@ do_decode_units(GstVaapiDecoder *decoder, GArray *units)
 }
 
 static GstVaapiDecoderStatus
-do_decode_1(GstVaapiDecoder *decoder, GstVaapiDecoderFrame *frame)
+do_decode_1(GstVaapiDecoder *decoder, GstVaapiParserFrame *frame)
 {
     GstVaapiDecoderClass * const klass = GST_VAAPI_DECODER_GET_CLASS(decoder);
     GstVaapiDecoderStatus status;
@@ -260,14 +262,14 @@ static inline GstVaapiDecoderStatus
 do_decode(GstVaapiDecoder *decoder, GstVideoCodecFrame *base_frame)
 {
     GstVaapiParserState * const ps = &decoder->priv->parser_state;
-    GstVaapiDecoderFrame * const frame = base_frame->user_data;
+    GstVaapiParserFrame * const frame = base_frame->user_data;
     GstVaapiDecoderStatus status;
 
     ps->current_frame = base_frame;
 
-    gst_vaapi_decoder_frame_ref(frame);
+    gst_vaapi_parser_frame_ref(frame);
     status = do_decode_1(decoder, frame);
-    gst_vaapi_decoder_frame_unref(frame);
+    gst_vaapi_parser_frame_unref(frame);
 
     switch ((guint)status) {
     case GST_VAAPI_DECODER_STATUS_DROP_FRAME:
@@ -386,12 +388,12 @@ static inline void
 push_frame(GstVaapiDecoder *decoder, GstVideoCodecFrame *frame)
 {
     GstVaapiDecoderPrivate * const priv = decoder->priv;
+    GstVaapiSurfaceProxy * const proxy = frame->user_data;
 
     GST_DEBUG("queue decoded surface %" GST_VAAPI_ID_FORMAT,
-              GST_VAAPI_ID_ARGS(gst_vaapi_surface_proxy_get_surface_id(
-                                    frame->user_data)));
+              GST_VAAPI_ID_ARGS(GST_VAAPI_SURFACE_PROXY_SURFACE_ID(proxy)));
 
-    g_queue_push_tail(priv->frames, frame);
+    g_queue_push_tail(priv->frames, gst_video_codec_frame_ref(frame));
 }
 
 static inline GstVideoCodecFrame *
@@ -399,14 +401,15 @@ pop_frame(GstVaapiDecoder *decoder)
 {
     GstVaapiDecoderPrivate * const priv = decoder->priv;
     GstVideoCodecFrame *frame;
+    GstVaapiSurfaceProxy *proxy;
 
     frame = g_queue_pop_head(priv->frames);
     if (!frame)
         return NULL;
 
+    proxy = frame->user_data;
     GST_DEBUG("dequeue decoded surface %" GST_VAAPI_ID_FORMAT,
-              GST_VAAPI_ID_ARGS(gst_vaapi_surface_proxy_get_surface_id(
-                                    frame->user_data)));
+              GST_VAAPI_ID_ARGS(GST_VAAPI_SURFACE_PROXY_SURFACE_ID(proxy)));
 
     return frame;
 }
@@ -612,9 +615,9 @@ gst_vaapi_decoder_get_codec(GstVaapiDecoder *decoder)
  * gst_vaapi_decoder_get_codec_state:
  * @decoder: a #GstVaapiDecoder
  *
- * Retrieves the @decoder codec state. The caller owns an extra reference
- * to the #GstVideoCodecState, so gst_video_codec_state_unref() shall be
- * called after usage.
+ * Retrieves the @decoder codec state. The decoder owns the returned
+ * #GstVideoCodecState structure, so use gst_video_codec_state_ref()
+ * whenever necessary.
  *
  * Return value: the #GstVideoCodecState object for @decoder
  */
@@ -623,14 +626,14 @@ gst_vaapi_decoder_get_codec_state(GstVaapiDecoder *decoder)
 {
     g_return_val_if_fail(GST_VAAPI_IS_DECODER(decoder), NULL);
 
-    return gst_video_codec_state_ref(decoder->priv->codec_state);
+    return GST_VAAPI_DECODER_CODEC_STATE(decoder);
 }
 
 /**
  * gst_vaapi_decoder_get_caps:
  * @decoder: a #GstVaapiDecoder
  *
- * Retrieves the @decoder caps. The deocder owns the returned caps, so
+ * Retrieves the @decoder caps. The decoder owns the returned caps, so
  * use gst_caps_ref() whenever necessary.
  *
  * Return value: the @decoder caps
@@ -662,7 +665,7 @@ gst_vaapi_decoder_put_buffer(GstVaapiDecoder *decoder, GstBuffer *buf)
     g_return_val_if_fail(GST_VAAPI_IS_DECODER(decoder), FALSE);
 
     if (buf) {
-        if (!GST_BUFFER_DATA(buf) || GST_BUFFER_SIZE(buf) <= 0)
+        if (gst_buffer_get_size(buf) == 0)
             return TRUE;
         buf = gst_buffer_ref(buf);
     }
@@ -699,7 +702,10 @@ gst_vaapi_decoder_get_surface(GstVaapiDecoder *decoder,
         frame = pop_frame(decoder);
         while (frame) {
             if (!GST_VIDEO_CODEC_FRAME_IS_DECODE_ONLY(frame)) {
-                *out_proxy_ptr = gst_vaapi_surface_proxy_ref(frame->user_data);
+                GstVaapiSurfaceProxy * const proxy = frame->user_data;
+                proxy->timestamp = frame->pts;
+                proxy->duration = frame->duration;
+                *out_proxy_ptr = proxy;
                 gst_video_codec_frame_unref(frame);
                 return GST_VAAPI_DECODER_STATUS_SUCCESS;
             }
@@ -744,6 +750,21 @@ gst_vaapi_decoder_get_frame(GstVaapiDecoder *decoder,
     out_frame = pop_frame(decoder);
     if (!out_frame)
         return GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA;
+
+#if !GST_CHECK_VERSION(1,0,0)
+    if (!GST_VIDEO_CODEC_FRAME_IS_DECODE_ONLY(out_frame)) {
+        const guint flags = GST_VAAPI_SURFACE_PROXY_FLAGS(out_frame->user_data);
+        guint out_flags = 0;
+
+        if (flags & GST_VAAPI_SURFACE_PROXY_FLAG_TFF)
+            out_flags |= GST_VIDEO_CODEC_FRAME_FLAG_TFF;
+        if (flags & GST_VAAPI_SURFACE_PROXY_FLAG_RFF)
+            out_flags |= GST_VIDEO_CODEC_FRAME_FLAG_RFF;
+        if (flags & GST_VAAPI_SURFACE_PROXY_FLAG_ONEFIELD)
+            out_flags |= GST_VIDEO_CODEC_FRAME_FLAG_ONEFIELD;
+        GST_VIDEO_CODEC_FRAME_FLAG_SET(out_frame, out_flags);
+    }
+#endif
 
     *out_frame_ptr = out_frame;
     return GST_VAAPI_DECODER_STATUS_SUCCESS;
@@ -866,19 +887,6 @@ gst_vaapi_decoder_ensure_context(
 )
 {
     GstVaapiDecoderPrivate * const priv = decoder->priv;
-    GstVideoCodecState * const codec_state = priv->codec_state;
-    gboolean size_changed;
-
-    size_changed = codec_state->info.width != cip->width ||
-        codec_state->info.height != cip->height;
-
-    /* Create a new context if the requested size for surfaces changed
-     * because we need to keep the context underlying surface pool
-     * until all surfaces are released */
-    if (size_changed) {
-        gst_vaapi_decoder_set_picture_size(decoder, cip->width, cip->height);
-        g_clear_object(&priv->context);
-    }
 
     if (priv->context) {
         if (!gst_vaapi_context_reset_full(priv->context, cip))
@@ -963,6 +971,7 @@ gst_vaapi_decoder_decode_codec_data(GstVaapiDecoder *decoder)
     GstVaapiDecoderClass * const klass = GST_VAAPI_DECODER_GET_CLASS(decoder);
     GstBuffer * const codec_data = GST_VAAPI_DECODER_CODEC_DATA(decoder);
     GstVaapiDecoderStatus status;
+    GstMapInfo map_info;
     const guchar *buf;
     guint buf_size;
 
@@ -973,11 +982,17 @@ gst_vaapi_decoder_decode_codec_data(GstVaapiDecoder *decoder)
     if (!klass->decode_codec_data)
         return GST_VAAPI_DECODER_STATUS_SUCCESS;
 
-    buf      = GST_BUFFER_DATA(codec_data);
-    buf_size = GST_BUFFER_SIZE(codec_data);
-    if (!buf || buf_size == 0)
-        return GST_VAAPI_DECODER_STATUS_SUCCESS;
+    if (!gst_buffer_map(codec_data, &map_info, GST_MAP_READ)) {
+        GST_ERROR("failed to map buffer");
+        return GST_VAAPI_DECODER_STATUS_ERROR_UNKNOWN;
+    }
 
-    status = klass->decode_codec_data(decoder, buf, buf_size);
+    buf      = map_info.data;
+    buf_size = map_info.size;
+    if (G_LIKELY(buf && buf_size > 0))
+        status = klass->decode_codec_data(decoder, buf, buf_size);
+    else
+        status = GST_VAAPI_DECODER_STATUS_SUCCESS;
+    gst_buffer_unmap(codec_data, &map_info);
     return status;
 }

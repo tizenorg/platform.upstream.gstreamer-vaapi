@@ -32,6 +32,7 @@
 #include "gstvaapisurface.h"
 #include "gstvaapisurface_priv.h"
 #include "gstvaapisurfacepool.h"
+#include "gstvaapisurfaceproxy.h"
 #include "gstvaapiimage.h"
 #include "gstvaapisubpicture.h"
 #include "gstvaapiminiobject.h"
@@ -251,8 +252,30 @@ overlay_rectangle_changed_pixels(GstVaapiOverlayRectangle *overlay,
     buffer = gst_video_overlay_rectangle_get_pixels_unscaled_raw(rect, flags);
     if (!buffer)
         return FALSE;
+#if GST_CHECK_VERSION(1,0,0)
+    {
+        const guint n_blocks = gst_buffer_n_memory(buffer);
+        gsize ofs;
+        guint i;
+
+        if (buffer == overlay->rect_buffer)
+            return TRUE;
+
+        if (n_blocks != gst_buffer_n_memory(overlay->rect_buffer))
+            return FALSE;
+
+        for (i = 0; i < n_blocks; i++) {
+            GstMemory * const mem1 = gst_buffer_peek_memory(buffer, i);
+            GstMemory * const mem2 =
+                gst_buffer_peek_memory(overlay->rect_buffer, i);
+            if (!gst_memory_is_span(mem1, mem2, &ofs))
+                return FALSE;
+        }
+    }
+#else
     if (GST_BUFFER_DATA(overlay->rect_buffer) != GST_BUFFER_DATA(buffer))
         return FALSE;
+#endif
     return TRUE;
 }
 
@@ -503,6 +526,7 @@ gst_vaapi_context_create_surfaces(GstVaapiContext *context)
         );
         if (!surface)
             return FALSE;
+        gst_vaapi_surface_set_parent_context(surface, context);
         g_ptr_array_add(priv->surfaces, surface);
         if (!gst_vaapi_video_pool_add_object(priv->surfaces_pool, surface))
             return FALSE;
@@ -999,29 +1023,27 @@ gst_vaapi_context_get_size(
 }
 
 /**
- * gst_vaapi_context_get_surface:
+ * gst_vaapi_context_get_surface_proxy:
  * @context: a #GstVaapiContext
  *
- * Acquires a free surface. The returned surface but be released with
- * gst_vaapi_context_put_surface(). This function returns %NULL if
- * there is no free surface available in the pool. The surfaces are
- * pre-allocated during context creation though.
+ * Acquires a free surface, wrapped into a #GstVaapiSurfaceProxy. The
+ * returned surface will be automatically released when the proxy is
+ * destroyed. So, it is enough to call gst_vaapi_surface_proxy_unref()
+ * after usage.
+ *
+ * This function returns %NULL if there is no free surface available
+ * in the pool. The surfaces are pre-allocated during context creation
+ * though.
  *
  * Return value: a free surface, or %NULL if none is available
  */
-GstVaapiSurface *
-gst_vaapi_context_get_surface(GstVaapiContext *context)
+GstVaapiSurfaceProxy *
+gst_vaapi_context_get_surface_proxy(GstVaapiContext *context)
 {
-    GstVaapiSurface *surface;
-
     g_return_val_if_fail(GST_VAAPI_IS_CONTEXT(context), NULL);
 
-    surface = gst_vaapi_video_pool_get_object(context->priv->surfaces_pool);
-    if (!surface)
-        return NULL;
-
-    gst_vaapi_surface_set_parent_context(surface, context);
-    return surface;
+    return gst_vaapi_surface_proxy_new_from_pool(
+        GST_VAAPI_SURFACE_POOL(context->priv->surfaces_pool));
 }
 
 /**
@@ -1038,53 +1060,6 @@ gst_vaapi_context_get_surface_count(GstVaapiContext *context)
     g_return_val_if_fail(GST_VAAPI_IS_CONTEXT(context), 0);
 
     return gst_vaapi_video_pool_get_size(context->priv->surfaces_pool);
-}
-
-/**
- * gst_vaapi_context_put_surface:
- * @context: a #GstVaapiContext
- * @surface: the #GstVaapiSurface to release
- *
- * Releases a surface acquired by gst_vaapi_context_get_surface().
- */
-void
-gst_vaapi_context_put_surface(GstVaapiContext *context, GstVaapiSurface *surface)
-{
-    g_return_if_fail(GST_VAAPI_IS_CONTEXT(context));
-    g_return_if_fail(GST_VAAPI_IS_SURFACE(surface));
-
-    gst_vaapi_surface_set_parent_context(surface, NULL);
-    gst_vaapi_video_pool_put_object(context->priv->surfaces_pool, surface);
-}
-
-/**
- * gst_vaapi_context_find_surface_by_id:
- * @context: a #GstVaapiContext
- * @id: the VA surface id to find
- *
- * Finds VA surface by @id in the list of surfaces attached to the @context.
- *
- * Return value: the matching #GstVaapiSurface object, or %NULL if
- *   none was found
- */
-GstVaapiSurface *
-gst_vaapi_context_find_surface_by_id(GstVaapiContext *context, GstVaapiID id)
-{
-    GstVaapiContextPrivate *priv;
-    GstVaapiSurface *surface;
-    guint i;
-
-    g_return_val_if_fail(GST_VAAPI_IS_CONTEXT(context), NULL);
-
-    priv = context->priv;
-    g_return_val_if_fail(priv->surfaces, NULL);
-
-    for (i = 0; i < priv->surfaces->len; i++) {
-        surface = g_ptr_array_index(priv->surfaces, i);
-        if (GST_VAAPI_OBJECT_ID(surface) == id)
-            return surface;
-    }
-    return NULL;
 }
 
 /**

@@ -1,7 +1,7 @@
 # gstreamer-vaapi package version number
 m4_define([gst_vaapi_major_version], [0])
 m4_define([gst_vaapi_minor_version], [5])
-m4_define([gst_vaapi_micro_version], [2])
+m4_define([gst_vaapi_micro_version], [3])
 m4_define([gst_vaapi_pre_version],   [0])
 m4_define([gst_vaapi_version],
           [gst_vaapi_major_version.gst_vaapi_minor_version.gst_vaapi_micro_version])
@@ -10,18 +10,23 @@ m4_append([gst_vaapi_version], gst_vaapi_pre_version, [.pre])
 ])
 
 # gstreamer-vaapi library (libtool) version number
-m4_define([gst_vaapi_lt_current],  [1])
-m4_define([gst_vaapi_lt_revision], [0])
-m4_define([gst_vaapi_lt_age],      [0])
+m4_define([gst_vaapi_lt_current],       [2])
+m4_define([gst0_vaapi_lt_current_bias], [0])
+m4_define([gst1_vaapi_lt_current_bias], [2])
+m4_define([gst_vaapi_lt_revision],      [0])
+m4_define([gst_vaapi_lt_age],           [0])
 
 # glib version number
 m4_define([glib_version], [2.28])
 
 # gstreamer version number
-m4_define([gst_api_version],            [0.10])
+m4_define([gst_api_version],            [1.0])
 m4_define([gst0_version],               [0.10.36])
 m4_define([gst0_plugins_base_version],  [0.10.31])
 m4_define([gst0_plugins_bad_version],   [0.10.22])
+m4_define([gst1_version],               [1.0.0])
+m4_define([gst1_plugins_base_version],  [1.0.0])
+m4_define([gst1_plugins_bad_version],   [1.0.0])
 
 # Wayland minimum version number
 m4_define([wayland_api_version], [1.0.0])
@@ -43,7 +48,7 @@ m4_define([libva_wld_package_version], [1.1.0])
 # XXX: introspection annotations require gtk-doc >= 1.12
 m4_define([gtkdoc_version], [1.9])
 
-AC_PREREQ([2.58])
+AC_PREREQ([2.66])
 AC_INIT([gst_vaapi], [gst_vaapi_version],
     [gwenole.beauchesne@intel.com],
     [gstreamer-vaapi])
@@ -59,9 +64,6 @@ AM_INIT_AUTOMAKE([1.11 tar-ustar no-dist-gzip dist-bzip2])
 
 TODAY="`LC_ALL=C date +'%a, %d %b %Y %X %z'`"
 AC_SUBST(TODAY)
-
-GST_VAAPI_MAJOR_VERSION=gst_vaapi_lt_current
-AC_SUBST(GST_VAAPI_MAJOR_VERSION)
 
 LIBVA_PACKAGE_VERSION=libva_x11_package_version
 AC_SUBST(LIBVA_PACKAGE_VERSION)
@@ -107,6 +109,12 @@ AC_ARG_ENABLE(wayland,
                    [enable Wayland output @<:@default=yes@:>@]),
     [], [enable_wayland="yes"])
 
+AC_ARG_WITH([gstreamer-api],
+    AC_HELP_STRING([--with-gstreamer-api=VERSION],
+                   [build against the specified GStreamer API version
+                    @<:@default=gst_api_version@:>@]),
+    [GST_API_VERSION="$with_gstreamer_api"], [GST_API_VERSION=gst_api_version])
+
 dnl Check for basic libraries
 AC_CHECK_LIB(m, tan)
 
@@ -123,17 +131,27 @@ GLIB_VERSION_REQUIRED=glib_version
 PKG_CHECK_MODULES([GLIB], [glib-2.0 >= $GLIB_VERSION_REQUIRED])
 AC_SUBST(GLIB_VERSION_REQUIRED)
 
+dnl Check to see if dlopen is in default libraries (like Solaris, which
+dnl has it in libc), or if libdl is needed to get it.
+AC_CHECK_FUNC([dlopen], [], [
+    AC_CHECK_LIB([dl], [dlopen], [DLOPEN_LIBS="-ldl"])])
+AC_SUBST([DLOPEN_LIBS])
+
 dnl ---------------------------------------------------------------------------
 dnl -- GStreamer                                                             --
 dnl ---------------------------------------------------------------------------
 
 dnl Versions for GStreamer and plugins-base
-GST_API_VERSION=gst_api_version
 case $GST_API_VERSION in
 0.10)
     GST_VERSION_REQUIRED=gst0_version
     GST_PLUGINS_BASE_VERSION_REQUIRED=gst0_plugins_base_version
     GST_PLUGINS_BAD_VERSION_REQUIRED=gst0_plugins_bad_version
+    ;;
+1.0)
+    GST_VERSION_REQUIRED=gst1_version
+    GST_PLUGINS_BASE_VERSION_REQUIRED=gst1_plugins_base_version
+    GST_PLUGINS_BAD_VERSION_REQUIRED=gst1_plugins_bad_version
     ;;
 *)
     AC_MSG_ERROR([unsupported GStreamer API version $GST_API_VERSION])
@@ -143,6 +161,15 @@ AC_SUBST(GST_API_VERSION)
 AC_SUBST(GST_VERSION_REQUIRED)
 AC_SUBST(GST_PLUGINS_BASE_VERSION_REQUIRED)
 AC_SUBST(GST_PLUGINS_BAD_VERSION_REQUIRED)
+
+USE_GST_API_0_10="no"
+USE_GST_API_1_0p="no"
+AS_VERSION_COMPARE([$GST_API_VERSION], [0.10],
+    [], [USE_GST_API_0_10="yes"], [])
+AS_VERSION_COMPARE([$GST_API_VERSION], [1.0],
+    [], [USE_GST_API_1_0p="yes"], [USE_GST_API_1_0p="yes"])
+AM_CONDITIONAL([USE_GST_API_0_10], [test "$USE_GST_API_0_10" = "yes"])
+AM_CONDITIONAL([USE_GST_API_1_0p], [test "$USE_GST_API_1_0p" = "yes"])
 
 dnl GStreamer Core
 PKG_CHECK_MODULES([GST],
@@ -172,8 +199,10 @@ fi
 dnl GStreamer -base plugins
 PKG_CHECK_MODULES([GST_PLUGINS_BASE],
     [gstreamer-plugins-base-$GST_API_VERSION >= $GST_PLUGINS_BASE_VERSION_REQUIRED])
+if test "$GST_API_VERSION" = "0.10"; then
 PKG_CHECK_MODULES([GST_INTERFACES],
     [gstreamer-interfaces-$GST_API_VERSION >= $GST_PLUGINS_BASE_VERSION_REQUIRED])
+fi
 
 dnl ... GstVideoOverlayComposition (gstreamer-video)
 PKG_CHECK_MODULES([GST_VIDEO],
@@ -331,8 +360,15 @@ AC_CACHE_CHECK([for JPEG parser],
 AM_CONDITIONAL([USE_LOCAL_CODEC_PARSERS_JPEG],
     [test "$ac_cv_have_gst_jpeg_parser" != "yes"])
 
+case $GST_API_VERSION in
+0.10)   lt_bias=gst0_vaapi_lt_current_bias;;
+1.0)    lt_bias=gst1_vaapi_lt_current_bias;;
+esac
+GST_VAAPI_MAJOR_VERSION=`expr gst_vaapi_lt_current - "$lt_bias"`
+AC_SUBST(GST_VAAPI_MAJOR_VERSION)
+
 dnl GST_VAAPI_LT_LDFLAGS:
-GST_VAAPI_LT_CURRENT=gst_vaapi_lt_current
+GST_VAAPI_LT_CURRENT="$GST_VAAPI_MAJOR_VERSION"
 GST_VAAPI_LT_REV=gst_vaapi_lt_revision
 GST_VAAPI_LT_AGE=gst_vaapi_lt_age
 GST_VAAPI_LT_VERSION="$GST_VAAPI_LT_CURRENT:$GST_VAAPI_LT_REV:$GST_VAAPI_LT_AGE"

@@ -46,7 +46,6 @@ libgstvaapi_source_c =				\
 	gstvaapicontext.c			\
 	gstvaapidecoder.c			\
 	gstvaapidecoder_dpb.c			\
-	gstvaapidecoder_frame.c			\
 	gstvaapidecoder_h264.c			\
 	gstvaapidecoder_mpeg2.c			\
 	gstvaapidecoder_mpeg4.c			\
@@ -61,6 +60,7 @@ libgstvaapi_source_c =				\
 	gstvaapiminiobject.c			\
 	gstvaapiobject.c			\
 	gstvaapiparamspecs.c			\
+	gstvaapiparser_frame.c			\
 	gstvaapiprofile.c			\
 	gstvaapisubpicture.c			\
 	gstvaapisurface.c			\
@@ -105,23 +105,26 @@ libgstvaapi_source_priv_h =			\
 	gstvaapicompat.h			\
 	gstvaapidebug.h				\
 	gstvaapidecoder_dpb.h			\
-	gstvaapidecoder_frame.h			\
 	gstvaapidecoder_objects.h		\
 	gstvaapidecoder_priv.h			\
 	gstvaapidecoder_unit.h			\
 	gstvaapidisplay_priv.h			\
 	gstvaapiminiobject.h			\
 	gstvaapiobject_priv.h			\
+	gstvaapiparser_frame.h			\
 	gstvaapisurface_priv.h			\
+	gstvaapisurfaceproxy_priv.h		\
 	gstvaapiutils.h				\
 	gstvaapiversion.h			\
 	gstvaapiworkarounds.h			\
 	sysdeps.h				\
 	$(NULL)
 
+libgstvaapi_jpegdec_source_c = gstvaapidecoder_jpeg.c
+libgstvaapi_jpegdec_source_h = gstvaapidecoder_jpeg.h
 if USE_JPEG_DECODER
-libgstvaapi_source_c += gstvaapidecoder_jpeg.c
-libgstvaapi_source_h += gstvaapidecoder_jpeg.h
+libgstvaapi_source_c += $(libgstvaapi_jpegdec_source_c)
+libgstvaapi_source_h += $(libgstvaapi_jpegdec_source_h)
 endif
 
 libgstvaapi_drm_source_c =			\
@@ -325,6 +328,7 @@ libgstvaapi_glx_@GST_API_VERSION@_la_LIBADD =	\
 	$(GL_LIBS)				\
 	$(LIBVA_GLX_LIBS)			\
 	libgstvaapi-x11-$(GST_API_VERSION).la	\
+	$(DLOPEN_LIBS)				\
 	$(NULL)
 
 libgstvaapi_glx_@GST_API_VERSION@_la_LDFLAGS =	\
@@ -394,6 +398,11 @@ $(PKG_VERSION_FILE): $(NEW_VERSION_FILE)
 
 BUILT_SOURCES	= gstvaapiversion.h
 EXTRA_DIST	= gstvaapiversion.h.in $(PKG_VERSION_FILE)
+
+EXTRA_DIST += \
+	$(libgstvaapi_jpegdec_source_c)	\
+	$(libgstvaapi_jpegdec_source_h)	\
+	$(NULL)
 
 CLEANFILES = \
 	$(OLD_VERSION_FILE)	\

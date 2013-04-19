@@ -28,6 +28,6 @@
  * The full version identifier of gstreamer-vaapi, in string form
  * (suitable for string concatenation).
  */
-#define GST_VAAPI_VERSION_ID "0.5.1-50-g32fe7c3"
+#define GST_VAAPI_VERSION_ID "0.5.1-98-gaf9202b"
 
 #endif /* GST_VAAPI_VERSION_H */

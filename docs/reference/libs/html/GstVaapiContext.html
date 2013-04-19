@@ -3,10 +3,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GstVaapiContext</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
-<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 1.0 Library Reference Manual">
 <link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
-<link rel="prev" href="GstVaapiImagePool.html" title="GstVaapiImagePool">
+<link rel="prev" href="libs-GstVaapiVideoMeta.html" title="GstVaapiVideoMeta">
 <link rel="next" href="libs-gstvaapidecoder.html" title="GstVaapiDecoder">
 <meta name="generator" content="GTK-Doc V1.18 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
@@ -14,10 +14,10 @@
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
 <tr valign="middle">
-<td><a accesskey="p" href="GstVaapiImagePool.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="p" href="libs-GstVaapiVideoMeta.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
 <td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
-<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<th width="100%" align="center">GStreamer VA-API Plugins 1.0 Library Reference Manual</th>
 <td><a accesskey="n" href="libs-gstvaapidecoder.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
@@ -61,15 +61,11 @@ struct              <a class="link" href="GstVaapiContext.html#GstVaapiContextCl
 <span class="returnvalue">void</span>                <a class="link" href="GstVaapiContext.html#gst-vaapi-context-get-size" title="gst_vaapi_context_get_size ()">gst_vaapi_context_get_size</a>          (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pwidth</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *pheight</code></em>);
-<a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="returnvalue">GstVaapiSurface</span></a> *   <a class="link" href="GstVaapiContext.html#gst-vaapi-context-get-surface" title="gst_vaapi_context_get_surface ()">gst_vaapi_context_get_surface</a>       (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);
+<span class="returnvalue">GstVaapiSurfaceProxy</span> * <a class="link" href="GstVaapiContext.html#gst-vaapi-context-get-surface-proxy" title="gst_vaapi_context_get_surface_proxy ()">gst_vaapi_context_get_surface_proxy</a>
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstVaapiContext.html#gst-vaapi-context-get-surface-count" title="gst_vaapi_context_get_surface_count ()">gst_vaapi_context_get_surface_count</a> (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="GstVaapiContext.html#gst-vaapi-context-put-surface" title="gst_vaapi_context_put_surface ()">gst_vaapi_context_put_surface</a>       (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);
-<a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="returnvalue">GstVaapiSurface</span></a> *   <a class="link" href="GstVaapiContext.html#gst-vaapi-context-find-surface-by-id" title="gst_vaapi_context_find_surface_by_id ()">gst_vaapi_context_find_surface_by_id</a>
-                                                        (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> id</code></em>);
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstVaapiContext.html#gst-vaapi-context-apply-composition" title="gst_vaapi_context_apply_composition ()">gst_vaapi_context_apply_composition</a> (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
-                                                         <em class="parameter"><code><span class="type">GstVideoOverlayComposition</span> *composition</code></em>);
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideooverlaycomposition.html#GstVideoOverlayComposition"><span class="type">GstVideoOverlayComposition</span></a> *composition</code></em>);
 </pre>
 </div>
 <div class="refsect1">
@@ -334,13 +330,19 @@ Retrieves the size of the surfaces attached to <em class="parameter"><code>conte
 </div>
 <hr>
 <div class="refsect2">
-<a name="gst-vaapi-context-get-surface"></a><h3>gst_vaapi_context_get_surface ()</h3>
-<pre class="programlisting"><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="returnvalue">GstVaapiSurface</span></a> *   gst_vaapi_context_get_surface       (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);</pre>
+<a name="gst-vaapi-context-get-surface-proxy"></a><h3>gst_vaapi_context_get_surface_proxy ()</h3>
+<pre class="programlisting"><span class="returnvalue">GstVaapiSurfaceProxy</span> * gst_vaapi_context_get_surface_proxy
+                                                        (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>);</pre>
 <p>
-Acquires a free surface. The returned surface but be released with
-<a class="link" href="GstVaapiContext.html#gst-vaapi-context-put-surface" title="gst_vaapi_context_put_surface ()"><code class="function">gst_vaapi_context_put_surface()</code></a>. This function returns <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if
-there is no free surface available in the pool. The surfaces are
-pre-allocated during context creation though.
+Acquires a free surface, wrapped into a <span class="type">GstVaapiSurfaceProxy</span>. The
+returned surface will be automatically released when the proxy is
+destroyed. So, it is enough to call <a class="link" href="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-unref" title="gst_vaapi_surface_proxy_unref ()"><code class="function">gst_vaapi_surface_proxy_unref()</code></a>
+after usage.
+</p>
+<p>
+This function returns <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if there is no free surface available
+in the pool. The surfaces are pre-allocated during context creation
+though.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -381,61 +383,9 @@ Retrieves the number of free surfaces left in the pool.
 </div>
 <hr>
 <div class="refsect2">
-<a name="gst-vaapi-context-put-surface"></a><h3>gst_vaapi_context_put_surface ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_context_put_surface       (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);</pre>
-<p>
-Releases a surface acquired by <a class="link" href="GstVaapiContext.html#gst-vaapi-context-get-surface" title="gst_vaapi_context_get_surface ()"><code class="function">gst_vaapi_context_get_surface()</code></a>.
-</p>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
-<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
-</td>
-</tr>
-<tr>
-<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
-<td>the <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> to release</td>
-</tr>
-</tbody>
-</table></div>
-</div>
-<hr>
-<div class="refsect2">
-<a name="gst-vaapi-context-find-surface-by-id"></a><h3>gst_vaapi_context_find_surface_by_id ()</h3>
-<pre class="programlisting"><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="returnvalue">GstVaapiSurface</span></a> *   gst_vaapi_context_find_surface_by_id
-                                                        (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="type">GstVaapiID</span></a> id</code></em>);</pre>
-<p>
-Finds VA surface by <em class="parameter"><code>id</code></em> in the list of surfaces attached to the <em class="parameter"><code>context</code></em>.
-</p>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term"><em class="parameter"><code>context</code></em> :</span></p></td>
-<td>a <a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a>
-</td>
-</tr>
-<tr>
-<td><p><span class="term"><em class="parameter"><code>id</code></em> :</span></p></td>
-<td>the VA surface id to find</td>
-</tr>
-<tr>
-<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td>the matching <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> object, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if
-none was found</td>
-</tr>
-</tbody>
-</table></div>
-</div>
-<hr>
-<div class="refsect2">
 <a name="gst-vaapi-context-apply-composition"></a><h3>gst_vaapi_context_apply_composition ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_context_apply_composition (<em class="parameter"><code><a class="link" href="GstVaapiContext.html" title="GstVaapiContext"><span class="type">GstVaapiContext</span></a> *context</code></em>,
-                                                         <em class="parameter"><code><span class="type">GstVideoOverlayComposition</span> *composition</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideooverlaycomposition.html#GstVideoOverlayComposition"><span class="type">GstVideoOverlayComposition</span></a> *composition</code></em>);</pre>
 <p>
 Applies video composition planes to all surfaces bound to <em class="parameter"><code>context</code></em>.
 This helper function resets any additional subpictures the user may
@@ -452,7 +402,7 @@ the existing subpictures.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>composition</code></em> :</span></p></td>
-<td>a <span class="type">GstVideoOverlayComposition</span>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideooverlaycomposition.html#GstVideoOverlayComposition"><span class="type">GstVideoOverlayComposition</span></a>
 </td>
 </tr>
 <tr>

@@ -237,12 +237,10 @@ gst_vaapidownload_class_init(GstVaapiDownloadClass *klass)
     /* sink pad */
     pad_template = gst_static_pad_template_get(&gst_vaapidownload_sink_factory);
     gst_element_class_add_pad_template(element_class, pad_template);
-    gst_object_unref(pad_template);
 
     /* src pad */
     pad_template = gst_static_pad_template_get(&gst_vaapidownload_src_factory);
     gst_element_class_add_pad_template(element_class, pad_template);
-    gst_object_unref(pad_template);
 }
 
 static void
@@ -594,7 +592,7 @@ gst_vaapidownload_query(GstPad *pad, GstQuery *query)
     else
         res = gst_pad_query_default(pad, query);
 
-    g_object_unref(download);
+    gst_object_unref(download);
     return res;
 
 }

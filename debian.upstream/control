@@ -1,14 +1,14 @@
-Source: gstreamer0.10-vaapi
+Source: gstreamer1.0-vaapi
 Section: libs
 Priority: optional
 Maintainer: Gwenole Beauchesne <gwenole.beauchesne@intel.com>
 Build-Depends: debhelper (>= 5),
 	       cdbs,
 	       libglib2.0-dev (>= 2.28),
-	       libgstreamer0.10-dev (>= 0.10.36),
-	       libgstreamer-plugins-base0.10-dev (>= 0.10.31),
-	       libgstreamer-plugins-bad0.10-dev (>= 0.10.22),
-#	       libdrm-dev, libudev-dev,
+	       libgstreamer1.0-dev (>= 1.0.0),
+	       libgstreamer-plugins-base1.0-dev (>= 1.0.0),
+	       libgstreamer-plugins-bad1.0-dev (>= 1.0.0),
+	       libdrm-dev, libudev-dev,
 	       libx11-dev, libxrandr-dev,
 	       libgl-dev,
 #	       libwayland-dev (>= 1.0.0),
@@ -16,11 +16,11 @@ Build-Depends: debhelper (>= 5),
 Build-Depends-Indep: gtk-doc-tools (>= 1.9)
 Standards-Version: 3.7.2
 
-Package: gstreamer0.10-vaapi
+Package: gstreamer1.0-vaapi
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Suggests: gstreamer0.10-vaapi-doc
+Suggests: gstreamer1.0-vaapi-doc
 Description: VA-API plugins for GStreamer
  This package contains GStreamer plugins for VA-API support:
  - `vaapidecode': decode bitstreams using VA-API
@@ -29,23 +29,23 @@ Description: VA-API plugins for GStreamer
  - `vaapipostproc': postprocess VA surfaces, e.g. deinterlacing
  - `vaapisink': a VA-API based video sink
 
-Package: gstreamer0.10-vaapi-doc
+Package: gstreamer1.0-vaapi-doc
 Architecture: all
 Section: doc
-Recommends: libgstvaapi1-dev (= ${source:Version})
+Recommends: libgstvaapi0-dev (= ${source:Version})
 Description: GStreamer VA-API documentation and manuals
  This packages contains documentation for libraries and elements.
 
-Package: gstreamer0.10-vaapi-dbg
+Package: gstreamer1.0-vaapi-dbg
 Section: libdevel
 Architecture: any
-Depends: gstreamer0.10-vaapi (= ${Source-Version})
+Depends: gstreamer1.0-vaapi (= ${Source-Version})
 Description: VA-API plugins for GStreamer
  VA-API support plugins for GStreamer.
  .
  This package contains the debug files.
 
-Package: libgstvaapi1
+Package: libgstvaapi0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -54,16 +54,16 @@ Description: GStreamer libraries from the "vaapi" set
  .
  This package contains common libraries for the "vaapi" set.
 
-#Package: libgstvaapi-drm-1
-#Section: libs
-#Architecture: any
-#Depends: ${shlibs:Depends}, ${misc:Depends}
-#Description: GStreamer libraries from the "vaapi" set
-# VA-API support libraries for GStreamer.
-# .
-# This package contains headless libraries for the "vaapi" set.
+Package: libgstvaapi-drm-0
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: GStreamer libraries from the "vaapi" set
+ VA-API support libraries for GStreamer.
+ .
+ This package contains headless libraries for the "vaapi" set.
 
-Package: libgstvaapi-x11-1
+Package: libgstvaapi-x11-0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -72,7 +72,7 @@ Description: GStreamer libraries from the "vaapi" set
  .
  This package contains x11 libraries for the "vaapi" set.
 
-Package: libgstvaapi-glx-1
+Package: libgstvaapi-glx-0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -81,7 +81,7 @@ Description: GStreamer libraries from the "vaapi" set
  .
  This package contains glx libraries for the "vaapi" set.
 
-#Package: libgstvaapi-wayland-1
+#Package: libgstvaapi-wayland-0
 #Section: libs
 #Architecture: any
 #Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -94,11 +94,11 @@ Package: libgstvaapi-dev
 Architecture: any
 Section: libdevel
 Depends: ${shlibs:Depends}, ${misc:Depends},
-#	 libgstvaapi-drm-1 (= ${Source-Version}),
-	 libgstvaapi-x11-1 (= ${Source-Version}),
-	 libgstvaapi-glx-1 (= ${Source-Version}),
-#	 libgstvaapi-wayland-1 (= ${Source-Version}),
-	 libgstvaapi1 (= ${Source-Version})
+	 libgstvaapi-drm-0 (= ${Source-Version}),
+	 libgstvaapi-x11-0 (= ${Source-Version}),
+	 libgstvaapi-glx-0 (= ${Source-Version}),
+#	 libgstvaapi-wayland-0 (= ${Source-Version}),
+	 libgstvaapi0 (= ${Source-Version})
 Description: GStreamer development files for libraries from the "vaapi" set
  GStreamer/VA-API development files.
  .

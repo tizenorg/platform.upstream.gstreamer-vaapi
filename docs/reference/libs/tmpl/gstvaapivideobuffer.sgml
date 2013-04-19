@@ -1,0 +1,52 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiVideoBuffer
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### STRUCT GstVaapiVideoBuffer ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GstVaapiVideoBufferClass ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gst_vaapi_video_buffer_new ##### -->
+<para>
+
+</para>
+
+@meta: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_buffer_get_meta ##### -->
+<para>
+
+</para>
+
+@buffer: 
+@Returns: 
+
+

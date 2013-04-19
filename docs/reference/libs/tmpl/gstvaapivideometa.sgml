@@ -1,0 +1,212 @@
+<!-- ##### SECTION Title ##### -->
+GstVaapiVideoMeta
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### SECTION Image ##### -->
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_new ##### -->
+<para>
+
+</para>
+
+@display: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_new_from_pool ##### -->
+<para>
+
+</para>
+
+@pool: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_new_with_image ##### -->
+<para>
+
+</para>
+
+@image: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_new_with_surface ##### -->
+<para>
+
+</para>
+
+@surface: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_new_with_surface_proxy ##### -->
+<para>
+
+</para>
+
+@proxy: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_ref ##### -->
+<para>
+
+</para>
+
+@meta: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_unref ##### -->
+<para>
+
+</para>
+
+@meta: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_replace ##### -->
+<para>
+
+</para>
+
+@old_meta_ptr: 
+@new_meta: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_get_display ##### -->
+<para>
+
+</para>
+
+@meta: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_get_image ##### -->
+<para>
+
+</para>
+
+@meta: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_set_image ##### -->
+<para>
+
+</para>
+
+@meta: 
+@image: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_set_image_from_pool ##### -->
+<para>
+
+</para>
+
+@meta: 
+@pool: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_get_surface ##### -->
+<para>
+
+</para>
+
+@meta: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_set_surface ##### -->
+<para>
+
+</para>
+
+@meta: 
+@surface: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_set_surface_from_pool ##### -->
+<para>
+
+</para>
+
+@meta: 
+@pool: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_set_surface_converter ##### -->
+<para>
+
+</para>
+
+@meta: 
+@func: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_get_surface_converter ##### -->
+<para>
+
+</para>
+
+@meta: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_get_surface_proxy ##### -->
+<para>
+
+</para>
+
+@meta: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_set_surface_proxy ##### -->
+<para>
+
+</para>
+
+@meta: 
+@proxy: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_get_render_flags ##### -->
+<para>
+
+</para>
+
+@meta: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gst_vaapi_video_meta_set_render_flags ##### -->
+<para>
+
+</para>
+
+@meta: 
+@flags: 
+
+

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE book PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
-<book xmlns="http://www.devhelp.net/book" title="GStreamer VA-API Plugins 0.10 Library Reference Manual" link="index.html" author="" name="libs" version="2" language="c">
+<book xmlns="http://www.devhelp.net/book" title="GStreamer VA-API Plugins 1.0 Library Reference Manual" link="index.html" author="" name="libs" version="2" language="c">
   <chapters>
     <sub name="gst-plugins-vaapi Library" link="ch01.html">
       <sub name="Basic data structures" link="libs-Basic-data-structures.html"/>
@@ -22,6 +22,8 @@
       <sub name="GstVaapiVideoPool" link="GstVaapiVideoPool.html"/>
       <sub name="GstVaapiSurfacePool" link="GstVaapiSurfacePool.html"/>
       <sub name="GstVaapiImagePool" link="GstVaapiImagePool.html"/>
+      <sub name="GstVaapiVideoBuffer" link="GstVaapiVideoBuffer.html"/>
+      <sub name="GstVaapiVideoMeta" link="libs-GstVaapiVideoMeta.html"/>
       <sub name="GstVaapiContext" link="GstVaapiContext.html"/>
       <sub name="GstVaapiDecoder" link="libs-gstvaapidecoder.html"/>
       <sub name="GstVaapiDecoderJpeg" link="libs-GstVaapiDecoderJpeg.html"/>
@@ -259,6 +261,31 @@
     <keyword type="struct" name="struct GstVaapiImagePool" link="GstVaapiImagePool.html#GstVaapiImagePool-struct"/>
     <keyword type="struct" name="struct GstVaapiImagePoolClass" link="GstVaapiImagePool.html#GstVaapiImagePoolClass"/>
     <keyword type="function" name="gst_vaapi_image_pool_new ()" link="GstVaapiImagePool.html#gst-vaapi-image-pool-new"/>
+    <keyword type="struct" name="struct GstVaapiVideoBuffer" link="GstVaapiVideoBuffer.html#GstVaapiVideoBuffer-struct"/>
+    <keyword type="struct" name="struct GstVaapiVideoBufferClass" link="GstVaapiVideoBuffer.html#GstVaapiVideoBufferClass"/>
+    <keyword type="function" name="gst_vaapi_video_buffer_new ()" link="GstVaapiVideoBuffer.html#gst-vaapi-video-buffer-new"/>
+    <keyword type="function" name="gst_vaapi_video_buffer_get_meta ()" link="GstVaapiVideoBuffer.html#gst-vaapi-video-buffer-get-meta"/>
+    <keyword type="function" name="gst_vaapi_video_meta_new ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-new"/>
+    <keyword type="function" name="gst_vaapi_video_meta_new_from_pool ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-new-from-pool"/>
+    <keyword type="function" name="gst_vaapi_video_meta_new_with_image ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-new-with-image"/>
+    <keyword type="function" name="gst_vaapi_video_meta_new_with_surface ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-new-with-surface"/>
+    <keyword type="function" name="gst_vaapi_video_meta_new_with_surface_proxy ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-new-with-surface-proxy"/>
+    <keyword type="function" name="gst_vaapi_video_meta_ref ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-ref"/>
+    <keyword type="function" name="gst_vaapi_video_meta_unref ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-unref"/>
+    <keyword type="function" name="gst_vaapi_video_meta_replace ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-replace"/>
+    <keyword type="function" name="gst_vaapi_video_meta_get_display ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-get-display"/>
+    <keyword type="function" name="gst_vaapi_video_meta_get_image ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-get-image"/>
+    <keyword type="function" name="gst_vaapi_video_meta_set_image ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-image"/>
+    <keyword type="function" name="gst_vaapi_video_meta_set_image_from_pool ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-image-from-pool"/>
+    <keyword type="function" name="gst_vaapi_video_meta_get_surface ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-get-surface"/>
+    <keyword type="function" name="gst_vaapi_video_meta_set_surface ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-surface"/>
+    <keyword type="function" name="gst_vaapi_video_meta_set_surface_from_pool ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-surface-from-pool"/>
+    <keyword type="function" name="gst_vaapi_video_meta_set_surface_converter ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-surface-converter"/>
+    <keyword type="function" name="gst_vaapi_video_meta_get_surface_converter ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-get-surface-converter"/>
+    <keyword type="function" name="gst_vaapi_video_meta_get_surface_proxy ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-get-surface-proxy"/>
+    <keyword type="function" name="gst_vaapi_video_meta_set_surface_proxy ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-surface-proxy"/>
+    <keyword type="function" name="gst_vaapi_video_meta_get_render_flags ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-get-render-flags"/>
+    <keyword type="function" name="gst_vaapi_video_meta_set_render_flags ()" link="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-render-flags"/>
     <keyword type="struct" name="struct GstVaapiContext" link="GstVaapiContext.html#GstVaapiContext-struct"/>
     <keyword type="struct" name="struct GstVaapiContextClass" link="GstVaapiContext.html#GstVaapiContextClass"/>
     <keyword type="function" name="gst_vaapi_context_new ()" link="GstVaapiContext.html#gst-vaapi-context-new"/>
@@ -268,10 +295,8 @@
     <keyword type="function" name="gst_vaapi_context_set_profile ()" link="GstVaapiContext.html#gst-vaapi-context-set-profile"/>
     <keyword type="function" name="gst_vaapi_context_get_entrypoint ()" link="GstVaapiContext.html#gst-vaapi-context-get-entrypoint"/>
     <keyword type="function" name="gst_vaapi_context_get_size ()" link="GstVaapiContext.html#gst-vaapi-context-get-size"/>
-    <keyword type="function" name="gst_vaapi_context_get_surface ()" link="GstVaapiContext.html#gst-vaapi-context-get-surface"/>
+    <keyword type="function" name="gst_vaapi_context_get_surface_proxy ()" link="GstVaapiContext.html#gst-vaapi-context-get-surface-proxy"/>
     <keyword type="function" name="gst_vaapi_context_get_surface_count ()" link="GstVaapiContext.html#gst-vaapi-context-get-surface-count"/>
-    <keyword type="function" name="gst_vaapi_context_put_surface ()" link="GstVaapiContext.html#gst-vaapi-context-put-surface"/>
-    <keyword type="function" name="gst_vaapi_context_find_surface_by_id ()" link="GstVaapiContext.html#gst-vaapi-context-find-surface-by-id"/>
     <keyword type="function" name="gst_vaapi_context_apply_composition ()" link="GstVaapiContext.html#gst-vaapi-context-apply-composition"/>
     <keyword type="property" name="The &quot;entrypoint&quot; property" link="GstVaapiContext.html#GstVaapiContext--entrypoint"/>
     <keyword type="property" name="The &quot;height&quot; property" link="GstVaapiContext.html#GstVaapiContext--height"/>
@@ -306,16 +331,15 @@
     <keyword type="struct" name="struct GstVaapiDecoderVC1" link="libs-GstVaapiDecoderVC1.html#GstVaapiDecoderVC1"/>
     <keyword type="struct" name="struct GstVaapiDecoderVC1Class" link="libs-GstVaapiDecoderVC1.html#GstVaapiDecoderVC1Class"/>
     <keyword type="function" name="gst_vaapi_decoder_vc1_new ()" link="libs-GstVaapiDecoderVC1.html#gst-vaapi-decoder-vc1-new"/>
-    <keyword type="function" name="gst_vaapi_surface_proxy_get_context ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-get-context"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_get_duration ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-get-duration"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_get_flags ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-get-flags"/>
     <keyword type="function" name="gst_vaapi_surface_proxy_get_surface ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-get-surface"/>
     <keyword type="function" name="gst_vaapi_surface_proxy_get_surface_id ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-get-surface-id"/>
-    <keyword type="function" name="gst_vaapi_surface_proxy_get_user_data ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-get-user-data"/>
-    <keyword type="function" name="gst_vaapi_surface_proxy_new ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-new"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_get_timestamp ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-get-timestamp"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_new_from_pool ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-new-from-pool"/>
     <keyword type="function" name="gst_vaapi_surface_proxy_ref ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-ref"/>
     <keyword type="function" name="gst_vaapi_surface_proxy_replace ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-replace"/>
-    <keyword type="function" name="gst_vaapi_surface_proxy_set_context ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-set-context"/>
-    <keyword type="function" name="gst_vaapi_surface_proxy_set_surface ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-set-surface"/>
-    <keyword type="function" name="gst_vaapi_surface_proxy_set_user_data ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-set-user-data"/>
+    <keyword type="function" name="gst_vaapi_surface_proxy_set_destroy_notify ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-set-destroy-notify"/>
     <keyword type="function" name="gst_vaapi_surface_proxy_unref ()" link="libs-GstVaapiSurfaceProxy.html#gst-vaapi-surface-proxy-unref"/>
     <keyword type="constant" name="GST_VAAPI_CHROMA_TYPE_YUV420" link="libs-gstvaapisurface.html#GST-VAAPI-CHROMA-TYPE-YUV420:CAPS"/>
     <keyword type="constant" name="GST_VAAPI_CHROMA_TYPE_YUV422" link="libs-gstvaapisurface.html#GST-VAAPI-CHROMA-TYPE-YUV422:CAPS"/>

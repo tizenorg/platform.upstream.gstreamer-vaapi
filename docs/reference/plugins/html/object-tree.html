@@ -3,9 +3,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Object Hierarchy</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
-<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Plugins Reference Manual">
-<link rel="up" href="index.html" title="GStreamer VA-API Plugins 0.10 Plugins Reference Manual">
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 1.0 Plugins Reference Manual">
+<link rel="up" href="index.html" title="GStreamer VA-API Plugins 1.0 Plugins Reference Manual">
 <link rel="prev" href="GstVaapiSink.html" title="GstVaapiSink">
 <link rel="next" href="api-index-full.html" title="API Index">
 <meta name="generator" content="GTK-Doc V1.18 (XML mode)">
@@ -16,7 +16,7 @@
 <td><a accesskey="p" href="GstVaapiSink.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
 <td> </td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
-<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Plugins Reference Manual</th>
+<th width="100%" align="center">GStreamer VA-API Plugins 1.0 Plugins Reference Manual</th>
 <td><a accesskey="n" href="api-index-full.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr></table>
 <div class="chapter">
@@ -24,17 +24,15 @@
 <a name="object-tree"></a>Object Hierarchy</h2></div></div></div>
 <pre class="screen">
     <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-        <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
-            <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
-                GstVideoDecoder
-                    <a class="link" href="GstVaapiDecode.html" title="GstVaapiDecode">GstVaapiDecode</a>
-                <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseTransform.html">GstBaseTransform</a>
-                    <a class="link" href="GstVaapiDownload.html" title="GstVaapiDownload">GstVaapiDownload</a>
-                    <a class="link" href="GstVaapiUpload.html" title="GstVaapiUpload">GstVaapiUpload</a>
-                <a class="link" href="GstVaapiPostproc.html" title="GstVaapiPostproc">GstVaapiPostproc</a>
-                <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSink.html">GstBaseSink</a>
-                    <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideosink.html#GstVideoSink">GstVideoSink</a>
-                        <a class="link" href="GstVaapiSink.html" title="GstVaapiSink">GstVaapiSink</a>
+        <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GInitiallyUnowned">GInitiallyUnowned</a>
+            <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+                <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+                    <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-GstVideoDecoder.html#GstVideoDecoder">GstVideoDecoder</a>
+                        <a class="link" href="GstVaapiDecode.html" title="GstVaapiDecode">GstVaapiDecode</a>
+                    <a class="link" href="GstVaapiPostproc.html" title="GstVaapiPostproc">GstVaapiPostproc</a>
+                    <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSink.html">GstBaseSink</a>
+                        <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideosink.html#GstVideoSink">GstVideoSink</a>
+                            <a class="link" href="GstVaapiSink.html" title="GstVaapiSink">GstVaapiSink</a>
 </pre>
 </div>
 <div class="footer">

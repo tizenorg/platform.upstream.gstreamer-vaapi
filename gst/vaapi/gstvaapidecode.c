@@ -35,6 +35,10 @@
 #include "gstvaapidecode.h"
 #include "gstvaapipluginutil.h"
 #include "gstvaapivideobuffer.h"
+#if GST_CHECK_VERSION(1,0,0)
+#include "gstvaapivideobufferpool.h"
+#include "gstvaapivideomemory.h"
+#endif
 
 #include <gst/vaapi/gstvaapidecoder_h264.h>
 #include <gst/vaapi/gstvaapidecoder_jpeg.h>
@@ -80,6 +84,7 @@ static GstStaticPadTemplate gst_vaapidecode_src_factory =
         GST_STATIC_CAPS(gst_vaapidecode_src_caps_str));
 
 /* GstImplementsInterface interface */
+#if !GST_CHECK_VERSION(1,0,0)
 static gboolean
 gst_vaapidecode_implements_interface_supported(
     GstImplementsInterface *iface,
@@ -94,6 +99,7 @@ gst_vaapidecode_implements_iface_init(GstImplementsInterfaceClass *iface)
 {
     iface->supported = gst_vaapidecode_implements_interface_supported;
 }
+#endif
 
 /* GstVideoContext interface */
 static void
@@ -115,8 +121,10 @@ G_DEFINE_TYPE_WITH_CODE(
     GstVaapiDecode,
     gst_vaapidecode,
     GST_TYPE_VIDEO_DECODER,
+#if !GST_CHECK_VERSION(1,0,0)
     G_IMPLEMENT_INTERFACE(GST_TYPE_IMPLEMENTS_INTERFACE,
                           gst_vaapidecode_implements_iface_init);
+#endif
     G_IMPLEMENT_INTERFACE(GST_TYPE_VIDEO_CONTEXT,
                           gst_video_context_interface_init))
 
@@ -128,13 +136,11 @@ static void
 gst_vaapi_decoder_notify_caps(GObject *obj, GParamSpec *pspec, void *user_data)
 {
     GstVaapiDecode * const decode = GST_VAAPIDECODE(user_data);
-    GstVideoCodecState *codec_state;
 
     g_assert(decode->decoder == GST_VAAPI_DECODER(obj));
 
-    codec_state = gst_vaapi_decoder_get_codec_state(decode->decoder);
-    gst_vaapidecode_update_src_caps(decode, codec_state);
-    gst_video_codec_state_unref(codec_state);
+    gst_vaapidecode_update_src_caps(decode,
+        gst_vaapi_decoder_get_codec_state(decode->decoder));
 }
 
 static inline gboolean
@@ -150,7 +156,7 @@ gst_vaapidecode_update_src_caps(GstVaapiDecode *decode,
 {
     GstVideoDecoder * const vdec = GST_VIDEO_DECODER(decode);
     GstVideoCodecState *state;
-    GstVideoInfo *vi;
+    GstVideoInfo *vi, vis;
 
     state = gst_video_decoder_set_output_state(vdec,
         GST_VIDEO_INFO_FORMAT(&ref_state->info),
@@ -159,6 +165,12 @@ gst_vaapidecode_update_src_caps(GstVaapiDecode *decode,
         return FALSE;
 
     vi = &state->info;
+    if (GST_VIDEO_INFO_FORMAT(vi) == GST_VIDEO_FORMAT_ENCODED) {
+        gst_video_info_init(&vis);
+        gst_video_info_set_format(&vis, GST_VIDEO_FORMAT_NV12,
+            GST_VIDEO_INFO_WIDTH(vi), GST_VIDEO_INFO_HEIGHT(vi));
+        vi->size = vis.size;
+    }
     gst_video_codec_state_unref(state);
 
     /* XXX: gst_video_info_to_caps() from GStreamer 0.10 does not
@@ -176,10 +188,11 @@ gst_vaapidecode_update_src_caps(GstVaapiDecode *decode,
         "pixel-aspect-ratio", GST_TYPE_FRACTION, vi->par_n, vi->par_d,
         NULL);
 
-    if (GST_VIDEO_INFO_IS_INTERLACED(vi))
-        gst_caps_set_simple(state->caps, "interlaced", G_TYPE_BOOLEAN,
-            TRUE, NULL);
-
+    if (GST_VIDEO_INFO_IS_INTERLACED(vi)) {
+        GstStructure * const structure =
+            gst_caps_get_structure(state->caps, 0);
+        gst_structure_set_interlaced(structure, TRUE);
+    }
     gst_caps_replace(&decode->srcpad_caps, state->caps);
     return TRUE;
 }
@@ -200,9 +213,10 @@ gst_vaapidecode_decode_frame(GstVideoDecoder *vdec, GstVideoCodecFrame *frame)
     GstFlowReturn ret;
     gint64 end_time;
 
-    if (!decode->render_time_base)
-        decode->render_time_base = g_get_monotonic_time();
-    end_time = decode->render_time_base;
+    if (decode->render_time_base)
+        end_time = decode->render_time_base;
+    else
+        end_time = g_get_monotonic_time();
     end_time += GST_TIME_AS_USECONDS(decode->last_buffer_time);
     end_time += G_TIME_SPAN_SECOND;
 
@@ -211,6 +225,7 @@ gst_vaapidecode_decode_frame(GstVideoDecoder *vdec, GstVideoCodecFrame *frame)
         status = gst_vaapi_decoder_decode(decode->decoder, frame);
         if (status == GST_VAAPI_DECODER_STATUS_ERROR_NO_SURFACE) {
             gboolean was_signalled;
+            GST_VIDEO_DECODER_STREAM_UNLOCK(vdec);
             g_mutex_lock(&decode->decoder_mutex);
             was_signalled = g_cond_wait_until(
                 &decode->decoder_ready,
@@ -218,6 +233,7 @@ gst_vaapidecode_decode_frame(GstVideoDecoder *vdec, GstVideoCodecFrame *frame)
                 end_time
             );
             g_mutex_unlock(&decode->decoder_mutex);
+            GST_VIDEO_DECODER_STREAM_LOCK(vdec);
             if (was_signalled)
                 continue;
             goto error_decode_timeout;
@@ -233,7 +249,7 @@ error_decode_timeout:
     {
         GST_WARNING("decode timeout. Decoder required a VA surface but none "
                     "got available within one second");
-        return GST_FLOW_UNEXPECTED;
+        return GST_FLOW_EOS;
     }
 error_decode:
     {
@@ -245,7 +261,7 @@ error_decode:
             ret = GST_FLOW_NOT_SUPPORTED;
             break;
         default:
-            ret = GST_FLOW_UNEXPECTED;
+            ret = GST_FLOW_EOS;
             break;
         }
         gst_video_decoder_drop_frame(vdec, frame);
@@ -254,40 +270,76 @@ error_decode:
 }
 
 static GstFlowReturn
-gst_vaapidecode_push_decoded_frames(GstVideoDecoder *vdec)
+gst_vaapidecode_push_decoded_frame(GstVideoDecoder *vdec)
 {
     GstVaapiDecode * const decode = GST_VAAPIDECODE(vdec);
     GstVaapiSurfaceProxy *proxy;
     GstVaapiDecoderStatus status;
+    GstVaapiVideoMeta *meta;
     GstVideoCodecFrame *out_frame;
     GstFlowReturn ret;
+    guint flags;
 
-    /* Output all decoded frames */
-    for (;;) {
-        status = gst_vaapi_decoder_get_frame(decode->decoder, &out_frame);
-        if (status != GST_VAAPI_DECODER_STATUS_SUCCESS)
-            return GST_FLOW_OK;
+    status = gst_vaapi_decoder_get_frame(decode->decoder, &out_frame);
+    if (status != GST_VAAPI_DECODER_STATUS_SUCCESS)
+        return GST_VIDEO_DECODER_FLOW_NEED_DATA;
 
-        if (!GST_VIDEO_CODEC_FRAME_IS_DECODE_ONLY(out_frame)) {
-            proxy = gst_video_codec_frame_get_user_data(out_frame);
+    if (!GST_VIDEO_CODEC_FRAME_IS_DECODE_ONLY(out_frame)) {
+        proxy = gst_video_codec_frame_get_user_data(out_frame);
 
-            gst_vaapi_surface_proxy_set_user_data(proxy,
-                decode, (GDestroyNotify)gst_vaapidecode_release);
+        gst_vaapi_surface_proxy_set_destroy_notify(proxy,
+            (GDestroyNotify)gst_vaapidecode_release, decode);
 
-            out_frame->output_buffer =
-                gst_vaapi_video_buffer_new_with_surface_proxy(proxy);
-            if (!out_frame->output_buffer)
-                goto error_create_buffer;
-        }
-
-        ret = gst_video_decoder_finish_frame(vdec, out_frame);
+#if GST_CHECK_VERSION(1,0,0)
+        ret = gst_video_decoder_allocate_output_frame(vdec, out_frame);
         if (ret != GST_FLOW_OK)
-            goto error_commit_buffer;
+            goto error_create_buffer;
 
-        if (GST_CLOCK_TIME_IS_VALID(out_frame->pts))
-            decode->last_buffer_time = out_frame->pts;
-        gst_video_codec_frame_unref(out_frame);
-    };
+        meta = gst_buffer_get_vaapi_video_meta(out_frame->output_buffer);
+        if (!meta)
+            goto error_get_meta;
+        gst_vaapi_video_meta_set_surface_proxy(meta, proxy);
+
+        flags = gst_vaapi_surface_proxy_get_flags(proxy);
+        if (flags & GST_VAAPI_SURFACE_PROXY_FLAG_INTERLACED) {
+            guint out_flags = GST_VIDEO_BUFFER_FLAG_INTERLACED;
+            if (flags & GST_VAAPI_SURFACE_PROXY_FLAG_TFF)
+                out_flags |= GST_VIDEO_BUFFER_FLAG_TFF;
+            if (flags & GST_VAAPI_SURFACE_PROXY_FLAG_RFF)
+                out_flags |= GST_VIDEO_BUFFER_FLAG_RFF;
+            if (flags & GST_VAAPI_SURFACE_PROXY_FLAG_ONEFIELD)
+                out_flags |= GST_VIDEO_BUFFER_FLAG_ONEFIELD;
+            GST_BUFFER_FLAG_SET(out_frame->output_buffer, out_flags);
+        }
+#else
+        out_frame->output_buffer =
+            gst_vaapi_video_buffer_new_with_surface_proxy(proxy);
+        if (!out_frame->output_buffer)
+            goto error_create_buffer;
+#endif
+    }
+
+    ret = gst_video_decoder_finish_frame(vdec, out_frame);
+    if (ret != GST_FLOW_OK)
+        goto error_commit_buffer;
+
+    /* Estimate when this frame would no longer be needed for rendering */
+    if (GST_CLOCK_TIME_IS_VALID(out_frame->pts)) {
+        if (!decode->render_time_base)
+            decode->render_time_base = g_get_monotonic_time() -
+                GST_TIME_AS_USECONDS(out_frame->pts);
+        decode->last_buffer_time = out_frame->pts;
+        if (GST_CLOCK_TIME_IS_VALID(out_frame->duration))
+            decode->last_buffer_time += out_frame->duration;
+        else
+            decode->last_buffer_time += GST_SECOND;
+    }
+    else {
+        decode->render_time_base = 0;
+        decode->last_buffer_time = 0;
+    }
+
+    gst_video_codec_frame_unref(out_frame);
     return GST_FLOW_OK;
 
     /* ERRORS */
@@ -301,13 +353,23 @@ error_create_buffer:
                   GST_VAAPI_ID_ARGS(surface_id));
         gst_video_decoder_drop_frame(vdec, out_frame);
         gst_video_codec_frame_unref(out_frame);
-        return GST_FLOW_UNEXPECTED;
+        return GST_FLOW_EOS;
     }
+#if GST_CHECK_VERSION(1,0,0)
+error_get_meta:
+    {
+        GST_ERROR("failed to get vaapi video meta attached to video buffer");
+        gst_video_decoder_drop_frame(vdec, out_frame);
+        gst_video_codec_frame_unref(out_frame);
+        return GST_FLOW_EOS;
+    }
+#endif
 error_commit_buffer:
     {
-        GST_DEBUG("video sink rejected the video buffer (error %d)", ret);
+        if (ret != GST_FLOW_FLUSHING)
+            GST_ERROR("video sink rejected the video buffer (error %d)", ret);
         gst_video_codec_frame_unref(out_frame);
-        return GST_FLOW_UNEXPECTED;
+        return GST_FLOW_EOS;
     }
 }
 
@@ -316,10 +378,26 @@ gst_vaapidecode_handle_frame(GstVideoDecoder *vdec, GstVideoCodecFrame *frame)
 {
     GstFlowReturn ret;
 
+    /* Make sure to release the base class stream lock so that decode
+       loop can call gst_video_decoder_finish_frame() without blocking */
+    GST_VIDEO_DECODER_STREAM_UNLOCK(vdec);
     ret = gst_vaapidecode_decode_frame(vdec, frame);
-    if (ret != GST_FLOW_OK)
-        return ret;
-    return gst_vaapidecode_push_decoded_frames(vdec);
+    GST_VIDEO_DECODER_STREAM_LOCK(vdec);
+    return ret;
+}
+
+static void
+gst_vaapidecode_decode_loop(GstVaapiDecode *decode)
+{
+    GstVideoDecoder * const vdec = GST_VIDEO_DECODER(decode);
+    GstFlowReturn ret;
+
+    ret = gst_vaapidecode_push_decoded_frame(vdec);
+    if (ret == GST_FLOW_OK || ret == GST_VIDEO_DECODER_FLOW_NEED_DATA)
+        return;
+
+    /* ERRORS */
+    gst_pad_pause_task(decode->srcpad);
 }
 
 static GstFlowReturn
@@ -331,15 +409,99 @@ gst_vaapidecode_finish(GstVideoDecoder *vdec)
     status = gst_vaapi_decoder_flush(decode->decoder);
     if (status != GST_VAAPI_DECODER_STATUS_SUCCESS)
         goto error_flush;
-    return gst_vaapidecode_push_decoded_frames(vdec);
+
+    /* Make sure the decode loop function has a chance to return, thus
+       possibly unlocking gst_video_decoder_finish_frame() */
+    GST_VIDEO_DECODER_STREAM_UNLOCK(vdec);
+    gst_pad_stop_task(decode->srcpad);
+    GST_VIDEO_DECODER_STREAM_LOCK(vdec);
+
+    /* Submit all frames that got decoded so far */
+    while (gst_vaapidecode_push_decoded_frame(vdec) == GST_FLOW_OK)
+        ;
+    return GST_FLOW_OK;
 
     /* ERRORS */
 error_flush:
     {
         GST_ERROR("failed to flush decoder (status %d)", status);
-        return GST_FLOW_UNEXPECTED;
+        return GST_FLOW_EOS;
     }
 }
+
+#if GST_CHECK_VERSION(1,0,0)
+static gboolean
+gst_vaapidecode_decide_allocation(GstVideoDecoder *vdec, GstQuery *query)
+{
+    GstVaapiDecode * const decode = GST_VAAPIDECODE(vdec);
+    GstCaps *caps = NULL;
+    GstBufferPool *pool;
+    GstStructure *config;
+    GstVideoInfo vi;
+    guint size, min, max;
+    gboolean need_pool, update_pool;
+
+    gst_query_parse_allocation(query, &caps, &need_pool);
+
+    if (!caps)
+        goto error_no_caps;
+
+    gst_video_info_init(&vi);
+    gst_video_info_from_caps(&vi, caps);
+    if (GST_VIDEO_INFO_FORMAT(&vi) == GST_VIDEO_FORMAT_ENCODED)
+        gst_video_info_set_format(&vi, GST_VIDEO_FORMAT_NV12,
+            GST_VIDEO_INFO_WIDTH(&vi), GST_VIDEO_INFO_HEIGHT(&vi));
+
+    g_return_val_if_fail(decode->display != NULL, FALSE);
+
+    if (gst_query_get_n_allocation_pools(query) > 0) {
+        gst_query_parse_nth_allocation_pool(query, 0, &pool, &size, &min, &max);
+        size = MAX(size, vi.size);
+        update_pool = TRUE;
+    }
+    else {
+        pool = NULL;
+        size = vi.size;
+        min = max = 0;
+        update_pool = FALSE;
+    }
+
+    if (!pool || !gst_buffer_pool_has_option(pool,
+            GST_BUFFER_POOL_OPTION_VAAPI_VIDEO_META)) {
+        GST_INFO("no pool or doesn't support GstVaapiVideoMeta, "
+            "making new pool");
+        pool = gst_vaapi_video_buffer_pool_new(decode->display);
+        if (!pool)
+            goto error_create_pool;
+
+        config = gst_buffer_pool_get_config(pool);
+        gst_buffer_pool_config_set_params(config, caps, size, min, max);
+        gst_buffer_pool_config_add_option(config,
+            GST_BUFFER_POOL_OPTION_VAAPI_VIDEO_META);
+        gst_buffer_pool_set_config(pool, config);
+    }
+
+    if (update_pool)
+        gst_query_set_nth_allocation_pool(query, 0, pool, size, min, max);
+    else
+        gst_query_add_allocation_pool(query, pool, size, min, max);
+    if (pool)
+        gst_object_unref(pool);
+    return TRUE;
+
+    /* ERRORS */
+error_no_caps:
+    {
+        GST_ERROR("no caps specified");
+        return FALSE;
+    }
+error_create_pool:
+    {
+        GST_ERROR("failed to create buffer pool");
+        return FALSE;
+    }
+}
+#endif
 
 static inline gboolean
 gst_vaapidecode_ensure_display(GstVaapiDecode *decode)
@@ -398,12 +560,14 @@ gst_vaapidecode_create(GstVaapiDecode *decode, GstCaps *caps)
     );
 
     decode->decoder_caps = gst_caps_ref(caps);
-    return TRUE;
+    return gst_pad_start_task(decode->srcpad,
+        (GstTaskFunction)gst_vaapidecode_decode_loop, decode, NULL);
 }
 
 static void
 gst_vaapidecode_destroy(GstVaapiDecode *decode)
 {
+    gst_pad_stop_task(decode->srcpad);
     g_clear_object(&decode->decoder);
     gst_caps_replace(&decode->decoder_caps, NULL);
     gst_vaapidecode_release(decode);
@@ -438,8 +602,6 @@ gst_vaapidecode_finalize(GObject *object)
 {
     GstVaapiDecode * const decode = GST_VAAPIDECODE(object);
 
-    gst_vaapidecode_destroy(decode);
-
     gst_caps_replace(&decode->sinkpad_caps, NULL);
     gst_caps_replace(&decode->srcpad_caps,  NULL);
     gst_caps_replace(&decode->allowed_caps, NULL);
@@ -456,9 +618,18 @@ static gboolean
 gst_vaapidecode_open(GstVideoDecoder *vdec)
 {
     GstVaapiDecode * const decode = GST_VAAPIDECODE(vdec);
+    GstVaapiDisplay * const old_display = decode->display;
+    gboolean success;
 
-    decode->is_ready = TRUE;
-    return TRUE;
+    /* Let GstVideoContext ask for a proper display to its neighbours */
+    /* Note: steal old display that may be allocated from get_caps()
+       so that to retain a reference to it, thus avoiding extra
+       initialization steps if we turn out to simply re-use the
+       existing (cached) VA display */
+    decode->display = NULL;
+    success = gst_vaapidecode_ensure_display(decode);
+    g_clear_object(&old_display);
+    return success;
 }
 
 static gboolean
@@ -468,7 +639,6 @@ gst_vaapidecode_close(GstVideoDecoder *vdec)
 
     gst_vaapidecode_destroy(decode);
     g_clear_object(&decode->display);
-    decode->is_ready = FALSE;
     return TRUE;
 }
 
@@ -527,7 +697,7 @@ gst_vaapidecode_parse(GstVideoDecoder *vdec,
         break;
     default:
         GST_ERROR("parse error %d", status);
-        ret = GST_FLOW_UNEXPECTED;
+        ret = GST_FLOW_EOS;
         break;
     }
     return ret;
@@ -554,6 +724,11 @@ gst_vaapidecode_class_init(GstVaapiDecodeClass *klass)
     vdec_class->handle_frame = GST_DEBUG_FUNCPTR(gst_vaapidecode_handle_frame);
     vdec_class->finish       = GST_DEBUG_FUNCPTR(gst_vaapidecode_finish);
 
+#if GST_CHECK_VERSION(1,0,0)
+    vdec_class->decide_allocation =
+        GST_DEBUG_FUNCPTR(gst_vaapidecode_decide_allocation);
+#endif
+
     gst_element_class_set_static_metadata(element_class,
         "VA-API decoder",
         "Codec/Decoder/Video",
@@ -563,12 +738,10 @@ gst_vaapidecode_class_init(GstVaapiDecodeClass *klass)
     /* sink pad */
     pad_template = gst_static_pad_template_get(&gst_vaapidecode_sink_factory);
     gst_element_class_add_pad_template(element_class, pad_template);
-    gst_object_unref(pad_template);
 
     /* src pad */
     pad_template = gst_static_pad_template_get(&gst_vaapidecode_src_factory);
     gst_element_class_add_pad_template(element_class, pad_template);
-    gst_object_unref(pad_template);
 }
 
 static gboolean
@@ -607,7 +780,8 @@ gst_vaapidecode_ensure_allowed_caps(GstVaapiDecode *decode)
             "height", GST_TYPE_INT_RANGE, 1, G_MAXINT,
             NULL
         );
-        gst_caps_merge_structure(decode->allowed_caps, structure);
+        decode->allowed_caps =
+            gst_caps_merge_structure(decode->allowed_caps, structure);
     }
 
     gst_caps_unref(decode_caps);
@@ -637,9 +811,6 @@ gst_vaapidecode_get_caps(GstPad *pad)
 {
     GstVaapiDecode * const decode = GST_VAAPIDECODE(GST_OBJECT_PARENT(pad));
 
-    if (!decode->is_ready)
-        return gst_static_pad_template_get_caps(&gst_vaapidecode_sink_factory);
-
     if (!gst_vaapidecode_ensure_allowed_caps(decode))
         return gst_caps_new_empty();
 
@@ -647,20 +818,38 @@ gst_vaapidecode_get_caps(GstPad *pad)
 }
 
 static gboolean
-gst_vaapidecode_query (GstPad *pad, GstQuery *query) {
-    GstVaapiDecode *decode = GST_VAAPIDECODE (gst_pad_get_parent_element (pad));
+gst_vaapidecode_query(GST_PAD_QUERY_FUNCTION_ARGS)
+{
+    GstVaapiDecode * const decode =
+        GST_VAAPIDECODE(gst_pad_get_parent_element(pad));
     gboolean res;
 
-    GST_DEBUG ("sharing display %p", decode->display);
+    GST_DEBUG("sharing display %p", decode->display);
 
-    if (gst_vaapi_reply_to_query (query, decode->display))
-      res = TRUE;
-    else if (GST_PAD_IS_SINK(pad))
-      res = decode->sinkpad_query(decode->sinkpad, query);
+    if (gst_vaapi_reply_to_query(query, decode->display))
+        res = TRUE;
+    else if (GST_PAD_IS_SINK(pad)) {
+        switch (GST_QUERY_TYPE(query)) {
+#if GST_CHECK_VERSION(1,0,0)
+        case GST_QUERY_CAPS: {
+            GstCaps * const caps = gst_vaapidecode_get_caps(pad);
+            gst_query_set_caps_result(query, caps);
+            gst_caps_unref(caps);
+            res = TRUE;
+            break;
+        }
+#endif
+        default:
+            res = GST_PAD_QUERY_FUNCTION_CALL(decode->sinkpad_query,
+                decode->sinkpad, parent, query);
+            break;
+        }
+    }
     else
-      res = decode->srcpad_query(decode->srcpad, query);
+        res = GST_PAD_QUERY_FUNCTION_CALL(decode->srcpad_query,
+            decode->srcpad, parent, query);
 
-    g_object_unref (decode);
+    gst_object_unref(decode);
     return res;
 }
 
@@ -675,7 +864,6 @@ gst_vaapidecode_init(GstVaapiDecode *decode)
     decode->allowed_caps        = NULL;
     decode->render_time_base    = 0;
     decode->last_buffer_time    = 0;
-    decode->is_ready            = FALSE;
 
     g_mutex_init(&decode->decoder_mutex);
     g_cond_init(&decode->decoder_ready);
@@ -686,7 +874,9 @@ gst_vaapidecode_init(GstVaapiDecode *decode)
     decode->sinkpad = GST_VIDEO_DECODER_SINK_PAD(vdec);
     decode->sinkpad_query = GST_PAD_QUERYFUNC(decode->sinkpad);
     gst_pad_set_query_function(decode->sinkpad, gst_vaapidecode_query);
+#if !GST_CHECK_VERSION(1,0,0)
     gst_pad_set_getcaps_function(decode->sinkpad, gst_vaapidecode_get_caps);
+#endif
 
     /* Pad through which data goes out of the element */
     decode->srcpad = GST_VIDEO_DECODER_SRC_PAD(vdec);

@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE book PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
-<book xmlns="http://www.devhelp.net/book" title="GStreamer VA-API Plugins 0.10 Plugins Reference Manual" link="index.html" author="" name="plugins" version="2" language="c">
+<book xmlns="http://www.devhelp.net/book" title="GStreamer VA-API Plugins 1.0 Plugins Reference Manual" link="index.html" author="" name="plugins" version="2" language="c">
   <chapters>
     <sub name="gst-plugins-vaapi Plugins" link="ch01.html">
       <sub name="GstVaapiDecode" link="GstVaapiDecode.html"/>
       <sub name="GstVaapiPostproc" link="GstVaapiPostproc.html"/>
-      <sub name="GstVaapiDownload" link="GstVaapiDownload.html"/>
-      <sub name="GstVaapiUpload" link="GstVaapiUpload.html"/>
       <sub name="GstVaapiSink" link="GstVaapiSink.html"/>
     </sub>
     <sub name="Object Hierarchy" link="object-tree.html"/>
@@ -17,8 +15,6 @@
     <keyword type="struct" name="struct GstVaapiPostproc" link="GstVaapiPostproc.html#GstVaapiPostproc-struct"/>
     <keyword type="property" name="The &quot;deinterlace&quot; property" link="GstVaapiPostproc.html#GstVaapiPostproc--deinterlace"/>
     <keyword type="property" name="The &quot;deinterlace-method&quot; property" link="GstVaapiPostproc.html#GstVaapiPostproc--deinterlace-method"/>
-    <keyword type="struct" name="GstVaapiDownload" link="GstVaapiDownload.html#GstVaapiDownload-struct"/>
-    <keyword type="struct" name="struct GstVaapiUpload" link="GstVaapiUpload.html#GstVaapiUpload-struct"/>
     <keyword type="struct" name="struct GstVaapiSink" link="GstVaapiSink.html#GstVaapiSink-struct"/>
     <keyword type="property" name="The &quot;display&quot; property" link="GstVaapiSink.html#GstVaapiSink--display"/>
     <keyword type="property" name="The &quot;fullscreen&quot; property" link="GstVaapiSink.html#GstVaapiSink--fullscreen"/>

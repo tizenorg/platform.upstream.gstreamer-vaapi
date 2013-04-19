@@ -9,12 +9,10 @@ GstVaapiContext
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
-
 
 <!-- ##### SECTION Stability_Level ##### -->
 
@@ -132,7 +130,7 @@ GstVaapiContext
 @pheight: 
 
 
-<!-- ##### FUNCTION gst_vaapi_context_get_surface ##### -->
+<!-- ##### FUNCTION gst_vaapi_context_get_surface_proxy ##### -->
 <para>
 
 </para>
@@ -147,25 +145,6 @@ GstVaapiContext
 </para>
 
 @context: 
-@Returns: 
-
-
-<!-- ##### FUNCTION gst_vaapi_context_put_surface ##### -->
-<para>
-
-</para>
-
-@context: 
-@surface: 
-
-
-<!-- ##### FUNCTION gst_vaapi_context_find_surface_by_id ##### -->
-<para>
-
-</para>
-
-@context: 
-@id: 
 @Returns: 
 
 

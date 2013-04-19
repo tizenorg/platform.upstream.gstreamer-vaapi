@@ -1,0 +1,634 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GstVaapiVideoMeta</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 1.0 Library Reference Manual">
+<link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
+<link rel="prev" href="GstVaapiVideoBuffer.html" title="GstVaapiVideoBuffer">
+<link rel="next" href="GstVaapiContext.html" title="GstVaapiContext">
+<meta name="generator" content="GTK-Doc V1.18 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GstVaapiVideoBuffer.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GStreamer VA-API Plugins 1.0 Library Reference Manual</th>
+<td><a accesskey="n" href="GstVaapiContext.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#libs-GstVaapiVideoMeta.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#libs-GstVaapiVideoMeta.description" class="shortcut">Description</a>
+</td></tr>
+</table>
+<div class="refentry">
+<a name="libs-GstVaapiVideoMeta"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libs-GstVaapiVideoMeta.top_of_page"></a>GstVaapiVideoMeta</span></h2>
+<p>GstVaapiVideoMeta — VA video meta for GStreamer</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv">
+<a name="libs-GstVaapiVideoMeta.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis"><span class="returnvalue">GstVaapiVideoMeta</span> * <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-new" title="gst_vaapi_video_meta_new ()">gst_vaapi_video_meta_new</a>            (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);
+<span class="returnvalue">GstVaapiVideoMeta</span> * <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-new-from-pool" title="gst_vaapi_video_meta_new_from_pool ()">gst_vaapi_video_meta_new_from_pool</a>  (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);
+<span class="returnvalue">GstVaapiVideoMeta</span> * <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-new-with-image" title="gst_vaapi_video_meta_new_with_image ()">gst_vaapi_video_meta_new_with_image</a> (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<span class="returnvalue">GstVaapiVideoMeta</span> * <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-new-with-surface" title="gst_vaapi_video_meta_new_with_surface ()">gst_vaapi_video_meta_new_with_surface</a>
+                                                        (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);
+<span class="returnvalue">GstVaapiVideoMeta</span> * <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-new-with-surface-proxy" title="gst_vaapi_video_meta_new_with_surface_proxy ()">gst_vaapi_video_meta_new_with_surface_proxy</a>
+                                                        (<em class="parameter"><code><span class="type">GstVaapiSurfaceProxy</span> *proxy</code></em>);
+<span class="returnvalue">GstVaapiVideoMeta</span> * <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-ref" title="gst_vaapi_video_meta_ref ()">gst_vaapi_video_meta_ref</a>            (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-unref" title="gst_vaapi_video_meta_unref ()">gst_vaapi_video_meta_unref</a>          (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-replace" title="gst_vaapi_video_meta_replace ()">gst_vaapi_video_meta_replace</a>        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> **old_meta_ptr</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *new_meta</code></em>);
+<a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-get-display" title="gst_vaapi_video_meta_get_display ()">gst_vaapi_video_meta_get_display</a>    (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);
+<a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="returnvalue">GstVaapiImage</span></a> *     <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-get-image" title="gst_vaapi_video_meta_get_image ()">gst_vaapi_video_meta_get_image</a>      (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-image" title="gst_vaapi_video_meta_set_image ()">gst_vaapi_video_meta_set_image</a>      (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-image-from-pool" title="gst_vaapi_video_meta_set_image_from_pool ()">gst_vaapi_video_meta_set_image_from_pool</a>
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);
+<a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="returnvalue">GstVaapiSurface</span></a> *   <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-get-surface" title="gst_vaapi_video_meta_get_surface ()">gst_vaapi_video_meta_get_surface</a>    (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-surface" title="gst_vaapi_video_meta_set_surface ()">gst_vaapi_video_meta_set_surface</a>    (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-surface-from-pool" title="gst_vaapi_video_meta_set_surface_from_pool ()">gst_vaapi_video_meta_set_surface_from_pool</a>
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-surface-converter" title="gst_vaapi_video_meta_set_surface_converter ()">gst_vaapi_video_meta_set_surface_converter</a>
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GFunc"><span class="type">GFunc</span></a> func</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GFunc"><span class="returnvalue">GFunc</span></a>               <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-get-surface-converter" title="gst_vaapi_video_meta_get_surface_converter ()">gst_vaapi_video_meta_get_surface_converter</a>
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);
+<span class="returnvalue">GstVaapiSurfaceProxy</span> * <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-get-surface-proxy" title="gst_vaapi_video_meta_get_surface_proxy ()">gst_vaapi_video_meta_get_surface_proxy</a>
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-surface-proxy" title="gst_vaapi_video_meta_set_surface_proxy ()">gst_vaapi_video_meta_set_surface_proxy</a>
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiSurfaceProxy</span> *proxy</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-get-render-flags" title="gst_vaapi_video_meta_get_render_flags ()">gst_vaapi_video_meta_get_render_flags</a>
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-set-render-flags" title="gst_vaapi_video_meta_set_render_flags ()">gst_vaapi_video_meta_set_render_flags</a>
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> flags</code></em>);
+</pre>
+</div>
+<div class="refsect1">
+<a name="libs-GstVaapiVideoMeta.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="libs-GstVaapiVideoMeta.details"></a><h2>Details</h2>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-new"></a><h3>gst_vaapi_video_meta_new ()</h3>
+<pre class="programlisting"><span class="returnvalue">GstVaapiVideoMeta</span> * gst_vaapi_video_meta_new            (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>);</pre>
+<p>
+Creates an empty <span class="type">GstVaapiVideoMeta</span>. The caller is responsible for completing
+the initialization of the meta with the gst_vaapi_video_meta_set_*()
+functions.
+</p>
+<p>
+This function shall only be called from within gstreamer-vaapi
+plugin elements.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>display</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <span class="type">GstVaapiVideoMeta</span>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> or error</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-new-from-pool"></a><h3>gst_vaapi_video_meta_new_from_pool ()</h3>
+<pre class="programlisting"><span class="returnvalue">GstVaapiVideoMeta</span> * gst_vaapi_video_meta_new_from_pool  (<em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);</pre>
+<p>
+Creates a <span class="type">GstVaapiVideoMeta</span> with a video object allocated from a <em class="parameter"><code>pool</code></em>.
+Only <a class="link" href="GstVaapiSurfacePool.html" title="GstVaapiSurfacePool"><span class="type">GstVaapiSurfacePool</span></a> and <a class="link" href="GstVaapiImagePool.html" title="GstVaapiImagePool"><span class="type">GstVaapiImagePool</span></a> pools are supported.
+</p>
+<p>
+The meta object is destroyed through the last call to
+<a class="link" href="libs-GstVaapiVideoMeta.html#gst-vaapi-video-meta-unref" title="gst_vaapi_video_meta_unref ()"><code class="function">gst_vaapi_video_meta_unref()</code></a> and the video objects are pushed back
+to their respective pools.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <span class="type">GstVaapiVideoMeta</span>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-new-with-image"></a><h3>gst_vaapi_video_meta_new_with_image ()</h3>
+<pre class="programlisting"><span class="returnvalue">GstVaapiVideoMeta</span> * gst_vaapi_video_meta_new_with_image (<em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Creates a <span class="type">GstVaapiVideoMeta</span> with the specified <em class="parameter"><code>image</code></em>. The resulting
+meta holds an additional reference to the <em class="parameter"><code>image</code></em>.
+</p>
+<p>
+This function shall only be called from within gstreamer-vaapi
+plugin elements.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <span class="type">GstVaapiVideoMeta</span>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-new-with-surface"></a><h3>gst_vaapi_video_meta_new_with_surface ()</h3>
+<pre class="programlisting"><span class="returnvalue">GstVaapiVideoMeta</span> * gst_vaapi_video_meta_new_with_surface
+                                                        (<em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);</pre>
+<p>
+Creates a <span class="type">GstVaapiVideoMeta</span> with the specified <em class="parameter"><code>surface</code></em>. The resulting
+meta holds an additional reference to the <em class="parameter"><code>surface</code></em>.
+</p>
+<p>
+This function shall only be called from within gstreamer-vaapi
+plugin elements.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <span class="type">GstVaapiVideoMeta</span>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-new-with-surface-proxy"></a><h3>gst_vaapi_video_meta_new_with_surface_proxy ()</h3>
+<pre class="programlisting"><span class="returnvalue">GstVaapiVideoMeta</span> * gst_vaapi_video_meta_new_with_surface_proxy
+                                                        (<em class="parameter"><code><span class="type">GstVaapiSurfaceProxy</span> *proxy</code></em>);</pre>
+<p>
+Creates a <span class="type">GstVaapiVideoMeta</span> with the specified surface <em class="parameter"><code>proxy</code></em>. The
+resulting meta holds an additional reference to the <em class="parameter"><code>proxy</code></em>.
+</p>
+<p>
+This function shall only be called from within gstreamer-vaapi
+plugin elements.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>proxy</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiSurfaceProxy</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the newly allocated <span class="type">GstVaapiVideoMeta</span>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-ref"></a><h3>gst_vaapi_video_meta_ref ()</h3>
+<pre class="programlisting"><span class="returnvalue">GstVaapiVideoMeta</span> * gst_vaapi_video_meta_ref            (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);</pre>
+<p>
+Atomically increases the reference count of the given <em class="parameter"><code>meta</code></em> by one.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>The same <em class="parameter"><code>meta</code></em> argument</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-unref"></a><h3>gst_vaapi_video_meta_unref ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_video_meta_unref          (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);</pre>
+<p>
+Atomically decreases the reference count of the <em class="parameter"><code>meta</code></em> by one. If
+the reference count reaches zero, the object will be free'd.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-replace"></a><h3>gst_vaapi_video_meta_replace ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_video_meta_replace        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> **old_meta_ptr</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *new_meta</code></em>);</pre>
+<p>
+<em class="parameter"><code>new_meta</code></em>. This means that <em class="parameter"><code>old_meta_ptr</code></em> shall reference a valid
+Atomically replaces the meta object held in <em class="parameter"><code>old_meta_ptr</code></em> with
+object. However, <em class="parameter"><code>new_meta</code></em> can be NULL.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>old_meta_ptr</code></em> :</span></p></td>
+<td>a pointer to a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>new_meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-get-display"></a><h3>gst_vaapi_video_meta_get_display ()</h3>
+<pre class="programlisting"><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="returnvalue">GstVaapiDisplay</span></a> *   gst_vaapi_video_meta_get_display    (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);</pre>
+<p>
+Retrieves the <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> the <em class="parameter"><code>meta</code></em> is bound to. The <em class="parameter"><code>meta</code></em>
+owns the returned <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> object so the caller is
+responsible for calling <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-ref"><code class="function">g_object_ref()</code></a> when needed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> the <em class="parameter"><code>meta</code></em> is bound to</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-get-image"></a><h3>gst_vaapi_video_meta_get_image ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="returnvalue">GstVaapiImage</span></a> *     gst_vaapi_video_meta_get_image      (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);</pre>
+<p>
+Retrieves the <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> bound to the <em class="parameter"><code>meta</code></em>. The <em class="parameter"><code>meta</code></em> owns
+the <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> so the caller is responsible for calling
+<a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-ref"><code class="function">g_object_ref()</code></a> when needed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> bound to the <em class="parameter"><code>meta</code></em>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if
+there is none</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-set-image"></a><h3>gst_vaapi_video_meta_set_image ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_video_meta_set_image      (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> *image</code></em>);</pre>
+<p>
+Binds <em class="parameter"><code>image</code></em> to the <em class="parameter"><code>meta</code></em>. If the <em class="parameter"><code>meta</code></em> contains another image
+previously allocated from a pool, it's pushed back to its parent
+pool and the pool is also released.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-set-image-from-pool"></a><h3>gst_vaapi_video_meta_set_image_from_pool ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_video_meta_set_image_from_pool
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);</pre>
+<p>
+Binds a newly allocated video object from the <em class="parameter"><code>pool</code></em>. The <em class="parameter"><code>pool</code></em>
+shall be of type <a class="link" href="GstVaapiImagePool.html" title="GstVaapiImagePool"><span class="type">GstVaapiImagePool</span></a>. Previously allocated objects
+are released and returned to their parent pools, if any.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-get-surface"></a><h3>gst_vaapi_video_meta_get_surface ()</h3>
+<pre class="programlisting"><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="returnvalue">GstVaapiSurface</span></a> *   gst_vaapi_video_meta_get_surface    (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);</pre>
+<p>
+Retrieves the <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> bound to the <em class="parameter"><code>meta</code></em>. The <em class="parameter"><code>meta</code></em>
+owns the <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> so the caller is responsible for calling
+<a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-ref"><code class="function">g_object_ref()</code></a> when needed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> bound to the <em class="parameter"><code>meta</code></em>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if
+there is none</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-set-surface"></a><h3>gst_vaapi_video_meta_set_surface ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_video_meta_set_surface    (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a> *surface</code></em>);</pre>
+<p>
+Binds <em class="parameter"><code>surface</code></em> to the <em class="parameter"><code>meta</code></em>. If the <em class="parameter"><code>meta</code></em> contains another
+surface previously allocated from a pool, it's pushed back to its
+parent pool and the pool is also released.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>surface</code></em> :</span></p></td>
+<td>a <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurface"><span class="type">GstVaapiSurface</span></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-set-surface-from-pool"></a><h3>gst_vaapi_video_meta_set_surface_from_pool ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_vaapi_video_meta_set_surface_from_pool
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a> *pool</code></em>);</pre>
+<p>
+Binds a newly allocated video object from the <em class="parameter"><code>pool</code></em>. The <em class="parameter"><code>pool</code></em>
+shall be of type <a class="link" href="GstVaapiSurfacePool.html" title="GstVaapiSurfacePool"><span class="type">GstVaapiSurfacePool</span></a>. Previously allocated objects
+are released and returned to their parent pools, if any.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pool</code></em> :</span></p></td>
+<td>a <a class="link" href="GstVaapiVideoPool.html" title="GstVaapiVideoPool"><span class="type">GstVaapiVideoPool</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-set-surface-converter"></a><h3>gst_vaapi_video_meta_set_surface_converter ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_video_meta_set_surface_converter
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GFunc"><span class="type">GFunc</span></a> func</code></em>);</pre>
+<p>
+Sets the <em class="parameter"><code>meta</code></em> surface converter function to <em class="parameter"><code>func</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>func</code></em> :</span></p></td>
+<td>a pointer to the surface converter function</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-get-surface-converter"></a><h3>gst_vaapi_video_meta_get_surface_converter ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GFunc"><span class="returnvalue">GFunc</span></a>               gst_vaapi_video_meta_get_surface_converter
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);</pre>
+<p>
+Retrieves the surface converter bound to the <em class="parameter"><code>meta</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the surface converter associated with the video <em class="parameter"><code>meta</code></em>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-get-surface-proxy"></a><h3>gst_vaapi_video_meta_get_surface_proxy ()</h3>
+<pre class="programlisting"><span class="returnvalue">GstVaapiSurfaceProxy</span> * gst_vaapi_video_meta_get_surface_proxy
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);</pre>
+<p>
+Retrieves the <span class="type">GstVaapiSurfaceProxy</span> bound to the <em class="parameter"><code>meta</code></em>. The <em class="parameter"><code>meta</code></em>
+owns the <span class="type">GstVaapiSurfaceProxy</span> so the caller is responsible for calling
+<a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-ref"><code class="function">g_object_ref()</code></a> when needed.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the <span class="type">GstVaapiSurfaceProxy</span> bound to the <em class="parameter"><code>meta</code></em>, or
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if there is none</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-set-surface-proxy"></a><h3>gst_vaapi_video_meta_set_surface_proxy ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_video_meta_set_surface_proxy
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><span class="type">GstVaapiSurfaceProxy</span> *proxy</code></em>);</pre>
+<p>
+Binds surface <em class="parameter"><code>proxy</code></em> to the <em class="parameter"><code>meta</code></em>. If the <em class="parameter"><code>meta</code></em> contains another
+surface previously allocated from a pool, it's pushed back to its
+parent pool and the pool is also released.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>proxy</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiSurfaceProxy</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-get-render-flags"></a><h3>gst_vaapi_video_meta_get_render_flags ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_vaapi_video_meta_get_render_flags
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>);</pre>
+<p>
+Retrieves the surface render flags bound to the <em class="parameter"><code>meta</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>a combination for <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurfaceRenderFlags" title="enum GstVaapiSurfaceRenderFlags"><span class="type">GstVaapiSurfaceRenderFlags</span></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="gst-vaapi-video-meta-set-render-flags"></a><h3>gst_vaapi_video_meta_set_render_flags ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_vaapi_video_meta_set_render_flags
+                                                        (<em class="parameter"><code><span class="type">GstVaapiVideoMeta</span> *meta</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> flags</code></em>);</pre>
+<p>
+Sets <a class="link" href="libs-gstvaapisurface.html#GstVaapiSurfaceRenderFlags" title="enum GstVaapiSurfaceRenderFlags"><span class="type">GstVaapiSurfaceRenderFlags</span></a> to the <em class="parameter"><code>meta</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>meta</code></em> :</span></p></td>
+<td>a <span class="type">GstVaapiVideoMeta</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>flags</code></em> :</span></p></td>
+<td>a set of surface render flags</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.18</div>
+</body>
+</html>

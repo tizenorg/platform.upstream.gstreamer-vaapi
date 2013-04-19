@@ -3,8 +3,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GstVaapiSubpicture</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
-<link rel="home" href="index.html" title="GStreamer VA-API Plugins 0.10 Library Reference Manual">
+<meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+<link rel="home" href="index.html" title="GStreamer VA-API Plugins 1.0 Library Reference Manual">
 <link rel="up" href="ch01.html" title="gst-plugins-vaapi Library">
 <link rel="prev" href="libs-GstVaapiImageFormat.html" title="GstVaapiImageFormat">
 <link rel="next" href="GstVaapiTexture.html" title="GstVaapiTexture">
@@ -17,7 +17,7 @@
 <td><a accesskey="p" href="libs-GstVaapiImageFormat.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
 <td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
-<th width="100%" align="center">GStreamer VA-API Plugins 0.10 Library Reference Manual</th>
+<th width="100%" align="center">GStreamer VA-API Plugins 1.0 Library Reference Manual</th>
 <td><a accesskey="n" href="GstVaapiTexture.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
@@ -47,7 +47,7 @@ struct              <a class="link" href="GstVaapiSubpicture.html#GstVaapiSubpic
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> flags</code></em>);
 <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="returnvalue">GstVaapiSubpicture</span></a> * <a class="link" href="GstVaapiSubpicture.html#gst-vaapi-subpicture-new-from-overlay-rectangle" title="gst_vaapi_subpicture_new_from_overlay_rectangle ()">gst_vaapi_subpicture_new_from_overlay_rectangle</a>
                                                         (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
-                                                         <em class="parameter"><code><span class="type">GstVideoOverlayRectangle</span> *rect</code></em>);
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideooverlaycomposition.html#GstVideoOverlayRectangle"><span class="type">GstVideoOverlayRectangle</span></a> *rect</code></em>);
 <a class="link" href="libs-Basic-data-structures.html#GstVaapiID" title="GstVaapiID"><span class="returnvalue">GstVaapiID</span></a>          <a class="link" href="GstVaapiSubpicture.html#gst-vaapi-subpicture-get-id" title="gst_vaapi_subpicture_get_id ()">gst_vaapi_subpicture_get_id</a>         (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>);
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstVaapiSubpicture.html#gst-vaapi-subpicture-get-flags" title="gst_vaapi_subpicture_get_flags ()">gst_vaapi_subpicture_get_flags</a>      (<em class="parameter"><code><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> *subpicture</code></em>);
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="returnvalue">gfloat</span></a>              <a class="link" href="GstVaapiSubpicture.html#gst-vaapi-subpicture-get-global-alpha" title="gst_vaapi_subpicture_get_global_alpha ()">gst_vaapi_subpicture_get_global_alpha</a>
@@ -132,10 +132,10 @@ newly created object holds a reference on <em class="parameter"><code>image</cod
 <a name="gst-vaapi-subpicture-new-from-overlay-rectangle"></a><h3>gst_vaapi_subpicture_new_from_overlay_rectangle ()</h3>
 <pre class="programlisting"><a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="returnvalue">GstVaapiSubpicture</span></a> * gst_vaapi_subpicture_new_from_overlay_rectangle
                                                         (<em class="parameter"><code><a class="link" href="GstVaapiDisplay.html" title="GstVaapiDisplay"><span class="type">GstVaapiDisplay</span></a> *display</code></em>,
-                                                         <em class="parameter"><code><span class="type">GstVideoOverlayRectangle</span> *rect</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideooverlaycomposition.html#GstVideoOverlayRectangle"><span class="type">GstVideoOverlayRectangle</span></a> *rect</code></em>);</pre>
 <p>
 Helper function that creates a new <a class="link" href="GstVaapiSubpicture.html" title="GstVaapiSubpicture"><span class="type">GstVaapiSubpicture</span></a> from a
-<span class="type">GstVideoOverlayRectangle</span>. A new <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> is also created
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideooverlaycomposition.html#GstVideoOverlayRectangle"><span class="type">GstVideoOverlayRectangle</span></a>. A new <a class="link" href="libs-gstvaapiimage.html#GstVaapiImage"><span class="type">GstVaapiImage</span></a> is also created
 along the way and attached to the resulting subpicture. The
 subpicture holds a unique reference to the underlying image.
 </p>
@@ -149,7 +149,7 @@ subpicture holds a unique reference to the underlying image.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rect</code></em> :</span></p></td>
-<td>a <span class="type">GstVideoOverlayRectangle</span>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideooverlaycomposition.html#GstVideoOverlayRectangle"><span class="type">GstVideoOverlayRectangle</span></a>
 </td>
 </tr>
 <tr>

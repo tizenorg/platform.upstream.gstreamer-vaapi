@@ -1,0 +1,74 @@
+<!-- ##### SECTION ./tmpl/gstvaapidownload.sgml:Image ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gstvaapidownload.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gstvaapidownload.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gstvaapidownload.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gstvaapidownload.sgml:Stability_Level ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gstvaapidownload.sgml:Title ##### -->
+GstVaapiDownload
+
+
+<!-- ##### SECTION ./tmpl/gstvaapiupload.sgml:Image ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gstvaapiupload.sgml:Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gstvaapiupload.sgml:See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION ./tmpl/gstvaapiupload.sgml:Short_Description ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gstvaapiupload.sgml:Stability_Level ##### -->
+
+
+
+<!-- ##### SECTION ./tmpl/gstvaapiupload.sgml:Title ##### -->
+GstVaapiUpload
+
+
+<!-- ##### STRUCT GstVaapiDownload ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GstVaapiUpload ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ARG GstVaapiUpload:direct-rendering ##### -->
+<para>
+
+</para>
+
+
