@@ -444,8 +444,10 @@ gst_vaapiupload_prepare_output_buffer(
 
     if (!gst_vaapi_uploader_has_direct_rendering(upload->uploader))
         buffer = gst_vaapi_uploader_get_buffer(upload->uploader);
-    else
+    else if (GST_VAAPI_IS_VIDEO_BUFFER(inbuf))
         buffer = gst_vaapi_video_buffer_new_from_buffer(inbuf);
+    else /* inbuf doesn't come from gst_vaapiupload_sinkpad_buffer_alloc */
+        buffer = gst_vaapi_uploader_get_buffer(upload->uploader);
     if (!buffer)
         return GST_FLOW_UNEXPECTED;
 
