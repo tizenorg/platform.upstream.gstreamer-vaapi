@@ -2850,28 +2850,32 @@ fill_picture(GstVaapiDecoderH264 *decoder,
     GstVaapiPictureH264 *picture, GstVaapiParserInfoH264 *pi)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
-    GstVaapiDecPicBufLayer * dpb_layer = priv->current_dpb_layer;
+    GstVaapiDecPicBufLayer * dpb_layer = NULL;
     GstVaapiPicture * const base_picture = &picture->base;
     GstH264SliceHdr * const slice_hdr = &pi->data.slice_hdr;
     GstH264PPS * const pps = picture->pps;
     GstH264SPS * const sps = pps->sequence;
     VAPictureParameterBufferH264 * const pic_param = base_picture->param;
-    guint i, n;
+    guint i, n, dpb_idx;
 
     /* Fill in VAPictureParameterBufferH264 */
     vaapi_fill_picture(&pic_param->CurrPic, picture, 0);
 
-    for (i = 0, n = 0; i < dpb_layer->dpb_count; i++) {
-        GstVaapiFrameStore * const fs = dpb_layer->dpb[i];
-        if (gst_vaapi_frame_store_has_reference(fs))
-            vaapi_fill_picture(&pic_param->ReferenceFrames[n++],
-                fs->buffers[0], fs->structure);
-    }
+    for (dpb_idx = 0, n = 0; dpb_idx < MAX_VIEW_NUM; dpb_idx++) {
+        dpb_layer = &priv->dpb_layers[dpb_idx];
 
-    for (i = 0; i < dpb_layer->inter_ref_count; i++) {
-           GstVaapiPictureH264 *pic = dpb_layer->inter_ref[i];
-            vaapi_fill_picture(&pic_param->ReferenceFrames[n++],
-                pic, pic->base.structure );
+        for (i = 0; i < dpb_layer->dpb_count; i++) {
+            GstVaapiFrameStore * const fs = dpb_layer->dpb[i];
+            if (gst_vaapi_frame_store_has_reference(fs))
+                vaapi_fill_picture(&pic_param->ReferenceFrames[n++],
+                    fs->buffers[0], fs->structure);
+        }
+
+        for (i = 0; i < dpb_layer->inter_ref_count; i++) {
+             GstVaapiPictureH264 *pic = dpb_layer->inter_ref[i];
+                vaapi_fill_picture(&pic_param->ReferenceFrames[n++],
+                   pic, pic->base.structure );
+        }
     }
 
     for (; n < G_N_ELEMENTS(pic_param->ReferenceFrames); n++)
