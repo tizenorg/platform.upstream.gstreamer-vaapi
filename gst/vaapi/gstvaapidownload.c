@@ -83,11 +83,17 @@ struct _GstVaapiDownload {
     guint               image_width;
     guint               image_height;
     unsigned int        images_reset    : 1;
+    unsigned int        image_hard_copy : 1;
 };
 
 struct _GstVaapiDownloadClass {
     /*< private >*/
     GstBaseTransformClass parent_class;
+};
+
+enum {
+    PROP_0,
+    PROP_HARDCOPY
 };
 
 /* GstImplementsInterface interface */
@@ -201,6 +207,46 @@ gst_vaapidownload_destroy(GstVaapiDownload *download)
 }
 
 static void
+gst_vaapidownload_set_property(
+    GObject      *object,
+    guint         prop_id,
+    const GValue *value,
+    GParamSpec   *pspec
+)
+{
+    GstVaapiDownload *download = GST_VAAPIDOWNLOAD (object);
+
+    switch (prop_id) {
+    case PROP_HARDCOPY:
+        download->image_hard_copy = g_value_get_boolean(value);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+static void
+gst_vaapidownload_get_property(
+    GObject    *object,
+    guint       prop_id,
+    GValue     *value,
+    GParamSpec *pspec
+)
+{
+    GstVaapiDownload *download = GST_VAAPIDOWNLOAD (object);
+
+    switch (prop_id) {
+    case PROP_HARDCOPY:
+        g_value_set_boolean(value, download->image_hard_copy);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+static void
 gst_vaapidownload_finalize(GObject *object)
 {
     gst_vaapidownload_destroy(GST_VAAPIDOWNLOAD(object));
@@ -220,6 +266,9 @@ gst_vaapidownload_class_init(GstVaapiDownloadClass *klass)
                             GST_PLUGIN_NAME, 0, GST_PLUGIN_DESC);
 
     object_class->finalize        = gst_vaapidownload_finalize;
+    object_class->set_property   = gst_vaapidownload_set_property;
+    object_class->get_property   = gst_vaapidownload_get_property;
+
     trans_class->start            = gst_vaapidownload_start;
     trans_class->stop             = gst_vaapidownload_stop;
     trans_class->before_transform = gst_vaapidownload_before_transform;
@@ -241,6 +290,15 @@ gst_vaapidownload_class_init(GstVaapiDownloadClass *klass)
     /* src pad */
     pad_template = gst_static_pad_template_get(&gst_vaapidownload_src_factory);
     gst_element_class_add_pad_template(element_class, pad_template);
+
+    g_object_class_install_property
+        (object_class,
+         PROP_HARDCOPY,
+         g_param_spec_boolean("hardcopy",
+                              "Hardcopy",
+                              "Hard copy image directly from surface with same format",
+                              FALSE,
+                              G_PARAM_READWRITE));
 }
 
 static void
@@ -255,6 +313,7 @@ gst_vaapidownload_init(GstVaapiDownload *download)
     download->image_format      = GST_VIDEO_FORMAT_UNKNOWN;
     download->image_width       = 0;
     download->image_height      = 0;
+    download->image_hard_copy   = FALSE;
 
     /* Override buffer allocator on sink pad */
     sinkpad = gst_element_get_static_pad(GST_ELEMENT(download), "sink");
@@ -399,6 +458,26 @@ gst_vaapidownload_transform(
     if (!surface)
         return GST_FLOW_UNEXPECTED;
 
+    if (download->image_hard_copy) {
+        image = gst_vaapi_surface_derive_image(surface);
+        if (!image)
+          return GST_FLOW_UNEXPECTED;
+
+        if (GST_VAAPI_IMAGE_FORMAT(image) != download->image_format)
+          goto error_format;
+
+        success = gst_vaapi_image_get_buffer(image, outbuf, NULL);
+        g_object_unref(image);
+        if (!success) {
+          GST_WARNING("failed to hard copy surface(%"
+                      GST_FOURCC_FORMAT
+                      ") to buffer",
+                      GST_FOURCC_ARGS(download->image_format));
+          return GST_FLOW_UNEXPECTED;
+        }
+        return GST_FLOW_OK;
+    }
+
     image = gst_vaapi_video_pool_get_object(download->images);
     if (!image)
         return GST_FLOW_UNEXPECTED;
@@ -424,6 +503,18 @@ error_get_image:
 error_get_buffer:
     {
         GST_WARNING("failed to transfer image to output video buffer");
+        return GST_FLOW_UNEXPECTED;
+    }
+
+error_format:
+    {
+        GST_WARNING("wrong format in hard_copy, surface format:%"
+                    GST_FOURCC_FORMAT
+                    " image format:%"
+                    GST_FOURCC_FORMAT "",
+                    GST_FOURCC_ARGS(gst_vaapi_image_get_format(image)),
+                    GST_FOURCC_ARGS(download->image_format));
+        g_object_unref(image);
         return GST_FLOW_UNEXPECTED;
     }
 }
