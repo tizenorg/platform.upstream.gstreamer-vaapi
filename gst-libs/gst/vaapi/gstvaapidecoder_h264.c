@@ -1775,8 +1775,6 @@ exec_picture_refs_modification_1(
         num_refs                       = slice_hdr->num_ref_idx_l1_active_minus1 + 1;
     }
     ref_list_count = *ref_list_count_ptr;
-    if (num_refs > ref_list_count)
-        num_refs = ref_list_count;
 
     if (!GST_VAAPI_PICTURE_IS_FRAME(picture)) {
         MaxPicNum  = 1 << (sps->log2_max_frame_num_minus4 + 5); // 2 * MaxFrameNum
@@ -1866,7 +1864,9 @@ exec_picture_refs_modification_1(
         if (!ref_list[i])
             GST_ERROR("list %u entry %u is empty", list, i);
 #endif
-    *ref_list_count_ptr = num_refs;
+
+    for(i = num_refs; i > 0 && !ref_list[i - 1]; i--);
+    *ref_list_count_ptr = i ;
 }
 
 /* 8.2.4.3 - Modification process for reference picture lists */
