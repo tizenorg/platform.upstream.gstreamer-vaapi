@@ -40,6 +40,9 @@
 /* Define the max views supported */
 #define MAX_VIEW_NUM 2
 
+/* Define the max frames pending for MVC output */
+#define MAX_PENDING_FRAME_NUM 4
+
 /* Defined to 1 if strict ordering of DPB is needed. Only useful for debug */
 #define USE_STRICT_DPB_ORDERING 0
 
@@ -178,6 +181,8 @@ gst_vaapi_picture_h264_create(
     picture->field_poc[0]       = G_MAXINT32;
     picture->field_poc[1]       = G_MAXINT32;
     picture->output_needed      = FALSE;
+    picture->layer_id           = G_MAXINT32;
+    picture->view_id            = G_MAXINT32;
     return TRUE;
 }
 
@@ -429,6 +434,10 @@ struct _GstVaapiDecoderH264Private {
     guint                       current_view_id;
     guint                       iVOIdx;
     guint                       anchor_pic_flag;
+
+    /* mvc video view output reordering */
+    GstVaapiFrameStore         *out_pending_frames[MAX_PENDING_FRAME_NUM];
+    guint                       pending_frames_count;
 };
 
 /**
@@ -577,6 +586,91 @@ array_remove_index(void *array, guint *array_length_ptr, guint index)
 #define ARRAY_REMOVE_INDEX(array, index) \
     array_remove_index(array, &array##_count, index)
 
+static gboolean
+pending_frames_add(
+    GstVaapiDecoderH264 *decoder,
+    GstVaapiFrameStore  *fs,
+    GstVaapiPictureH264 *picture)
+{
+    GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    guint i;
+
+    if (!fs && picture) {
+        gst_vaapi_picture_output(GST_VAAPI_PICTURE_CAST(picture));
+        picture->output_needed = FALSE;
+        return TRUE;
+    }
+
+    if (priv->pending_frames_count < MAX_PENDING_FRAME_NUM) {
+       fs->output_needed--;
+
+       for (i = 0; i < MAX_PENDING_FRAME_NUM; i++) {
+           if (priv->out_pending_frames[i] && fs == priv->out_pending_frames[i]){
+              return TRUE;
+           }
+       }
+
+       for (i = 0; i < MAX_PENDING_FRAME_NUM; i++) {
+           if (!priv->out_pending_frames[i]) {
+               gst_vaapi_frame_store_replace(&priv->out_pending_frames[i], fs);
+               priv->pending_frames_count++;
+               return TRUE;
+           }
+       }
+   }
+
+   return FALSE;
+}
+
+static gboolean
+pending_frames_bump(GstVaapiDecoderH264 *decoder)
+{
+    GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiFrameStore  *fs;
+    GstVaapiPictureH264 *picture;
+    guint i;
+    guint min_poc = 0xffff;
+    gint found_idx = -1;
+
+    for (i = 0; i < MAX_PENDING_FRAME_NUM; i++) {
+       fs = priv->out_pending_frames[i];
+
+       if (!fs) continue;
+
+       if (fs->buffers[0]->base.poc < min_poc) {
+           min_poc = fs->buffers[0]->base.poc;
+           found_idx = i;
+       } else if (found_idx != -1 && fs->buffers[0]->base.poc == min_poc) {
+           GstVaapiFrameStore *store_min = priv->out_pending_frames[found_idx];
+           /* output view in layer with small layer id firstly */
+           if (fs->buffers[0]->layer_id < store_min->buffers[0]->layer_id) {
+               found_idx = i;
+           }
+       }
+    }
+
+    if (found_idx == -1) {
+        return FALSE;
+    }
+
+    fs = priv->out_pending_frames[found_idx];
+    picture = fs->buffers[0];
+    picture->output_needed = FALSE;
+
+    gst_vaapi_picture_output(GST_VAAPI_PICTURE_CAST(picture));
+
+    priv->pending_frames_count--;
+    gst_vaapi_frame_store_replace(&priv->out_pending_frames[found_idx], NULL);
+
+    return TRUE;
+}
+
+static void
+pending_frames_flush(GstVaapiDecoderH264 *decoder)
+{
+   while(pending_frames_bump(decoder));
+}
+
 static void
 dpb_remove_index(GstVaapiDecoderH264 *decoder, guint index)
 {
@@ -600,13 +694,33 @@ dpb_output(
     GstVaapiPictureH264 *picture
 )
 {
+    GstVaapiDecoderH264Private * const priv = &decoder->priv;
+
     picture->output_needed = FALSE;
 
-    if (fs) {
-        if (--fs->output_needed > 0)
-            return TRUE;
-        picture = fs->buffers[0];
-    }
+    /* buffer the output frames to make sure Left and right
+     * views with same POC will be output alternatively.
+     */
+    if (priv->is_mvc) {
+        pending_frames_add(decoder, fs, picture);
+
+        if (priv->pending_frames_count == MAX_PENDING_FRAME_NUM)
+            return pending_frames_bump(decoder);
+
+        return TRUE;
+    } else {
+        picture->output_needed = FALSE;
+
+        if (fs) {
+            if (--fs->output_needed > 0)
+                return TRUE;
+            picture = fs->buffers[0];
+        }
+
+        /* XXX: update cropping rectangle */
+        return gst_vaapi_picture_output(GST_VAAPI_PICTURE_CAST(picture));
+  }
+
     return gst_vaapi_picture_output(GST_VAAPI_PICTURE_CAST(picture));
 }
 
@@ -872,6 +986,7 @@ gst_vaapi_decoder_h264_create(GstVaapiDecoder *base_decoder)
     priv->current_view_id       = 0;
     priv->iVOIdx                = 0;
     priv->current_dpb_layer     = &priv->dpb_layers[0];
+    priv->pending_frames_count  = 0;
 
     dpb_init(decoder);
 
@@ -1022,7 +1137,7 @@ ensure_context(GstVaapiDecoderH264 *decoder, GstH264SPS *sps)
 
     if (priv->is_mvc)
         info.ref_frames = get_max_dec_frame_buffering(sps, priv->mvc_view_count)
-                          * priv->mvc_view_count;
+                          * priv->mvc_view_count + MAX_PENDING_FRAME_NUM;
     else
         info.ref_frames = get_max_dec_frame_buffering(sps, 1);
 
@@ -3681,6 +3796,8 @@ gst_vaapi_decoder_h264_flush(GstVaapiDecoder *base_decoder)
           layer_1_has_pics = dpb_bump(decoder) ;
       }
     }
+
+    pending_frames_flush(decoder);
 
     priv->current_dpb_layer = &priv->dpb_layers[0];
     dpb_clear(decoder);
