@@ -771,6 +771,7 @@ h264_get_profile(GstH264SPS *sps)
         profile = GST_VAAPI_PROFILE_H264_BASELINE;
         break;
     case GST_H264_PROFILE_MAIN:
+    case GST_H264_PROFILE_EXTENDED:
         profile = GST_VAAPI_PROFILE_H264_MAIN;
         break;
     case GST_H264_PROFILE_HIGH:
