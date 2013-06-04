@@ -2796,6 +2796,14 @@ decode_unit(GstVaapiDecoderH264 *decoder, GstVaapiDecoderUnit *unit)
     case GST_H264_NAL_SEI:
         status = GST_VAAPI_DECODER_STATUS_SUCCESS;
         break;
+    case GST_H264_NAL_SPS_EXT:
+        /* skip SPS Extension NALs */
+        status = GST_VAAPI_DECODER_STATUS_SUCCESS;
+        break;
+    case GST_H264_NAL_SLICE_AUX:
+        /* skip Slice Aux NALs */
+        status = GST_VAAPI_DECODER_STATUS_SUCCESS;
+        break;
     default:
         GST_WARNING("unsupported NAL unit type %d", pi->nalu.type);
         status = GST_VAAPI_DECODER_STATUS_ERROR_BITSTREAM_PARSER;
