@@ -1964,17 +1964,20 @@ init_picture_ref_lists(GstVaapiDecoderH264 *decoder)
 }
 
 static void
-remove_short_reference(GstVaapiDecoderH264 *decoder, gint32 frame_num)
+remove_short_reference(GstVaapiDecoderH264 *decoder, GstVaapiPictureH264 *picture)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
     GstVaapiPictureH264 *ref_picture;
     guint i;
+    gint32 frame_num = picture->frame_num;
 
     for (i = 0; i < priv->short_ref_count; ++i) {
         if (priv->short_ref[i]->frame_num == frame_num) {
             ref_picture = priv->short_ref[i];
-            gst_vaapi_picture_h264_set_reference(ref_picture, 0, FALSE);
-            ARRAY_REMOVE_INDEX(priv->short_ref, i);
+            if (ref_picture != picture->other_field){
+                gst_vaapi_picture_h264_set_reference(ref_picture, 0, FALSE);
+                ARRAY_REMOVE_INDEX(priv->short_ref, i);
+            }
             return;
         }
     }
@@ -2063,7 +2066,7 @@ process_for_gaps_in_frame_num(
 
         init_picture_refs_pic_num(decoder, dummy_pic, slice_hdr);
         exec_ref_pic_marking_sliding_window(decoder);
-        remove_short_reference(decoder, dummy_pic->frame_num);
+        remove_short_reference(decoder, dummy_pic);
         /* add to short reference */
         priv->short_ref[priv->short_ref_count++] = dummy_pic;
         dpb_add(decoder,dummy_pic);
@@ -2418,8 +2421,9 @@ exec_ref_pic_marking(GstVaapiDecoderH264 *decoder, GstVaapiPictureH264 *picture)
             if (!exec_ref_pic_marking_sliding_window(decoder))
                 return FALSE;
         }
-        if (!priv->prev_pic_has_mmco5)
-            remove_short_reference(decoder, picture->frame_num);
+        if (!priv->prev_pic_has_mmco5 &&
+            GST_VAAPI_PICTURE_IS_SHORT_TERM_REFERENCE(picture))
+            remove_short_reference(decoder, picture);
     }
     return TRUE;
 }
@@ -2635,6 +2639,8 @@ decode_picture(GstVaapiDecoderH264 *decoder, GstVaapiDecoderUnit *unit)
             GST_ERROR("failed to allocate field picture");
             return GST_VAAPI_DECODER_STATUS_ERROR_ALLOCATION_FAILED;
         }
+        picture->other_field = priv->current_picture;
+        priv->current_picture->other_field = picture;
     }
     else {
         /* Create new picture */
