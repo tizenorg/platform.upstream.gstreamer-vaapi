@@ -182,7 +182,7 @@ main(int argc, char *argv[])
         if (!win)
             g_error("could not create X window");
 
-        window = gst_vaapi_window_x11_new_with_xid(display, win);
+        window = gst_vaapi_window_x11_new_with_xid(display, win, FALSE);
         if (!window)
             g_error("could not create window");
 

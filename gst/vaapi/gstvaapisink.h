@@ -64,6 +64,8 @@ typedef struct _GstVaapiSinkClass               GstVaapiSinkClass;
 typedef struct _GstVaapiTexture                 GstVaapiTexture;
 #endif
 
+#define MAX_PIXMAP_COUNT  20
+
 struct _GstVaapiSink {
     /*< private >*/
     GstVideoSink parent_instance;
@@ -98,6 +100,8 @@ struct _GstVaapiSink {
     guint               use_rotation    : 1;
     guint               keep_aspect     : 1;
     guint               use_video_raw   : 1;
+    guint               is_pixmap       : 1;
+    GstVaapiWindow     *pixmap_pool[MAX_PIXMAP_COUNT];
 };
 
 struct _GstVaapiSinkClass {

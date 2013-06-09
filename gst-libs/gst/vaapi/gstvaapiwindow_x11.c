@@ -41,6 +41,14 @@
 #define DEBUG 1
 #include "gstvaapidebug.h"
 
+/*
+  * is_pixmap will be used by _create(), but _new_with_xid() doesn't have 
+  * a chance to set the flag, so add this flag here.
+  * TODO, we'd better add is_pixmap flag to base class: GstVaapiWindow
+*/
+
+static gboolean _is_pixmap = FALSE;
+
 #define _NET_WM_STATE_REMOVE    0 /* remove/unset property */
 #define _NET_WM_STATE_ADD       1 /* add/set property      */
 #define _NET_WM_STATE_TOGGLE    2 /* toggle property       */
@@ -230,7 +238,12 @@ gst_vaapi_window_x11_create(GstVaapiWindow *window, guint *width, guint *height)
 
     if (window->use_foreign_window && xid) {
         GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
-        XGetWindowAttributes(dpy, xid, &wattr);
+        if (_is_pixmap) {
+            priv->is_mapped = TRUE;
+        }
+        else {
+            XGetWindowAttributes(dpy, xid, &wattr);
+        }
         priv->is_mapped = wattr.map_state == IsViewable;
         ok = x11_get_geometry(dpy, xid, NULL, NULL, width, height, NULL);
         GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
@@ -622,15 +635,24 @@ gst_vaapi_window_x11_new(GstVaapiDisplay *display, guint width, guint height)
  * Return value: the newly allocated #GstVaapiWindow object
  */
 GstVaapiWindow *
-gst_vaapi_window_x11_new_with_xid(GstVaapiDisplay *display, Window xid)
+gst_vaapi_window_x11_new_with_xid(GstVaapiDisplay *display, Window xid, gboolean is_pixmap)
 {
+    GstVaapiWindow * window = NULL;
     GST_DEBUG("new window from xid 0x%08x", xid);
 
     g_return_val_if_fail(GST_VAAPI_IS_DISPLAY_X11(display), NULL);
     g_return_val_if_fail(xid != None, NULL);
 
-    return gst_vaapi_window_new_from_native(GST_VAAPI_WINDOW_CLASS(
-            gst_vaapi_window_x11_class()), display, GINT_TO_POINTER(xid));
+    _is_pixmap = is_pixmap;
+    window = gst_vaapi_window_new_from_native(GST_VAAPI_WINDOW_CLASS(
+              gst_vaapi_window_x11_class()), display, GINT_TO_POINTER(xid));
+
+    if (window) {
+        GstVaapiWindowX11Private *priv = GST_VAAPI_WINDOW_X11_GET_PRIVATE(window);
+        priv->is_pixmap = is_pixmap;
+    }
+
+    return window;
 }
 
 /**
@@ -667,3 +689,21 @@ gst_vaapi_window_x11_is_foreign_xid(GstVaapiWindowX11 *window)
 
     return GST_VAAPI_WINDOW(window)->use_foreign_window;
 }
+
+/**
+ * gst_vaapi_window_x11_is_pixmap:
+ * @window: a #GstVaapiWindowX11
+ *
+ * Checks whether the @window XID is Pixmap or Window
+ *
+ * Return value: %TRUE if the underlying X Drawble is Pixmap
+ */
+gboolean
+gst_vaapi_window_x11_is_pixmap(GstVaapiWindowX11 *window)
+{
+    g_return_val_if_fail(window != NULL, FALSE);
+
+    GstVaapiWindowX11Private *priv = GST_VAAPI_WINDOW_X11_GET_PRIVATE(window);
+    return priv->is_pixmap;
+}
+

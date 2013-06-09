@@ -159,6 +159,7 @@ enum {
     PROP_USE_REFLECTION,
     PROP_ROTATION,
     PROP_FORCE_ASPECT_RATIO,
+    PROP_IS_PIXMAP,
 };
 
 #define DEFAULT_DISPLAY_TYPE            GST_VAAPI_DISPLAY_TYPE_ANY
@@ -533,7 +534,7 @@ gst_vaapisink_ensure_window_xid(GstVaapiSink *sink, guintptr window_id)
 {
     Window rootwin;
     unsigned int width, height, border_width, depth;
-    int x, y;
+    int x, y, i;
     XID xid = window_id;
 
     if (!gst_vaapisink_ensure_display(sink))
@@ -556,11 +557,22 @@ gst_vaapisink_ensure_window_xid(GstVaapiSink *sink, guintptr window_id)
         sink->window_height = height;
     }
 
-    if (sink->window &&
-        gst_vaapi_window_x11_get_xid(GST_VAAPI_WINDOW_X11(sink->window)) == xid)
-        return TRUE;
-
-    gst_vaapi_window_replace(&sink->window, NULL);
+    if (sink->is_pixmap) {
+        for (i = 0; i < MAX_PIXMAP_COUNT; i++) {
+            if (sink->pixmap_pool[i])
+            if (sink->pixmap_pool[i] &&
+                gst_vaapi_window_x11_get_xid(GST_VAAPI_WINDOW_X11(sink->pixmap_pool[i])) == xid) {
+                sink->window = sink->pixmap_pool[i];
+                return TRUE;
+            }
+        }
+    }
+    else {
+        if (sink->window &&
+            gst_vaapi_window_x11_get_xid(GST_VAAPI_WINDOW_X11(sink->window)) == xid)
+            return TRUE;
+        gst_vaapi_window_replace(&sink->window, NULL);
+    }
 
     switch (sink->display_type) {
 #if USE_GLX
@@ -569,12 +581,28 @@ gst_vaapisink_ensure_window_xid(GstVaapiSink *sink, guintptr window_id)
         break;
 #endif
     case GST_VAAPI_DISPLAY_TYPE_X11:
-        sink->window = gst_vaapi_window_x11_new_with_xid(sink->display, xid);
+        sink->window = gst_vaapi_window_x11_new_with_xid(sink->display, xid, sink->is_pixmap);        
         break;
     default:
         GST_ERROR("unsupported display type %d", sink->display_type);
         return FALSE;
     }
+
+    gboolean save_pixmap_to_pool = FALSE;
+    for (i = 0; i < MAX_PIXMAP_COUNT; i++) {
+      if (!sink->pixmap_pool[i]) {
+        sink->pixmap_pool[i] = sink->window;
+        save_pixmap_to_pool = TRUE;
+        break;
+      }
+    }
+
+    if (!save_pixmap_to_pool) {
+        g_clear_object(&sink->pixmap_pool[MAX_PIXMAP_COUNT-1]);
+        sink->pixmap_pool[MAX_PIXMAP_COUNT-1] = sink->window;
+        GST_WARNING("exceed MAX_PIXMAP_COUNT: %d", MAX_PIXMAP_COUNT);
+    }
+
     return sink->window != NULL;
 }
 #endif
@@ -695,13 +723,24 @@ gst_vaapisink_start(GstBaseSink *base_sink)
 static gboolean
 gst_vaapisink_stop(GstBaseSink *base_sink)
 {
+    int i = 0;
     GstVaapiSink * const sink = GST_VAAPISINK(base_sink);
 
     gst_buffer_replace(&sink->video_buffer, NULL);
 #if GST_CHECK_VERSION(1,0,0)
     g_clear_object(&sink->video_buffer_pool);
 #endif
-    gst_vaapi_window_replace(&sink->window, NULL);
+    if (sink->is_pixmap) {
+        for (i = 0; i < MAX_PIXMAP_COUNT; i++) {
+            if (sink->pixmap_pool[i])  {
+                g_clear_object(&sink->pixmap_pool[i]);
+            }
+        }
+    }
+    else 
+        gst_vaapi_window_replace(&sink->window, NULL);
+    sink->window = NULL;
+
     gst_vaapi_display_replace(&sink->display, NULL);
     g_clear_object(&sink->uploader);
 
@@ -1385,6 +1424,9 @@ gst_vaapisink_set_property(
     case PROP_FORCE_ASPECT_RATIO:
         sink->keep_aspect = g_value_get_boolean(value);
         break;
+    case PROP_IS_PIXMAP:
+        sink->is_pixmap = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1422,6 +1464,9 @@ gst_vaapisink_get_property(
         break;
     case PROP_FORCE_ASPECT_RATIO:
         g_value_set_boolean(value, sink->keep_aspect);
+        break;
+    case PROP_IS_PIXMAP:
+        g_value_set_boolean(value, sink->is_pixmap);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -1549,11 +1594,22 @@ gst_vaapisink_class_init(GstVaapiSinkClass *klass)
                               "When enabled, scaling will respect original aspect ratio",
                               TRUE,
                               G_PARAM_READWRITE));
+
+    g_object_class_install_property
+        (object_class,
+         PROP_IS_PIXMAP,
+         g_param_spec_boolean("is-pixmap",
+                              "IsPixmap",
+                              "the X drawable is Pixmap or not",
+                              FALSE,
+                              G_PARAM_READWRITE));
+
 }
 
 static void
 gst_vaapisink_init(GstVaapiSink *sink)
 {
+    int i = 0;
     sink->caps           = NULL;
     sink->display        = NULL;
     sink->window         = NULL;
@@ -1575,5 +1631,10 @@ gst_vaapisink_init(GstVaapiSink *sink)
     sink->use_overlay    = FALSE;
     sink->use_rotation   = FALSE;
     sink->keep_aspect    = TRUE;
+    sink->is_pixmap      = FALSE;
+
+    for (i = 0; i < MAX_PIXMAP_COUNT; i++) {
+        sink->pixmap_pool[i] = NULL;
+    }
     gst_video_info_init(&sink->video_info);
 }
