@@ -47,7 +47,7 @@ GstVaapiWindow *
 gst_vaapi_window_x11_new(GstVaapiDisplay *display, guint width, guint height);
 
 GstVaapiWindow *
-gst_vaapi_window_x11_new_with_xid(GstVaapiDisplay *display, Window xid);
+gst_vaapi_window_x11_new_with_xid(GstVaapiDisplay *display, Window xid, gboolean is_pixmap);
 
 Window
 gst_vaapi_window_x11_get_xid(GstVaapiWindowX11 *window);
