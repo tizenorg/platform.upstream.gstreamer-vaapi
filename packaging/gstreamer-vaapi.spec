@@ -1,4 +1,4 @@
-Name:       gstreamer-vaapi
+Name:       gstreamer-vaapi0.10
 Version:    0.4.0.pre1
 Release:    0
 Summary:    VA-API based plugins for GStreamer and helper libraries
@@ -12,7 +12,7 @@ BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(gstreamer-0.10)
 BuildRequires:  pkgconfig(gstreamer-basevideo-0.10)
 BuildRequires:  pkgconfig(gstreamer-plugins-base-0.10)
-BuildRequires:  pvr-bin-mdfld-devel
+BuildRequires:  pkgconfig(gles20)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  which
 ExclusiveArch:  %{ix86}
@@ -67,4 +67,4 @@ find %{buildroot} -regex ".*\.a$" | xargs rm -f --
 %doc README COPYING.LIB
 %{_includedir}/gstreamer-0.10/gst/vaapi
 %{_libdir}/*.so
-%{_libdir}/pkgconfig/%{name}*.pc
+%{_libdir}/pkgconfig/*.pc
