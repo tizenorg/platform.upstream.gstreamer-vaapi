@@ -1,0 +1,8 @@
+Change-Id: I14ec0390bc3b57fd497df0701ac72e8ec873d957
+Code-Review+2: Anas Nashif <anas.nashif@intel.com>
+Verified+1: Anas Nashif <anas.nashif@intel.com>
+Submitted-by: Anas Nashif <anas.nashif@intel.com>
+Submitted-at: Wed, 19 Jun 2013 09:54:11 -0700
+Reviewed-on: https://review.tizen.org/gerrit/4081
+Project: platform/upstream/gstreamer-vaapi
+Branch: refs/heads/tizen_2.1_compat
