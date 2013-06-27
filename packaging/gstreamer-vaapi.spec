@@ -40,7 +40,7 @@ developing applications that use %{name}.
 %build
 cp %{SOURCE1001} .
 
-%configure --enable-encoders --with-gstreamer-api=1.0
+%configure --enable-encoders --with-gstreamer-api=1.0 --disable-jpeg --disable-mpeg4
 make %{?_smp_mflags}
 
 %install
