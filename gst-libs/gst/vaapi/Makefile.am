@@ -48,7 +48,6 @@ libgstvaapi_source_c =				\
 	gstvaapidecoder_dpb.c			\
 	gstvaapidecoder_h264.c			\
 	gstvaapidecoder_mpeg2.c			\
-	gstvaapidecoder_mpeg4.c			\
 	gstvaapidecoder_objects.c		\
 	gstvaapidecoder_unit.c			\
 	gstvaapidecoder_vc1.c			\
@@ -77,7 +76,6 @@ libgstvaapi_source_h =				\
 	gstvaapidecoder.h			\
 	gstvaapidecoder_h264.h			\
 	gstvaapidecoder_mpeg2.h			\
-	gstvaapidecoder_mpeg4.h			\
 	gstvaapidecoder_vc1.h			\
 	gstvaapidisplay.h			\
 	gstvaapidisplaycache.h			\
@@ -125,6 +123,13 @@ libgstvaapi_jpegdec_source_h = gstvaapidecoder_jpeg.h
 if USE_JPEG_DECODER
 libgstvaapi_source_c += $(libgstvaapi_jpegdec_source_c)
 libgstvaapi_source_h += $(libgstvaapi_jpegdec_source_h)
+endif
+
+libgstvaapi_mpeg4dec_source_c = gstvaapidecoder_mpeg4.c
+libgstvaapi_mpeg4dec_source_h = gstvaapidecoder_mpeg4.h
+if USE_MPEG4_DECODER
+libgstvaapi_source_c += libgstvaapi_mpeg4dec_source_c
+libgstvaapi_source_h += libgstvaapi_mpeg4dec_source_h
 endif
 
 libgstvaapi_drm_source_c =			\

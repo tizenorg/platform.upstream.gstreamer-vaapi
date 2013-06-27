@@ -57,13 +57,17 @@ GST_DEBUG_CATEGORY_STATIC(gst_debug_vaapidecode);
 
 static const char gst_vaapidecode_sink_caps_str[] =
     GST_CAPS_CODEC("video/mpeg, mpegversion=2, systemstream=(boolean)false")
+#if USE_MPEG4_DECODER
     GST_CAPS_CODEC("video/mpeg, mpegversion=4")
     GST_CAPS_CODEC("video/x-divx")
     GST_CAPS_CODEC("video/x-xvid")
     GST_CAPS_CODEC("video/x-h263")
+#endif
     GST_CAPS_CODEC("video/x-h264")
     GST_CAPS_CODEC("video/x-wmv")
+#if USE_JPEG_DECODER
     GST_CAPS_CODEC("image/jpeg")
+#endif
     ;
 
 static const char gst_vaapidecode_src_caps_str[] =
@@ -529,10 +533,12 @@ gst_vaapidecode_create(GstVaapiDecode *decode, GstCaps *caps)
     case GST_VAAPI_CODEC_MPEG2:
         decode->decoder = gst_vaapi_decoder_mpeg2_new(dpy, caps);
         break;
+#if USE_MPEG4_DECODER
     case GST_VAAPI_CODEC_MPEG4:
     case GST_VAAPI_CODEC_H263:
         decode->decoder = gst_vaapi_decoder_mpeg4_new(dpy, caps);
         break;
+#endif
     case GST_VAAPI_CODEC_H264:
         decode->decoder = gst_vaapi_decoder_h264_new(dpy, caps);
         break;

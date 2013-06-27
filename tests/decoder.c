@@ -118,9 +118,11 @@ decoder_new(GstVaapiDisplay *display, const gchar *codec_name)
     case GST_VAAPI_CODEC_MPEG2:
         decoder = gst_vaapi_decoder_mpeg2_new(display, caps);
         break;
+#if USE_MPEG4_DECODER
     case GST_VAAPI_CODEC_MPEG4:
         decoder = gst_vaapi_decoder_mpeg4_new(display, caps);
         break;
+#endif
     case GST_VAAPI_CODEC_VC1:
         decoder = gst_vaapi_decoder_vc1_new(display, caps);
         break;

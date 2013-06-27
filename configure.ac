@@ -115,6 +115,16 @@ AC_ARG_WITH([gstreamer-api],
                     @<:@default=gst_api_version@:>@]),
     [GST_API_VERSION="$with_gstreamer_api"], [GST_API_VERSION=gst_api_version])
 
+AC_ARG_ENABLE(jpeg,
+    AC_HELP_STRING([--disable-jpeg],
+                   [disable jpeg decoder @<:@default=yes@:>@]),
+    [], [enable_jpeg="yes"])
+
+AC_ARG_ENABLE(mpeg4,
+    AC_HELP_STRING([--disable-mpeg4],
+                   [disable mpeg4 decoders @<:@default=yes@:>@]),
+    [], [enable_mpeg4="yes"])
+
 dnl Check for basic libraries
 AC_CHECK_LIB(m, tan)
 
@@ -558,6 +568,7 @@ AC_SUBST(LIBVA_GLX_PKGNAME)
 
 dnl Check for JPEG decoding API (0.32.1+)
 USE_JPEG_DECODER=0
+if test "$enable_jpeg" = "yes"; then
 AC_CACHE_CHECK([for JPEG decoding API],
     ac_cv_have_jpeg_decoding_api, [
     saved_CPPFLAGS="$CPPFLAGS"
@@ -577,6 +588,14 @@ AC_CACHE_CHECK([for JPEG decoding API],
     CPPFLAGS="$saved_CPPFLAGS"
     LIBS="$saved_LIBS"
 ])
+fi
+
+dnl Check for MPEG-4 decoding
+USE_MPEG4_DECODER=1
+if test "$enable_mpeg4" = "no"; then
+    USE_MPEG4_DECODER=0
+fi
+
 
 dnl VA/Wayland API
 if test "$enable_wayland" = "yes"; then
@@ -599,6 +618,10 @@ esac
 AC_DEFINE_UNQUOTED(USE_JPEG_DECODER, $USE_JPEG_DECODER,
     [Defined to 1 if JPEG decoder is used])
 AM_CONDITIONAL(USE_JPEG_DECODER, test $USE_JPEG_DECODER -eq 1)
+
+AC_DEFINE_UNQUOTED(USE_MPEG4_DECODER, $USE_MPEG4_DECODER,
+    [Defined to 1 if MPEG4 decoder is used])
+AM_CONDITIONAL(USE_MPEG4_DECODER, test $USE_MPEG4_DECODER -eq 1)
 
 AC_DEFINE_UNQUOTED(USE_DRM, $USE_DRM,
     [Defined to 1 if DRM is enabled])
