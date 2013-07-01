@@ -57,13 +57,13 @@ make %{?_smp_mflags}
 %postun -p /sbin/ldconfig
 
 %files
-%manifest gstreamer-vaapi.manifest
+%manifest %{name}.manifest
 %license COPYING.LIB
 %{_libdir}/*.so.*
 %{_libdir}/gstreamer-1.0/*.so
 
 %files devel
-%manifest gstreamer-vaapi.manifest
+%manifest %{name}.manifest
 %license COPYING.LIB
 %dir %{_includedir}/gstreamer-1.0/gst/vaapi
 %{_includedir}/gstreamer-1.0/gst/vaapi/*.h
