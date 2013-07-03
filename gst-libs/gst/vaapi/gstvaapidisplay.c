@@ -1265,7 +1265,52 @@ gst_vaapi_display_get_decode_caps(GstVaapiDisplay *display)
 {
     g_return_val_if_fail(display != NULL, NULL);
 
-    return get_profile_caps(GST_VAAPI_DISPLAY_GET_PRIVATE(display)->decoders);
+    VADisplay va_dpy = gst_vaapi_display_get_display(display);
+    VAStatus va_status;
+    GstCaps *out_caps = NULL;
+    VAProfile profile;
+
+    out_caps = gst_caps_new_empty();
+    if (!out_caps)
+        return NULL;
+
+    for (profile = VAProfileNone; profile <= VAProfileH264ConstrainedBaseline; profile++) {
+        VAEntrypoint entrypoint, entrypoints[10];
+        int num_entrypoint;
+        va_status = vaQueryConfigEntrypoints(va_dpy, profile, entrypoints,  &num_entrypoint);
+        if (va_status != VA_STATUS_SUCCESS)
+            continue;
+
+        gboolean support_vld_entrypoint = FALSE;
+        for (entrypoint = 0; entrypoint < num_entrypoint; entrypoint++) {
+            if (entrypoint == VAEntrypointVLD) {
+                support_vld_entrypoint = TRUE;
+            }
+        }
+        if (!support_vld_entrypoint) continue;
+
+        GstCaps *caps = NULL;
+        const GstVaapiProfileMap *m;
+        for (m = gst_vaapi_profiles; m->profile; m++) {
+            if (m->va_profile != profile)
+                continue;
+            caps = gst_caps_from_string(m->caps_str);
+            if (!caps)
+                break;
+            gst_caps_set_simple(
+                caps,
+                "profile", G_TYPE_STRING, m->profile_str,
+                NULL
+            );
+            break;
+        }
+
+        if (caps) {
+            out_caps = gst_caps_merge(out_caps, caps);
+            caps = NULL;
+        }
+    }
+    return out_caps;
 }
 
 /**

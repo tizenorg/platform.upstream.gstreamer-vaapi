@@ -32,73 +32,11 @@
 #include "gstvaapiprofile.h"
 #include "gstvaapiworkarounds.h"
 
-typedef struct _GstVaapiProfileMap              GstVaapiProfileMap;
 typedef struct _GstVaapiEntrypointMap           GstVaapiEntrypointMap;
-
-struct _GstVaapiProfileMap {
-    GstVaapiProfile             profile;
-    VAProfile                   va_profile;
-    const char                 *caps_str;
-    const gchar                *profile_str;
-};
 
 struct _GstVaapiEntrypointMap {
     GstVaapiEntrypoint          entrypoint;
     VAEntrypoint                va_entrypoint;
-};
-
-/* Profiles */
-static const GstVaapiProfileMap gst_vaapi_profiles[] = {
-    { GST_VAAPI_PROFILE_MPEG2_SIMPLE, VAProfileMPEG2Simple,
-      "video/mpeg, mpegversion=2", "simple"
-    },
-    { GST_VAAPI_PROFILE_MPEG2_MAIN, VAProfileMPEG2Main,
-      "video/mpeg, mpegversion=2", "main"
-    },
-    { GST_VAAPI_PROFILE_MPEG4_SIMPLE, VAProfileMPEG4Simple,
-      "video/mpeg, mpegversion=4", "simple"
-    },
-    { GST_VAAPI_PROFILE_MPEG4_ADVANCED_SIMPLE, VAProfileMPEG4AdvancedSimple,
-      "video/mpeg, mpegversion=4", "advanced-simple"
-    },
-    { GST_VAAPI_PROFILE_MPEG4_MAIN, VAProfileMPEG4Main,
-      "video/mpeg, mpegversion=4", "main"
-    },
-    { GST_VAAPI_PROFILE_MPEG4_ADVANCED_SIMPLE, VAProfileMPEG4AdvancedSimple,
-      "video/x-divx, divxversion=5", "advanced-simple"
-    },
-    { GST_VAAPI_PROFILE_MPEG4_ADVANCED_SIMPLE, VAProfileMPEG4AdvancedSimple,
-      "video/x-xvid", "advanced-simple"
-    },
-#if VA_CHECK_VERSION(0,30,0)
-    { GST_VAAPI_PROFILE_H263_BASELINE, VAProfileH263Baseline,
-      "video/x-h263, variant=itu, h263version=h263", "baseline"
-    },
-#endif
-    { GST_VAAPI_PROFILE_H264_BASELINE, VAProfileH264Baseline,
-      "video/x-h264", "baseline"
-    },
-    { GST_VAAPI_PROFILE_H264_MAIN, VAProfileH264Main,
-      "video/x-h264", "main"
-    },
-    { GST_VAAPI_PROFILE_H264_HIGH, VAProfileH264High,
-      "video/x-h264", "high"
-    },
-    { GST_VAAPI_PROFILE_VC1_SIMPLE, VAProfileVC1Simple,
-      "video/x-wmv, wmvversion=3", "simple"
-    },
-    { GST_VAAPI_PROFILE_VC1_MAIN, VAProfileVC1Main,
-      "video/x-wmv, wmvversion=3", "main"
-    },
-    { GST_VAAPI_PROFILE_VC1_ADVANCED, VAProfileVC1Advanced,
-      "video/x-wmv, wmvversion=3, " GST_MAKE_FORMAT_STRING(WVC1), "advanced"
-    },
-#if VA_CHECK_VERSION(0,32,0)
-    { GST_VAAPI_PROFILE_JPEG_BASELINE, VAProfileJPEGBaseline,
-      "image/jpeg", "baseline"
-    },
-#endif
-    { 0, }
 };
 
 /* Entry-points */
