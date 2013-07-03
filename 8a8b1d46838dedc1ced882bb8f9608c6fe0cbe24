@@ -1,0 +1,9 @@
+Change-Id: I8a8b1d46838dedc1ced882bb8f9608c6fe0cbe24
+Code-Review+1: Patrick McCarty <patrick.mccarty@linux.intel.com>
+Code-Review+2: halley zhao <halley.zhao@intel.com>
+Verified+1: halley zhao <halley.zhao@intel.com>
+Submitted-by: halley zhao <halley.zhao@intel.com>
+Submitted-at: Wed, 03 Jul 2013 15:49:43 -0700
+Reviewed-on: https://review.tizen.org/gerrit/5420
+Project: platform/upstream/gstreamer-vaapi
+Branch: refs/heads/tizen
