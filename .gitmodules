@@ -1,6 +1,0 @@
-[submodule "ext/codecparsers"]
-	path = ext/codecparsers
-	url = git://gitorious.org/vaapi/gstreamer-codecparsers.git
-[submodule "ext/videoutils"]
-	path = ext/videoutils
-	url = git://gitorious.org/vaapi/gstreamer-videoutils.git
