@@ -15,22 +15,22 @@ cd "$srcdir"
 
 mkdir -p m4
 
-GIT=`which git`
-if test -z "$GIT"; then
-    echo "*** No git found ***"
-    exit 1
-else
-    submodule_init="no"
-    for ext_module in codecparsers videoutils; do
-        if test ! -f ext/${ext_module}/autogen.sh; then
-            submodule_init="yes"
-        fi
-    done
-    if test "$submodule_init" = "yes"; then
-        $GIT submodule init
-    fi
-    $GIT submodule update
-fi
+# GIT=`which git`
+# if test -z "$GIT"; then
+#     echo "*** No git found ***"
+#     exit 1
+# else
+#     submodule_init="no"
+#     for ext_module in codecparsers videoutils; do
+#         if test ! -f ext/${ext_module}/autogen.sh; then
+#             submodule_init="yes"
+#         fi
+#     done
+#     if test "$submodule_init" = "yes"; then
+#         $GIT submodule init
+#     fi
+#     $GIT submodule update
+# fi
 
 GTKDOCIZE=`which gtkdocize`
 if test -z "$GTKDOCIZE"; then
