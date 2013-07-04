@@ -1,0 +1,10 @@
+Change-Id: I9e9d55f96135d301e2859d3d4624887ab9e9536c
+Code-Review+1: YAN YIN <yan.yin@intel.com>
+Code-Review+2: halley zhao <halley.zhao@intel.com>
+Verified+1: halley zhao <halley.zhao@intel.com>
+Code-Review+1: Wind Yuan <feng.yuan@intel.com>
+Submitted-by: halley zhao <halley.zhao@intel.com>
+Submitted-at: Wed, 03 Jul 2013 18:37:17 -0700
+Reviewed-on: https://review.tizen.org/gerrit/5483
+Project: platform/upstream/gstreamer-vaapi
+Branch: refs/heads/tizen
