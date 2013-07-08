@@ -1,0 +1,8 @@
+Change-Id: Iccf4388d91ce015cc2809374a9250820fdf35759
+Code-Review+2: Ryan Ware <ware@linux.intel.com>
+Verified+1: Ryan Ware <ware@linux.intel.com>
+Submitted-by: Ryan Ware <ware@linux.intel.com>
+Submitted-at: Mon, 08 Jul 2013 09:50:00 -0700
+Reviewed-on: https://review.tizen.org/gerrit/5178
+Project: platform/upstream/gstreamer-vaapi
+Branch: refs/heads/tizen
