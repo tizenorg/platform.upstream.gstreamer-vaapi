@@ -172,6 +172,7 @@ gst_vaapi_window_wayland_create(
         GST_VAAPI_WINDOW_WAYLAND_GET_PRIVATE(window);
     GstVaapiDisplayWaylandPrivate * const priv_display =
         GST_VAAPI_DISPLAY_WAYLAND_GET_PRIVATE(GST_VAAPI_OBJECT_DISPLAY(window));
+    void *wld_surface  = GST_VAAPI_OBJECT_ID(window);
 
     GST_DEBUG("create window, size %ux%u", *width, *height);
 
@@ -184,9 +185,15 @@ gst_vaapi_window_wayland_create(
     if (!priv->event_queue)
         return FALSE;
 
-    GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
-    priv->surface = wl_compositor_create_surface(priv_display->compositor);
-    GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
+    if(wld_surface){
+        priv->surface = wld_surface;
+        window->use_foreign_window = TRUE;
+    } else {
+        GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
+        priv->surface = wl_compositor_create_surface(priv_display->compositor);
+        GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
+        window->use_foreign_window = FALSE;
+    }
     if (!priv->surface)
         return FALSE;
     wl_proxy_set_queue((struct wl_proxy *)priv->surface, priv->event_queue);
@@ -225,7 +232,9 @@ gst_vaapi_window_wayland_destroy(GstVaapiWindow * window)
     }
 
     if (priv->surface) {
-        wl_surface_destroy(priv->surface);
+        if (!window->use_foreign_window) {
+            wl_surface_destroy(priv->surface);
+        }
         priv->surface = NULL;
     }
 
@@ -268,7 +277,6 @@ static void
 frame_redraw_callback(void *data, struct wl_callback *callback, uint32_t time)
 {
     GstVaapiWindowWaylandPrivate * const priv = data;
-
     wl_buffer_destroy(priv->buffer);
     priv->buffer = NULL;
     wl_callback_destroy(callback);
@@ -416,3 +424,30 @@ gst_vaapi_window_wayland_new(
     return gst_vaapi_window_new(GST_VAAPI_WINDOW_CLASS(
         gst_vaapi_window_wayland_class()), display, width, height);
 }
+
+/**
+ * gst_vaapi_window_wayland_new_with_id:
+ * @display: a #GstVaapiDisplay
+ * @id:a wl_surface #Surface id
+ *
+ * Creates a window with the specified @id. The window
+ * will be attached to the @display and remains invisible to the user
+ * until gst_vaapi_window_show() is called.
+ *
+ * Return value: the newly allocated #GstVaapiWindow object
+ */
+GstVaapiWindow *
+gst_vaapi_window_wayland_new_with_id(
+    GstVaapiDisplay *display,
+    guint            id
+)
+{
+    GST_INFO("new window from id 0x%08x,vaapidisplay=%p", id,display);
+    struct wl_display *wl_dpy = gst_vaapi_display_wayland_get_display((GstVaapiDisplayWayland*)display);
+    g_return_val_if_fail(display, NULL);
+    g_return_val_if_fail(id  > 0, NULL);
+    return gst_vaapi_window_new_from_native(GST_VAAPI_WINDOW_CLASS(
+            gst_vaapi_window_wayland_class()), display, GINT_TO_POINTER(id));
+
+}
+
