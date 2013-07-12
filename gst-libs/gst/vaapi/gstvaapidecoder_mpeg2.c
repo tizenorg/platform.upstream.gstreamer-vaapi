@@ -434,6 +434,7 @@ ensure_context(GstVaapiDecoderMpeg2 *decoder)
 
         info.profile    = priv->hw_profile;
         info.entrypoint = entrypoint;
+        info.rate_control = GST_VAAPI_RATECONTROL_NONE;
         info.width      = priv->width;
         info.height     = priv->height;
         info.ref_frames = 2;
