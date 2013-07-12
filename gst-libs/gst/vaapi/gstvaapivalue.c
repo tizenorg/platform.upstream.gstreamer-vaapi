@@ -117,3 +117,33 @@ gst_vaapi_rotation_get_type(void)
         g_type = g_enum_register_static("GstVaapiRotation", rotation_values);
     return g_type;
 }
+
+/* --- GstVaapiRateControl --- */
+
+GType
+gst_vaapi_rate_control_get_type(void)
+{
+    static GType g_type = 0;
+
+    static const GEnumValue rate_control_values[] = {
+        { GST_VAAPI_RATECONTROL_NONE,
+          "None rate control mode", "none" },
+        { GST_VAAPI_RATECONTROL_CBR,
+          "Constant bitrate control mode", "cbr" },
+        { GST_VAAPI_RATECONTROL_VBR,
+          "Variable bitrate control mode", "vbr" },
+        { GST_VAAPI_RATECONTROL_VCM,
+          "Video conference mode", "vcm" },
+        { GST_VAAPI_RATECONTROL_CQP,
+          "Constant QP mode", "cqp" },
+        { GST_VAAPI_RATECONTROL_VBR_CONSTRAINED,
+          "Variable bitrate control with peak rate higher than average bitrate",
+          "vbr_constrain" },
+        { 0, NULL, NULL },
+    };
+
+    if (!g_type)
+        g_type = g_enum_register_static("GstVaapiRateControl", rate_control_values);
+    return g_type;
+
+}
