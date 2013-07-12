@@ -111,6 +111,18 @@ to_GstVaapiRotation(guint value);
 
 G_GNUC_INTERNAL
 guint
+from_GstVaapiRateControl(guint value);
+
+G_GNUC_INTERNAL
+guint
+to_GstVaapiRateControl(guint value);
+
+G_GNUC_INTERNAL
+const char *
+string_of_VARateControl(guint rate_control);
+
+G_GNUC_INTERNAL
+guint
 from_GstVaapiDeinterlaceMethod(guint value);
 
 G_GNUC_INTERNAL

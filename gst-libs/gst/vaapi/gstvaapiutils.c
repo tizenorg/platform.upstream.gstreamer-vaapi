@@ -439,6 +439,51 @@ to_GstVaapiRotation(guint value)
     return GST_VAAPI_ROTATION_0;
 }
 
+guint
+from_GstVaapiRateControl(guint value)
+{
+    switch (value) {
+    case GST_VAAPI_RATECONTROL_NONE:   return VA_RC_NONE;
+    case GST_VAAPI_RATECONTROL_CBR:  return VA_RC_CBR;
+    case GST_VAAPI_RATECONTROL_VBR: return VA_RC_VBR;
+    case GST_VAAPI_RATECONTROL_VCM: return VA_RC_VCM;
+    case GST_VAAPI_RATECONTROL_CQP: return VA_RC_CQP;
+    case GST_VAAPI_RATECONTROL_VBR_CONSTRAINED: return VA_RC_VBR_CONSTRAINED;
+    }
+    GST_ERROR("unsupported GstVaapiRateControl value %d", value);
+    return VA_RC_NONE;
+}
+
+guint
+to_GstVaapiRateControl(guint value)
+{
+    switch (value) {
+    case VA_RC_NONE: return GST_VAAPI_RATECONTROL_NONE;
+    case VA_RC_CBR:   return GST_VAAPI_RATECONTROL_CBR;
+    case VA_RC_VBR:  return GST_VAAPI_RATECONTROL_VBR;
+    case VA_RC_VCM:  return GST_VAAPI_RATECONTROL_VCM;
+    case VA_RC_CQP: return GST_VAAPI_RATECONTROL_CQP;
+    case VA_RC_VBR_CONSTRAINED: return GST_VAAPI_RATECONTROL_VBR_CONSTRAINED;
+    }
+    GST_ERROR("unsupported VA-API Rate Control value %d", value);
+    return GST_VAAPI_RATECONTROL_NONE;
+}
+
+const char *
+string_of_VARateControl(guint rate_control)
+{
+    switch (rate_control) {
+    case VA_RC_NONE: return "VA_RC_NONE";
+    case VA_RC_CBR: return "VA_RC_CBR";
+    case VA_RC_VBR: return "VA_RC_VBR";
+    case VA_RC_VCM: return "VA_RC_VCM";
+    case VA_RC_CQP: return "VA_RC_CQP";
+    case VA_RC_VBR_CONSTRAINED: return "VA_RC_VBR_CONSTRAINED";
+    default: break;
+    }
+    return "<unknown>";
+}
+
 /* VPP: translate GstVaapiDeinterlaceMethod to VA deinterlacing algorithm */
 guint
 from_GstVaapiDeinterlaceMethod(guint value)

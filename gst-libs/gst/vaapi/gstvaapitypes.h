@@ -119,6 +119,26 @@ typedef enum {
     GST_VAAPI_ROTATION_270 = 270,
 } GstVaapiRotation;
 
+/**
+ * GstVaapiRateControl:
+ * @GST_VAAPI_RATECONTROL_NONE: None rate control
+ * @GST_VAAPI_RATECONTROL_CBR: Constant rate control
+ * @GST_VAAPI_RATECONTROL_VBR: Variable bitrate control
+ * @GST_VAAPI_RATECONTROL_VCM: Video conference mode
+ * @GST_VAAPI_RATECONTROL_CQP: Variable bitrate control
+ * @GST_VAAPI_RATECONTROL_VBR_CONSTRAINED: Variable bitrate control with peak rate higher than average bitrate
+ *
+ * The set of all rate-controls for #GstVaapiRateControl, only worked on encoders
+ */
+typedef enum {
+    GST_VAAPI_RATECONTROL_NONE = 0,
+    GST_VAAPI_RATECONTROL_CBR,
+    GST_VAAPI_RATECONTROL_VBR,
+    GST_VAAPI_RATECONTROL_VCM,
+    GST_VAAPI_RATECONTROL_CQP,
+    GST_VAAPI_RATECONTROL_VBR_CONSTRAINED,
+} GstVaapiRateControl;
+
 G_END_DECLS
 
 #endif /* GST_VAAPI_TYPES_H */
