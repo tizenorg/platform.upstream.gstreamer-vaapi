@@ -88,6 +88,22 @@ libgstvaapi_source_c += $(libgstvaapi_1_2p_source_c)
 libgstvaapi_source_h += $(libgstvaapi_1_2p_source_h)
 endif
 
+libgstvaapi_encode_source_c =	\
+	gstvaapiencode.c			\
+	gstvaapiencode_h264.c		\
+	$(NULL)
+
+
+libgstvaapi_encode_source_h =	\
+	gstvaapiencode.h			\
+	gstvaapiencode_h264.h		\
+	$(NULL)
+
+if USE_ENCODERS
+libgstvaapi_source_c += $(libgstvaapi_encode_source_c)
+libgstvaapi_source_h += $(libgstvaapi_encode_source_h)
+endif
+
 libgstvaapi_1_0p_source_c = \
 	gstvaapivideobufferpool.c \
 	gstvaapivideomemory.c	\

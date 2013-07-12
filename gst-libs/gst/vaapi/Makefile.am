@@ -39,6 +39,7 @@ libgstvaapi_libs =				\
 	$(GST_VIDEO_LIBS)			\
 	$(GST_CODEC_PARSERS_LIBS)		\
 	$(LIBVA_LIBS)				\
+	$(top_builddir)/gst-libs/gst/bitwriter/libgstvaapi-bitwriter.la \
 	$(top_builddir)/gst-libs/gst/video/libgstvaapi-videoutils.la \
 	$(top_builddir)/gst-libs/gst/codecparsers/libgstvaapi-codecparsers.la
 
@@ -131,6 +132,23 @@ libgstvaapi_jpegdec_source_h = gstvaapidecoder_jpeg.h
 if USE_JPEG_DECODER
 libgstvaapi_source_c += $(libgstvaapi_jpegdec_source_c)
 libgstvaapi_source_h += $(libgstvaapi_jpegdec_source_h)
+endif
+
+libgstvaapi_encoder_source_c =      \
+	gstvaapiencoder.c               \
+	gstvaapiencoder_objects.c       \
+	gstvaapiencoder_h264.c          \
+	$(NULL)
+
+libgstvaapi_encoder_source_h =      \
+	gstvaapiencoder.h               \
+	gstvaapiencoder_objects.h       \
+	gstvaapiencoder_h264.h          \
+	$(NULL)
+
+if USE_ENCODERS
+libgstvaapi_source_c += $(libgstvaapi_encoder_source_c)
+libgstvaapi_source_h += $(libgstvaapi_encoder_source_h)
 endif
 
 libgstvaapi_drm_source_c =			\
