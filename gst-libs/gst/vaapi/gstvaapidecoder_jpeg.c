@@ -189,6 +189,7 @@ ensure_context(GstVaapiDecoderJpeg *decoder)
 
         info.profile    = priv->profile;
         info.entrypoint = entrypoint;
+        info.rate_control = GST_VAAPI_RATECONTROL_NONE;
         info.width      = priv->width;
         info.height     = priv->height;
         info.ref_frames = 2;

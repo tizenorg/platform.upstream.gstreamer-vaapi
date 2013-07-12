@@ -520,12 +520,14 @@ gst_vaapi_context_create(GstVaapiContext *context)
     GstVaapiDisplay * const display = GST_VAAPI_OBJECT_DISPLAY(context);
     VAProfile va_profile;
     VAEntrypoint va_entrypoint;
-    VAConfigAttrib attrib;
+    VAConfigAttrib attribs[2];
+    guint attribs_num;
     VAContextID context_id;
     VASurfaceID surface_id;
     VAStatus status;
     GArray *surfaces = NULL;
     gboolean success = FALSE;
+    guint va_rate_control;
     guint i;
 
     if (!context->surfaces && !gst_vaapi_context_create_surfaces(context))
@@ -555,26 +557,43 @@ gst_vaapi_context_create(GstVaapiContext *context)
     va_profile    = gst_vaapi_profile_get_va_profile(cip->profile);
     va_entrypoint = gst_vaapi_entrypoint_get_va_entrypoint(cip->entrypoint);
 
+    attribs[0].type = VAConfigAttribRTFormat;
+    attribs[1].type = VAConfigAttribRateControl;
+    if (GST_VAAPI_ENTRYPOINT_SLICE_ENCODE == cip->entrypoint)
+        attribs_num = 2;
+    else
+        attribs_num = 1;
+
     GST_VAAPI_DISPLAY_LOCK(display);
-    attrib.type = VAConfigAttribRTFormat;
     status = vaGetConfigAttributes(
         GST_VAAPI_DISPLAY_VADISPLAY(display),
         va_profile,
         va_entrypoint,
-        &attrib, 1
+        attribs, attribs_num
     );
     GST_VAAPI_DISPLAY_UNLOCK(display);
     if (!vaapi_check_status(status, "vaGetConfigAttributes()"))
         goto end;
-    if (!(attrib.value & VA_RT_FORMAT_YUV420))
+    if (!(attribs[0].value & VA_RT_FORMAT_YUV420))
         goto end;
+    if (GST_VAAPI_ENTRYPOINT_SLICE_ENCODE == cip->entrypoint) {
+        va_rate_control = from_GstVaapiRateControl(cip->rate_control);
+        if (va_rate_control == VA_RC_NONE)
+            attribs[1].value = VA_RC_NONE;
+        if ((attribs[1].value & va_rate_control) != va_rate_control) {
+            GST_ERROR("encoder rate control:%s unsupported",
+                      string_of_VARateControl(va_rate_control));
+            goto end;
+        }
+        attribs[1].value = va_rate_control;
+    }
 
     GST_VAAPI_DISPLAY_LOCK(display);
     status = vaCreateConfig(
         GST_VAAPI_DISPLAY_VADISPLAY(display),
         va_profile,
         va_entrypoint,
-        &attrib, 1,
+        attribs, attribs_num,
         &context->config_id
     );
     GST_VAAPI_DISPLAY_UNLOCK(display);
@@ -628,6 +647,7 @@ GST_VAAPI_OBJECT_DEFINE_CLASS(GstVaapiContext, gst_vaapi_context)
  * @display: a #GstVaapiDisplay
  * @profile: a #GstVaapiProfile
  * @entrypoint: a #GstVaapiEntrypoint
+ * @rate_control: a#GstVaapiRateControl
  * @width: coded width from the bitstream
  * @height: coded height from the bitstream
  *
@@ -641,6 +661,7 @@ gst_vaapi_context_new(
     GstVaapiDisplay    *display,
     GstVaapiProfile     profile,
     GstVaapiEntrypoint  entrypoint,
+    GstVaapiRateControl rate_control,
     guint               width,
     guint               height
 )
@@ -649,6 +670,7 @@ gst_vaapi_context_new(
 
     info.profile    = profile;
     info.entrypoint = entrypoint;
+    info.rate_control = rate_control;
     info.width      = width;
     info.height     = height;
     info.ref_frames = get_max_ref_frames(profile);
@@ -696,6 +718,7 @@ error:
  * @context: a #GstVaapiContext
  * @profile: a #GstVaapiProfile
  * @entrypoint: a #GstVaapiEntrypoint
+ * @rate_control: a#GstVaapiRateControl
  * @width: coded width from the bitstream
  * @height: coded height from the bitstream
  *
@@ -709,6 +732,7 @@ gst_vaapi_context_reset(
     GstVaapiContext    *context,
     GstVaapiProfile     profile,
     GstVaapiEntrypoint  entrypoint,
+    GstVaapiRateControl rate_control,
     unsigned int        width,
     unsigned int        height
 )
@@ -717,6 +741,7 @@ gst_vaapi_context_reset(
 
     info.profile    = profile;
     info.entrypoint = entrypoint;
+    info.rate_control = rate_control;
     info.width      = width;
     info.height     = height;
     info.ref_frames = context->info.ref_frames;
@@ -820,6 +845,7 @@ gst_vaapi_context_set_profile(GstVaapiContext *context, GstVaapiProfile profile)
     return gst_vaapi_context_reset(context,
                                    profile,
                                    context->info.entrypoint,
+                                   context->info.rate_control,
                                    context->info.width,
                                    context->info.height);
 }

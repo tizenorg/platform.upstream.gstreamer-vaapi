@@ -47,6 +47,7 @@ typedef struct _GstVaapiContextInfo             GstVaapiContextInfo;
 struct _GstVaapiContextInfo {
     GstVaapiProfile     profile;
     GstVaapiEntrypoint  entrypoint;
+    GstVaapiRateControl rate_control;
     guint               width;
     guint               height;
     guint               ref_frames;
@@ -58,6 +59,7 @@ gst_vaapi_context_new(
     GstVaapiDisplay    *display,
     GstVaapiProfile     profile,
     GstVaapiEntrypoint  entrypoint,
+    GstVaapiRateControl rate_control,
     guint               width,
     guint               height
 );
@@ -73,6 +75,7 @@ gst_vaapi_context_reset(
     GstVaapiContext    *context,
     GstVaapiProfile     profile,
     GstVaapiEntrypoint  entrypoint,
+    GstVaapiRateControl rate_control,
     guint               width,
     guint               height
 );
