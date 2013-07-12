@@ -114,6 +114,11 @@ AC_ARG_ENABLE(wayland,
                    [enable Wayland output @<:@default=yes@:>@]),
     [], [enable_wayland="yes"])
 
+AC_ARG_ENABLE(encoders,
+    AC_HELP_STRING([--enable-encoders],
+                   [enable encoders @<:@default=no@:>@]),
+   [], [enable_encoders="no"])
+
 AC_ARG_WITH([gstreamer-api],
     AC_HELP_STRING([--with-gstreamer-api=VERSION],
                    [build against the specified GStreamer API version
@@ -539,6 +544,12 @@ if test "$enable_wayland" = "yes"; then
     fi
 fi
 
+dnl ... encoders
+USE_ENCODERS=0
+if test "$enable_encoders" = "yes"; then
+    USE_ENCODERS=1
+fi
+
 dnl ---------------------------------------------------------------------------
 dnl -- VA-API                                                                --
 dnl ---------------------------------------------------------------------------
@@ -692,6 +703,10 @@ AC_DEFINE_UNQUOTED(USE_WAYLAND, $USE_WAYLAND,
     [Defined to 1 if WAYLAND is enabled])
 AM_CONDITIONAL(USE_WAYLAND, test $USE_WAYLAND -eq 1)
 
+AC_DEFINE_UNQUOTED(USE_ENCODERS, $USE_ENCODERS,
+    [Defined to 1 if GStreamer Vaapi Encoders are used])
+AM_CONDITIONAL(USE_ENCODERS, test $USE_ENCODERS -eq 1)
+
 pkgconfigdir=${libdir}/pkgconfig
 AC_SUBST(pkgconfigdir)
 
@@ -763,4 +778,5 @@ echo
 echo GStreamer API version ............ : $GST_API_VERSION
 echo VA-API version ................... : $VA_VERSION_STR
 echo Video outputs .................... : $VIDEO_OUTPUTS
+echo VaapiEncoder support....... ...... : $(yesno $USE_ENCODERS)
 echo
