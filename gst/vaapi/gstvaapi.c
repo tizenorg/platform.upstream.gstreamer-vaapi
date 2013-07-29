@@ -29,6 +29,10 @@
 #include "gstvaapipostproc.h"
 #include "gstvaapisink.h"
 
+#if USE_ENCODERS
+#include "gstvaapiencode_h264.h"
+#endif
+
 #define PLUGIN_NAME     "vaapi"
 #define PLUGIN_DESC     "VA-API based elements"
 #define PLUGIN_LICENSE  "LGPL"
@@ -55,6 +59,12 @@ plugin_init (GstPlugin *plugin)
     gst_element_register(plugin, "vaapisink",
                          GST_RANK_PRIMARY,
                          GST_TYPE_VAAPISINK);
+#if USE_ENCODERS
+    gst_element_register(plugin, "vaapiencodeh264",
+                         GST_RANK_PRIMARY,
+                         GST_TYPE_VAAPIENCODE_H264);
+#endif
+
     return TRUE;
 }
 
