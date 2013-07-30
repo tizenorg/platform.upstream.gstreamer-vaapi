@@ -423,6 +423,10 @@ gst_vaapidecode_finish(GstVideoDecoder *vdec)
     GstVaapiDecode * const decode = GST_VAAPIDECODE(vdec);
     GstVaapiDecoderStatus status;
 
+    /* if there are something in GstVideoDecoder's output adapter, send them to decoder*/
+    if (decode->bytes_added_to_frame)
+        gst_video_decoder_have_frame(vdec);
+
     status = gst_vaapi_decoder_flush(decode->decoder);
     if (status != GST_VAAPI_DECODER_STATUS_SUCCESS)
         goto error_flush;
@@ -605,6 +609,9 @@ gst_vaapidecode_reset_full(GstVaapiDecode *decode, GstCaps *caps, gboolean hard)
         if (codec == gst_vaapi_decoder_get_codec(decode->decoder))
             return TRUE;
     }
+    /* reset output adapter bytes counter*/
+    decode->bytes_added_to_frame = 0;
+
 
     gst_vaapidecode_destroy(decode);
     return gst_vaapidecode_create(decode, caps);
@@ -693,10 +700,14 @@ gst_vaapidecode_parse(GstVideoDecoder *vdec,
 
     switch (status) {
     case GST_VAAPI_DECODER_STATUS_SUCCESS:
-        if (got_unit_size > 0)
+        if (got_unit_size > 0) {
             gst_video_decoder_add_to_frame(vdec, got_unit_size);
-        if (got_frame)
+            decode->bytes_added_to_frame += got_unit_size;
+        }
+        if (got_frame) {
             ret = gst_video_decoder_have_frame(vdec);
+            decode->bytes_added_to_frame = 0;
+        }
         else
             ret = GST_FLOW_OK;
         break;
@@ -878,6 +889,7 @@ gst_vaapidecode_init(GstVaapiDecode *decode)
     decode->allowed_caps        = NULL;
     decode->render_time_base    = 0;
     decode->last_buffer_time    = 0;
+    decode->bytes_added_to_frame = 0;
 
     g_mutex_init(&decode->decoder_mutex);
     g_cond_init(&decode->decoder_ready);
