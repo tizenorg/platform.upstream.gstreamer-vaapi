@@ -175,16 +175,17 @@ gst_vaapi_window_wayland_create(
 
     GST_DEBUG("create window, size %ux%u", *width, *height);
 
-    g_return_val_if_fail(priv_display->compositor != NULL, FALSE);
-    g_return_val_if_fail(priv_display->shell != NULL, FALSE);
-
+    void *wld_surface  = (void*)GST_VAAPI_OBJECT_ID(window);
+    if (!wld_surface) {
+        g_return_val_if_fail(priv_display->compositor != NULL, FALSE);
+        g_return_val_if_fail(priv_display->shell != NULL, FALSE);
+    }
     GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
     priv->event_queue = wl_display_create_queue(priv_display->wl_display);
     GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
     if (!priv->event_queue)
         return FALSE;
 
-    void *wld_surface  = GST_VAAPI_OBJECT_ID(window);
     if(wld_surface){
         priv->surface = wld_surface;
         window->use_foreign_window = TRUE;
@@ -197,23 +198,24 @@ gst_vaapi_window_wayland_create(
     if (!priv->surface)
         return FALSE;
     wl_proxy_set_queue((struct wl_proxy *)priv->surface, priv->event_queue);
+    if (window->use_foreign_window == FALSE) {
 
-    GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
-    priv->shell_surface =
-        wl_shell_get_shell_surface(priv_display->shell, priv->surface);
-    GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
-    if (!priv->shell_surface)
-        return FALSE;
-    wl_proxy_set_queue((struct wl_proxy *)priv->shell_surface,
-        priv->event_queue);
+        GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
+        priv->shell_surface =
+            wl_shell_get_shell_surface(priv_display->shell, priv->surface);
+        GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
+        if (!priv->shell_surface)
+            return FALSE;
+        wl_proxy_set_queue((struct wl_proxy *)priv->shell_surface,
+            priv->event_queue);
 
-    wl_shell_surface_add_listener(priv->shell_surface,
-                                  &shell_surface_listener, priv);
-    wl_shell_surface_set_toplevel(priv->shell_surface);
+        wl_shell_surface_add_listener(priv->shell_surface,
+                                      &shell_surface_listener, priv);
+        wl_shell_surface_set_toplevel(priv->shell_surface);
 
-    if (priv->fullscreen_on_show)
-        gst_vaapi_window_wayland_set_fullscreen(window, TRUE);
-
+        if (priv->fullscreen_on_show)
+            gst_vaapi_window_wayland_set_fullscreen(window, TRUE);
+    }
     priv->redraw_pending = FALSE;
     priv->is_shown = TRUE;
 
@@ -263,13 +265,14 @@ gst_vaapi_window_wayland_resize(
 
     GST_DEBUG("resize window, new size %ux%u", width, height);
 
-    if (priv->opaque_region)
-        wl_region_destroy(priv->opaque_region);
-    GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
-    priv->opaque_region = wl_compositor_create_region(priv_display->compositor);
-    GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
-    wl_region_add(priv->opaque_region, 0, 0, width, height);
-
+    if (window->use_foreign_window == FALSE) {
+        if (priv->opaque_region)
+            wl_region_destroy(priv->opaque_region);
+        GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
+        priv->opaque_region = wl_compositor_create_region(priv_display->compositor);
+        GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
+        wl_region_add(priv->opaque_region, 0, 0, width, height);
+    }
     return TRUE;
 }
 
