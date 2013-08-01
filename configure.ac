@@ -752,6 +752,7 @@ debian.upstream/libgstvaapi-x11.install.in
     gst-libs/gst/codecparsers/Makefile
     gst-libs/gst/vaapi/Makefile
     gst-libs/gst/video/Makefile
+    gst-libs/gst/bitwriter/Makefile
     gst/Makefile
     gst/vaapi/Makefile
     pkgconfig/Makefile
