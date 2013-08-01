@@ -37,6 +37,7 @@ GST_DEBUG_CATEGORY_STATIC (gst_vaapi_h264_encode_debug);
 #define GST_CAPS_CODEC(CODEC) CODEC "; "
 
 static const char gst_vaapiencode_h264_sink_caps_str[] =
+    GST_VIDEO_CAPS_MAKE(GST_VIDEO_FORMATS_ALL) "; "
     GST_VAAPI_SURFACE_CAPS;
 
 static const char gst_vaapiencode_h264_src_caps_str[] =

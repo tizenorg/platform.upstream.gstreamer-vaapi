@@ -69,6 +69,9 @@ struct _GstVaapiEncode {
     GstVaapiDisplay    *display;
     GstVaapiEncoder    *encoder;
 
+    GstBufferPool      *video_buffer_pool;
+    guint               video_buffer_size;
+
     guint32             is_running     : 1;
     guint32             out_caps_done  : 1;
 };
