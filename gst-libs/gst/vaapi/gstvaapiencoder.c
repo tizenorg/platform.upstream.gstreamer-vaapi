@@ -192,13 +192,27 @@ gst_vaapi_encoder_replace(
 }
 
 static gboolean
-gst_vaapi_encoder_check_coded_buffer(GstVaapiEncoder *encoder)
+gst_vaapi_encoder_init_coded_buffer_queue(
+    GstVaapiEncoder *encoder,
+    guint count)
 {
-    gboolean ret;
+    GstVaapiCodedBuffer *buf;
+    guint i = 0;
+
     GST_VAAPI_ENCODER_LOCK(encoder);
-    ret = !g_queue_is_empty(&encoder->coded_buffers);
+    if (count > encoder->max_buf_num)
+        count = encoder->max_buf_num;
+
+    g_assert(encoder->buf_size);
+    for (i = 0; i < count; ++i) {
+        buf = GST_VAAPI_CODED_BUFFER_NEW(encoder, encoder->buf_size);
+        g_queue_push_tail(&encoder->coded_buffers, buf);
+        ++encoder->buf_count;
+    }
+    g_assert(encoder->buf_count <= encoder->max_buf_num);
+
     GST_VAAPI_ENCODER_UNLOCK(encoder);
-    return ret;
+    return TRUE;
 }
 
 static GstVaapiCodedBuffer *
@@ -633,6 +647,12 @@ gst_vaapi_encoder_set_format(
 
     encoder->buf_size = (GST_VAAPI_ENCODER_WIDTH(encoder) *
                          GST_VAAPI_ENCODER_HEIGHT(encoder) * 400) /(16*16);
+
+    if (!gst_vaapi_encoder_init_coded_buffer_queue(encoder, 5)) {
+        GST_ERROR("encoder init coded buffer failed");
+        goto error;
+    }
+
     return out_caps;
 
 error:
