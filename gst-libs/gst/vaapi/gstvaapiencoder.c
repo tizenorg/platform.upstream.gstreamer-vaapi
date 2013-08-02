@@ -93,6 +93,7 @@ static void
 gst_vaapi_coded_buffer_proxy_finalize(GstVaapiCodedBufferProxy *proxy)
 {
     if (proxy->buffer) {
+        gst_vaapi_coded_buffer_unmap(proxy->buffer);
         if (proxy->encoder)
             gst_vaapi_encoder_queue_coded_buffer(proxy->encoder, proxy->buffer);
         else {
