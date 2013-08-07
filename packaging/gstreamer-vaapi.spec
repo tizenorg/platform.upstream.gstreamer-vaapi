@@ -7,6 +7,8 @@ License:    LGPL-2.1+ and GPL-2.0+
 URL:        http://gitorious.org/vaapi/gstreamer-vaapi
 Source0:    %{name}-%{version}.tar.bz2
 Source1001: gstreamer-vaapi.manifest
+Source2001: codecparsers.tar.bz2
+Source2002: videoutils.tar.bz2
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(gstreamer-1.0)
@@ -14,6 +16,7 @@ BuildRequires:  pkgconfig(gstreamer-basevideo-1.0)
 BuildRequires:  pkgconfig(gstreamer-plugins-base-1.0)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  which
+BuildRequires:  git
 ExclusiveArch:  %{ix86} x86_64
 
 %description
@@ -35,7 +38,10 @@ The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
 
 %prep
-%setup -q
+%setup -q 
+%setup -q -T -D -a 2001
+%setup -q -T -D -a 2002
+
 
 %build
 cp %{SOURCE1001} .
