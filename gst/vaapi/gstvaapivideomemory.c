@@ -113,9 +113,8 @@ gst_video_meta_map_vaapi_memory(GstVideoMeta *meta, guint plane,
     if (mem->map_type &&
         mem->map_type != GST_VAAPI_VIDEO_MEMORY_MAP_TYPE_PLANAR)
         goto error_incompatible_map;
-    if ((flags & GST_MAP_READWRITE) != GST_MAP_WRITE)
+    if ((flags & GST_MAP_READ) != GST_MAP_READ && (flags & GST_MAP_WRITE) != GST_MAP_WRITE)
         goto error_unsupported_map;
-
     /* Map for writing */
     if (++mem->map_count == 1) {
         if (!ensure_surface(mem))
