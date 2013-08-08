@@ -142,6 +142,8 @@ gst_vaapiencode_query (GstPad *pad, GstObject *parent, GstQuery *query)
 
     g_assert(encode);
 
+    GST_DEBUG("vaapiencode query %s", GST_QUERY_TYPE_NAME(query));
+
     if (encode->encoder &&
         gst_vaapi_reply_to_query(query, encode->display))
       res = TRUE;
@@ -238,24 +240,27 @@ gst_vaapiencode_push_frame(GstVaapiEncode *encode, gint64 ms_timeout)
             gst_video_codec_state_unref(old_state);
             gst_video_codec_state_unref(new_state);
             if (!gst_video_encoder_negotiate(GST_VIDEO_ENCODER_CAST(encode))) {
-                GST_ERROR("negotiate failed");
+                GST_ERROR("negotiate failed on caps:%s",
+                          _encode_dump_caps(encode->srcpad_caps));
                 ret = GST_FLOW_NOT_NEGOTIATED;
                 goto error_unlock;
             }
+            GST_DEBUG("update encoder src caps:%s",
+                      _encode_dump_caps(encode->srcpad_caps));
         }
         encode->out_caps_done = TRUE;
     }
     GST_VIDEO_ENCODER_STREAM_UNLOCK(encode);
 
+    GST_DEBUG(
+        "output:%" GST_TIME_FORMAT ", size:%d",
+        GST_TIME_ARGS(out_frame->pts),
+        gst_buffer_get_size(output_buf));
+
     ret = gst_video_encoder_finish_frame(base, out_frame);
     out_frame = NULL;
     if (ret != GST_FLOW_OK)
         goto error;
-
-    GST_DEBUG(
-        "output:%" GST_TIME_FORMAT ", size:%d",
-        GST_TIME_ARGS(GST_BUFFER_TIMESTAMP(output_buf)),
-        gst_buffer_get_size(output_buf));
 
     return GST_FLOW_OK;
 
@@ -358,6 +363,10 @@ gst_vaapiencode_open(GstVideoEncoder *base)
     success = ensure_display(encode);
     if (old_display)
         gst_vaapi_display_unref(old_display);
+
+    GST_DEBUG("ensure display %s, display:%p",
+              (success ? "okay" : "failed"),
+              encode->display);
     return success;
 }
 
@@ -365,6 +374,8 @@ static gboolean
 gst_vaapiencode_close(GstVideoEncoder *base)
 {
     GstVaapiEncode * const encode = GST_VAAPIENCODE(base);
+
+    GST_DEBUG("vaapiencode starting close");
 
     return gst_vaapiencode_destroy(encode);
 }
@@ -439,6 +450,9 @@ gst_vaapiencode_update_src_caps(
     gst_caps_replace(&encode->srcpad_caps, out_state->caps);
     gst_video_codec_state_unref(out_state);
 
+    GST_DEBUG("encoder set src_caps:%s",
+              _encode_dump_caps(encode->srcpad_caps));
+
     return TRUE;
 }
 
@@ -511,24 +525,36 @@ gst_vaapiencode_set_format(
     GstVaapiEncode * const encode = GST_VAAPIENCODE(base);
 
     g_return_val_if_fail(state->caps, FALSE);
+    GST_DEBUG("vaapiencode starting set_format, caps:%s",
+              _encode_dump_caps(state->caps));
 
-    if (!gst_vaapiencode_ensure_video_buffer_pool(encode, state->caps))
+    if (!gst_vaapiencode_ensure_video_buffer_pool(encode, state->caps)) {
+        GST_DEBUG("ensure video buffer pool failed, caps:%s",
+                  _encode_dump_caps(state->caps));
         return FALSE;
+    }
 
     if (!ensure_encoder(encode)) {
         GST_ERROR("ensure encoder failed.");
         return FALSE;
     }
 
-    if(!gst_vaapiencode_update_sink_caps(encode, state))
+    if(!gst_vaapiencode_update_sink_caps(encode, state)) {
+        GST_DEBUG("vaapiencode update sink caps failed");
         return FALSE;
+    }
 
     /* update output state*/
-    if (!gst_vaapiencode_update_src_caps(encode, state))
+    if (!gst_vaapiencode_update_src_caps(encode, state)) {
+        GST_DEBUG("vaapiencode update src caps failed");
         return FALSE;
+    }
 
-    if (encode->out_caps_done && !gst_video_encoder_negotiate(base))
+    if (encode->out_caps_done && !gst_video_encoder_negotiate(base)) {
+        GST_DEBUG("vaapiencode negotiate failed, caps:%s",
+                  _encode_dump_caps(encode->srcpad_caps));
         return FALSE;
+    }
 
     return gst_pad_start_task(encode->srcpad,
         (GstTaskFunction)gst_vaapiencode_buffer_loop, encode, NULL);
@@ -542,6 +568,8 @@ gst_vaapiencode_reset(
 )
 {
     GstVaapiEncode * const encode = GST_VAAPIENCODE(base);
+
+    GST_DEBUG("vaapiencode starting reset");
 
     /* FIXME: compare sink_caps with encoder */
     encode->is_running = FALSE;
@@ -598,6 +626,8 @@ gst_vaapiencode_finish(GstVideoEncoder *base)
     GstVaapiEncoderStatus encoder_status;
     GstFlowReturn ret = GST_FLOW_OK;
 
+    GST_DEBUG("vaapiencode starting finish");
+
     encoder_status = gst_vaapi_encoder_flush(encode->encoder);
 
     GST_VIDEO_ENCODER_STREAM_UNLOCK(encode);
@@ -621,13 +651,18 @@ gst_vaapiencode_propose_allocation(GstVideoEncoder *base, GstQuery *query)
     GstCaps *caps = NULL;
     gboolean need_pool;
 
+    GST_DEBUG("vaapiencode starting propose_allocation");
+
     gst_query_parse_allocation(query, &caps, &need_pool);
 
     if (need_pool) {
         if (!caps)
             goto error_no_caps;
-        if (!gst_vaapiencode_ensure_video_buffer_pool(encode, caps))
+        if (!gst_vaapiencode_ensure_video_buffer_pool(encode, caps)) {
+            GST_WARNING("vaapiencode ensure video_buffer_pool failed, caps:%s",
+                        _encode_dump_caps(caps));
             return FALSE;
+        }
         gst_query_add_allocation_pool(query, encode->video_buffer_pool,
             encode->video_buffer_size, 0, 0);
     }
