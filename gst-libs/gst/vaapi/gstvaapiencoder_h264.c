@@ -474,8 +474,10 @@ fill_picture(
     pic->last_picture = 0; /* means last encoding picture */
     pic->frame_num = picture->frame_num;
     pic->pic_init_qp = encoder->init_qp;
-    pic->num_ref_idx_l0_active_minus1 = 0; /* only 1 reference */
-    pic->num_ref_idx_l1_active_minus1 = 0; /* B frames only have 1 backward and 1 forward reference*/
+    pic->num_ref_idx_l0_active_minus1 =
+        (encoder->max_reflist0_count ? (encoder->max_reflist0_count - 1) : 0);
+    pic->num_ref_idx_l1_active_minus1 =
+        (encoder->max_reflist1_count ? (encoder->max_reflist1_count - 1) : 0);
     pic->chroma_qp_index_offset = 0;
     pic->second_chroma_qp_index_offset = 0;
 
@@ -914,6 +916,10 @@ ensure_slices(
     }
 
     g_assert(reflist_0_count + reflist_1_count <= encoder->max_ref_num);
+    if (reflist_0_count > encoder->max_reflist0_count)
+        reflist_0_count = encoder->max_reflist0_count;
+    if (reflist_1_count > encoder->max_reflist1_count)
+        reflist_1_count = encoder->max_reflist1_count;
 
     if (!fill_slices(encoder, picture,
                      reflist_0, reflist_0_count,
@@ -1173,8 +1179,6 @@ gst_vaapi_encoder_h264_get_context_info (
 static gboolean
 prepare_encoding(GstVaapiEncoderH264 *encoder, GstCaps* caps)
 {
-    encoder->max_ref_num = (encoder->b_frame_num ? 2 : 1);
-
     if (encoder->b_frame_num)
         encoder->cts_offset = GST_SECOND * GST_VAAPI_ENCODER_FPS_D(encoder) /
                               GST_VAAPI_ENCODER_FPS_N(encoder);
@@ -1191,6 +1195,12 @@ prepare_encoding(GstVaapiEncoderH264 *encoder, GstCaps* caps)
 
     encoder->frame_index = 0;
     encoder->idr_num = 0;
+    encoder->max_reflist0_count = 1;
+    if (encoder->b_frame_num)
+        encoder->max_reflist1_count = 1;
+    else
+        encoder->max_reflist1_count = 0;
+    encoder->max_ref_num = encoder->max_reflist0_count + encoder->max_reflist1_count;
     return TRUE;
 }
 
@@ -1414,6 +1424,8 @@ gst_vaapi_encoder_h264_init(GstVaapiEncoder *base)
 
     g_queue_init(&encoder->ref_list);
     encoder->max_ref_num = 0;
+    encoder->max_reflist0_count = 1;
+    encoder->max_reflist1_count = 1;
 
     encoder->sps_data = NULL;
     encoder->pps_data = NULL;

@@ -100,6 +100,9 @@ struct _GstVaapiEncoderH264 {
     /* reference list */
     GQueue                 ref_list;
     guint                  max_ref_num;
+    /* max reflist count */
+    guint                  max_reflist0_count;
+    guint                  max_reflist1_count;
 
     /* frame, poc */
     guint32           max_frame_num;
