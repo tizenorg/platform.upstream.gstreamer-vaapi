@@ -277,7 +277,6 @@ static void
 frame_redraw_callback(void *data, struct wl_callback *callback, uint32_t time)
 {
     GstVaapiWindowWaylandPrivate * const priv = data;
-    wl_buffer_destroy(priv->buffer);
     priv->buffer = NULL;
     wl_callback_destroy(callback);
     priv->redraw_pending = FALSE;
