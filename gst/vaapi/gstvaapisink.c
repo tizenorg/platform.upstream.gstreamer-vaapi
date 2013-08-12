@@ -1041,6 +1041,9 @@ gst_vaapisink_show_frame(GstBaseSink *base_sink, GstBuffer *src_buffer)
 #if GST_CHECK_VERSION(1,0,0)
     GstVaapiRectangle tmp_rect;
 #endif
+    GstStructure *s;
+    GstMessage *msg;
+    static int frame_num = 0;
 
     meta = gst_buffer_get_vaapi_video_meta(src_buffer);
 #if GST_CHECK_VERSION(1,0,0)
@@ -1145,6 +1148,14 @@ gst_vaapisink_show_frame(GstBaseSink *base_sink, GstBuffer *src_buffer)
     if (sink->use_overlay)
         gst_buffer_replace(&sink->video_buffer, buffer);
     gst_buffer_unref(buffer);
+
+    GST_DEBUG ("post \"frame-rendered\" element message with frame-num(%d)", frame_num);
+    s = gst_structure_new ("frame-rendered",
+        "frame-num", G_TYPE_INT, frame_num++,
+        NULL);
+    msg = gst_message_new_element (GST_OBJECT (sink), s);
+    gst_element_post_message (GST_ELEMENT (sink), msg);
+
     return GST_FLOW_OK;
 
 error:
