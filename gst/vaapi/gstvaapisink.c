@@ -1145,6 +1145,21 @@ gst_vaapisink_show_frame(GstBaseSink *base_sink, GstBuffer *src_buffer)
     if (sink->use_overlay)
         gst_buffer_replace(&sink->video_buffer, buffer);
     gst_buffer_unref(buffer);
+
+#if USE_WAYLAND
+    if (sink->display_type == GST_VAAPI_DISPLAY_TYPE_WAYLAND) {
+        GstStructure *s;
+        GstMessage *msg;
+        static int frame_num = 0;
+        GST_DEBUG ("post \"frame-rendered\" element message with frame-num(%d)", frame_num);
+        s = gst_structure_new ("frame-rendered",
+            "frame-num", G_TYPE_INT, frame_num++,
+            NULL);
+        msg = gst_message_new_element (GST_OBJECT (sink), s);
+        gst_element_post_message (GST_ELEMENT (sink), msg);
+    }
+#endif
+
     return GST_FLOW_OK;
 
 error:
