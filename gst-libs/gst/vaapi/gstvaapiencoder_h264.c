@@ -76,6 +76,12 @@ typedef struct {
         "stream-format = (string) { avc, byte-stream }, "  \
         "alignment = (string) { au } "
 
+typedef enum {
+    GST_VAAPI_ENC_H264_REORD_NONE          = 0,
+    GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES = 1,
+    GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES = 2
+}GstVaapiEncH264ReorderState;
+
 static gboolean
 gst_bit_writer_write_nal_header(
     GstBitWriter *bitwriter,
@@ -264,6 +270,9 @@ ensure_public_attributes(GstVaapiEncoderH264 *encoder)
     if (encoder->slice_num > (total_mbs+1)/2)
         encoder->slice_num = (total_mbs+1)/2;
     g_assert(encoder->slice_num);
+
+    if (encoder->b_frame_num > (encoder->intra_period + 1)/2)
+        encoder->b_frame_num = (encoder->intra_period + 1)/2;
 
     if (encoder->b_frame_num > 50)
         encoder->b_frame_num = 50;
@@ -1099,6 +1108,82 @@ gst_vaapi_encoder_h264_get_codec_data(
     return gst_vaapi_encoder_h264_get_avcC_codec_data(encoder, buffer);
 }
 
+static inline void
+_reset_gop_start(GstVaapiEncoderH264 *encoder)
+{
+    ++encoder->idr_num;
+    encoder->frame_index = 1;
+    encoder->cur_frame_num = 0;
+    encoder->cur_present_index = 0;
+}
+
+static void
+_set_b_frame(
+    GstVaapiEncPicture *pic,
+    GstVaapiEncoderH264 *encoder
+)
+{
+    g_assert(pic && encoder);
+    g_return_if_fail(pic->type == GST_VAAPI_PICTURE_TYPE_NONE);
+    pic->type = GST_VAAPI_PICTURE_TYPE_B;
+    pic->frame_num = (encoder->cur_frame_num % encoder->max_frame_num);
+}
+
+static inline void
+_set_p_frame(
+    GstVaapiEncPicture *pic,
+    GstVaapiEncoderH264 *encoder
+)
+{
+    g_return_if_fail(pic->type == GST_VAAPI_PICTURE_TYPE_NONE);
+    pic->type = GST_VAAPI_PICTURE_TYPE_P;
+    pic->frame_num = (encoder->cur_frame_num % encoder->max_frame_num);
+}
+
+static inline void
+_set_i_frame(
+    GstVaapiEncPicture *pic,
+    GstVaapiEncoderH264 *encoder
+)
+{
+    g_return_if_fail(pic->type == GST_VAAPI_PICTURE_TYPE_NONE);
+    pic->type = GST_VAAPI_PICTURE_TYPE_I;
+    pic->frame_num = (encoder->cur_frame_num % encoder->max_frame_num);
+    g_assert(GST_VAAPI_ENC_PICTURE_GET_FRAME(pic));
+    GST_VIDEO_CODEC_FRAME_SET_SYNC_POINT(GST_VAAPI_ENC_PICTURE_GET_FRAME(pic));
+}
+
+static inline void
+_set_idr_frame(
+    GstVaapiEncPicture *pic,
+    GstVaapiEncoderH264 *encoder
+)
+{
+    g_return_if_fail(pic->type == GST_VAAPI_PICTURE_TYPE_NONE);
+    pic->type = GST_VAAPI_PICTURE_TYPE_I;
+    pic->frame_num = 0;
+    pic->poc = 0;
+    GST_VAAPI_ENC_PICTURE_FLAG_SET(pic, GST_VAAPI_ENC_PICTURE_FLAG_IDR);
+
+    g_assert(GST_VAAPI_ENC_PICTURE_GET_FRAME(pic));
+    GST_VIDEO_CODEC_FRAME_SET_SYNC_POINT(GST_VAAPI_ENC_PICTURE_GET_FRAME(pic));
+}
+
+static inline void
+_set_key_frame(
+    GstVaapiEncPicture *picture,
+    GstVaapiEncoderH264 *encoder,
+    gboolean is_idr
+)
+{
+    if (is_idr) {
+        _reset_gop_start(encoder);
+        _set_idr_frame(picture, encoder);
+    } else
+        _set_i_frame(picture, encoder);
+
+}
+
 static GstVaapiEncoderStatus
 gst_vaapi_encoder_h264_reordering(
     GstVaapiEncoder* base,
@@ -1109,13 +1194,28 @@ gst_vaapi_encoder_h264_reordering(
 {
     GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264(base);
     GstVaapiEncPicture *picture;
+    gboolean is_idr = FALSE;
 
     *output = NULL;
 
     if (!frame) {
-        return GST_VAAPI_ENCODER_STATUS_FRAME_NOT_READY;
+        if (encoder->reorder_state != GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES)
+            return GST_VAAPI_ENCODER_STATUS_FRAME_NOT_READY;
+
+        /* reorder_state = GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES
+           dump B frames from queue, sometime, there may also have P frame or I frame */
+        g_assert(encoder->b_frame_num > 0);
+        g_return_val_if_fail(!g_queue_is_empty(&encoder->reorder_frame_list),
+                             GST_VAAPI_ENCODER_STATUS_UNKNOWN_ERR);
+        picture = g_queue_pop_head(&encoder->reorder_frame_list);
+        g_assert(picture);
+        if (g_queue_is_empty(&encoder->reorder_frame_list)) {
+            encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES;
+        }
+        goto end;
     }
 
+    /* new frame coming */
     picture = GST_VAAPI_ENC_PICTURE_NEW(H264, encoder, frame);
     if (!picture) {
         GST_WARNING("create H264 picture failed, frame timestamp:%"
@@ -1123,31 +1223,61 @@ gst_vaapi_encoder_h264_reordering(
                     GST_TIME_ARGS(frame->pts));
         return GST_VAAPI_ENCODER_STATUS_OBJECT_ERR;
     }
-
-    if (encoder->frame_index == 0 ||
-        encoder->frame_index >= encoder->idr_period) {
-        picture->type = GST_VAAPI_PICTURE_TYPE_I;
-        ++encoder->idr_num;
-        encoder->frame_index = 1;
-        encoder->cur_frame_num = 0;
-        encoder->cur_present_index = 0;
-        GST_VIDEO_CODEC_FRAME_SET_SYNC_POINT(frame);
-        GST_VAAPI_ENC_PICTURE_FLAG_SET(picture,
-                                       GST_VAAPI_ENC_PICTURE_FLAG_IDR);
-    } else {
-        if (GST_VIDEO_CODEC_FRAME_IS_FORCE_KEYFRAME(frame) ||
-            (encoder->frame_index % encoder->intra_period) == 0) {
-            picture->type = GST_VAAPI_PICTURE_TYPE_I;
-            GST_VIDEO_CODEC_FRAME_SET_SYNC_POINT(frame);
-        }
-        picture->type = GST_VAAPI_PICTURE_TYPE_P;
-        ++encoder->cur_frame_num;
-        ++encoder->cur_present_index;
-        ++encoder->frame_index;
-    }
-    picture->frame_num = (encoder->cur_frame_num % encoder->max_frame_num);
+    ++encoder->cur_present_index;
     picture->poc = ((encoder->cur_present_index * 2) %
                            encoder->max_pic_order_cnt);
+
+    is_idr = (encoder->frame_index == 0 ||
+              encoder->frame_index >= encoder->idr_period);
+
+    /* check key frames */
+    if (is_idr || GST_VIDEO_CODEC_FRAME_IS_FORCE_KEYFRAME(frame) ||
+        (encoder->frame_index % encoder->intra_period) == 0) {
+        ++encoder->cur_frame_num;
+        ++encoder->frame_index;
+
+        /* b frame enabled,  check queue of reorder_frame_list */
+        if (encoder->b_frame_num && !g_queue_is_empty(&encoder->reorder_frame_list)) {
+            GstVaapiEncPicture *p_pic;
+
+            p_pic = g_queue_pop_tail(&encoder->reorder_frame_list);
+            _set_p_frame(p_pic, encoder);
+            g_queue_foreach(&encoder->reorder_frame_list,
+                            (GFunc)_set_b_frame, encoder);
+            ++encoder->cur_frame_num;
+            _set_key_frame(picture, encoder, is_idr);
+            g_queue_push_tail(&encoder->reorder_frame_list, picture);
+            picture = p_pic;
+            encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES;
+        } else { /* no b frames in queue */
+            _set_key_frame(picture, encoder, is_idr);
+            g_assert(g_queue_is_empty(&encoder->reorder_frame_list));
+            if (encoder->b_frame_num)
+                encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES;
+        }
+        goto end;
+    }
+
+    /* new p/b frames coming */
+    ++encoder->frame_index;
+    if (encoder->reorder_state == GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES &&
+        g_queue_get_length(&encoder->reorder_frame_list) < encoder->b_frame_num) {
+        g_queue_push_tail(&encoder->reorder_frame_list, picture);
+        return GST_VAAPI_ENCODER_STATUS_FRAME_NOT_READY;
+    }
+
+    ++encoder->cur_frame_num;
+    _set_p_frame(picture, encoder);
+
+    if (encoder->reorder_state == GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES) {
+        g_queue_foreach(&encoder->reorder_frame_list, _set_b_frame, encoder);
+        encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES;
+        g_assert(!g_queue_is_empty(&encoder->reorder_frame_list));
+    }
+
+end:
+    g_assert(picture);
+    frame = GST_VAAPI_ENC_PICTURE_GET_FRAME(picture);
     if (GST_CLOCK_TIME_IS_VALID(frame->pts))
         frame->pts += encoder->cts_offset;
     *output = picture;
@@ -1418,6 +1548,7 @@ gst_vaapi_encoder_h264_init(GstVaapiEncoder *base)
     encoder->is_avc = FALSE;
     /* re-ordering */
     g_queue_init(&encoder->reorder_frame_list);
+    encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_NONE;
     encoder->frame_index = 0;
     encoder->cur_frame_num = 0;
     encoder->cur_present_index = 0;

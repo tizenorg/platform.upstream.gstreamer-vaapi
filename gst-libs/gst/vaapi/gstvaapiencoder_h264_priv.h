@@ -92,6 +92,7 @@ struct _GstVaapiEncoderH264 {
     gboolean               is_avc;  /* avc or bytestream */
     /* re-ordering */
     GQueue                 reorder_frame_list;
+    guint                  reorder_state;
     guint                  frame_index;
     guint                  cur_frame_num;
     guint                  cur_present_index;
