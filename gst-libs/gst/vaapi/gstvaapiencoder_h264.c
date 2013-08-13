@@ -346,6 +346,8 @@ push_reference(
     GstVaapiEncoderH264Ref *ref;
 
     if (GST_VAAPI_PICTURE_TYPE_B == picture->type) {
+        gst_vaapi_encoder_release_surface(
+            GST_VAAPI_ENCODER(encoder), surface);
         return TRUE;
     }
     if (GST_VAAPI_ENC_PICTURE_IS_IDR(picture)) {
