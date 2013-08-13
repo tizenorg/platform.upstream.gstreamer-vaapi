@@ -167,8 +167,7 @@ gst_vaapi_display_wayland_setup(GstVaapiDisplay *display)
     if (!priv->width || !priv->height) {
         wl_display_roundtrip(priv->wl_display);
         if (!priv->width || !priv->height) {
-            GST_ERROR("failed to determine the display size");
-            return FALSE;
+            GST_WARNING("failed to determine the display size");
         }
     }
 
@@ -178,8 +177,7 @@ gst_vaapi_display_wayland_setup(GstVaapiDisplay *display)
     }
 
     if (!priv->shell) {
-        GST_ERROR("failed to bind shell interface");
-        return FALSE;
+        GST_WARNING("failed to bind shell interface");
     }
     return TRUE;
 }
@@ -221,14 +219,15 @@ gst_vaapi_display_wayland_open_display(GstVaapiDisplay *display,
     if (info) {
         priv->wl_display = info->native_display;
         priv->use_foreign_display = TRUE;
+        return TRUE;
     }
     else {
         priv->wl_display = wl_display_connect(name);
         if (!priv->wl_display)
             return FALSE;
         priv->use_foreign_display = FALSE;
+        return gst_vaapi_display_wayland_setup(display);
     }
-    return gst_vaapi_display_wayland_setup(display);
 }
 
 static void
@@ -308,8 +307,11 @@ gst_vaapi_display_wayland_get_size(
     GstVaapiDisplayWaylandPrivate * const priv =
         GST_VAAPI_DISPLAY_WAYLAND_GET_PRIVATE(display);
 
-    if (!priv->output)
+    if (!priv->output) {
+        *pwidth = 0;
+        *pheight = 0;
         return;
+    }
 
     if (pwidth)
         *pwidth = priv->width;
