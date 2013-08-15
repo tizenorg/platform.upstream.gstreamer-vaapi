@@ -69,12 +69,14 @@ endif
 libgstvaapi_encode_source_c =	\
 	gstvaapiencode.c			\
 	gstvaapiencode_h264.c		\
+	gstvaapiencode_mpeg2.c		\
 	$(NULL)
 
 
 libgstvaapi_encode_source_h =	\
 	gstvaapiencode.h			\
 	gstvaapiencode_h264.h		\
+	gstvaapiencode_mpeg2.h		\
 	$(NULL)
 
 if USE_ENCODERS
