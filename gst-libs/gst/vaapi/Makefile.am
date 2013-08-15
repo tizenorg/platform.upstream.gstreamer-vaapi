@@ -138,12 +138,14 @@ libgstvaapi_encoder_source_c =      \
 	gstvaapiencoder.c               \
 	gstvaapiencoder_objects.c       \
 	gstvaapiencoder_h264.c          \
+	gstvaapiencoder_mpeg2.c          \
 	$(NULL)
 
 libgstvaapi_encoder_source_h =      \
 	gstvaapiencoder.h               \
 	gstvaapiencoder_objects.h       \
 	gstvaapiencoder_h264.h          \
+	gstvaapiencoder_mpeg2.h          \
 	$(NULL)
 
 if USE_ENCODERS
