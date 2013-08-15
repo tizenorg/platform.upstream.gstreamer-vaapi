@@ -1,3 +1,11 @@
+* Thu Aug 15 2013 Zhao Halley <halley.zhao@intel.com> submit/tizen/20130807.090602@d6cb0a6
+- add 'frame-rendered' signal for wayland platform
+- fixes when vappsink renders to simple wayland compositor
+- seems wl_buffer_destroy is not required
+- add foreign wl_display/wl_surface support
+- Fix issue of mem map
+- add gitmodules.sh scipt to help maintain submodule
+
 * Wed Aug 07 2013 Zhao Halley <halley.zhao@intel.com> 0.5.5@3ecb26e
 - sync to recent upstream git repo
 - add codecparsers/videoutils as tar ball
