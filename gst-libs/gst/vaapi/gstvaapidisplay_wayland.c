@@ -219,15 +219,14 @@ gst_vaapi_display_wayland_open_display(GstVaapiDisplay *display,
     if (info) {
         priv->wl_display = info->native_display;
         priv->use_foreign_display = TRUE;
-        return TRUE;
     }
     else {
         priv->wl_display = wl_display_connect(name);
         if (!priv->wl_display)
             return FALSE;
         priv->use_foreign_display = FALSE;
-        return gst_vaapi_display_wayland_setup(display);
     }
+    return gst_vaapi_display_wayland_setup(display);
 }
 
 static void
