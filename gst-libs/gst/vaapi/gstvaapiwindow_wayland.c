@@ -309,10 +309,10 @@ gst_vaapi_window_wayland_render(
 
     /* XXX: use VPP to support unusual source and destination rectangles */
     gst_vaapi_surface_get_size(surface, &width, &height);
-    if (src_rect->x      != 0     ||
+    if (0 && (src_rect->x  != 0   ||
         src_rect->y      != 0     ||
         src_rect->width  != width ||
-        src_rect->height != height) {
+        src_rect->height != height)) {
         GST_ERROR("unsupported source rectangle for rendering");
         return FALSE;
     }
