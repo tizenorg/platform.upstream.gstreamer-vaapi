@@ -170,12 +170,11 @@ gst_vaapi_video_pool_get_object(GstVaapiVideoPool *pool)
 
     g_return_val_if_fail(pool != NULL, NULL);
 
-    if (pool->capacity && pool->used_count >= pool->capacity)
-        return NULL;
-
     object = g_queue_pop_head(&pool->free_objects);
     if (!object) {
-        object = gst_vaapi_video_pool_alloc_object(pool);
+        gint total = pool->used_count  + g_queue_get_length(&pool->free_objects);
+        if (!pool->capacity || total < pool->capacity)
+             object = gst_vaapi_video_pool_alloc_object(pool);
         if (!object)
             return NULL;
     }
