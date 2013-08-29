@@ -76,8 +76,7 @@ struct _GstVaapiDecode {
     GCond               decoder_finish_done;
     GstCaps            *decoder_caps;
     GstCaps            *allowed_caps;
-    gint64              render_time_base;
-    GstClockTime        last_buffer_time;
+    gint                src_result;
     guint               current_frame_size;
     guint               has_texture_upload_meta : 1;
 };
