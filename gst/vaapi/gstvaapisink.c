@@ -1142,7 +1142,9 @@ gst_vaapisink_show_frame(GstBaseSink *base_sink, GstBuffer *src_buffer)
         goto error;
 
     /* Retain VA surface until the next one is displayed */
+#if !USE_WAYLAND
     if (sink->use_overlay)
+#endif
         gst_buffer_replace(&sink->video_buffer, buffer);
     gst_buffer_unref(buffer);
 

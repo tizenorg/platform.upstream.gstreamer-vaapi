@@ -157,12 +157,16 @@ gst_vaapi_display_wayland_setup(GstVaapiDisplay *display)
 {
     GstVaapiDisplayWaylandPrivate * const priv =
         GST_VAAPI_DISPLAY_WAYLAND_GET_PRIVATE(display);
+    int ret = 0;
 
     wl_display_set_user_data(priv->wl_display, priv);
     priv->registry = wl_display_get_registry(priv->wl_display);
     wl_registry_add_listener(priv->registry, &registry_listener, priv);
     priv->event_fd = wl_display_get_fd(priv->wl_display);
-    wl_display_roundtrip(priv->wl_display);
+    ret = wl_display_roundtrip(priv->wl_display);
+    if (ret <0) {
+        GST_ERROR("Wayland sync fail of wl_display_roundtrip");
+    }
 
     if (!priv->width || !priv->height) {
         wl_display_roundtrip(priv->wl_display);
@@ -346,6 +350,9 @@ gst_vaapi_display_wayland_init(GstVaapiDisplay *display)
         GST_VAAPI_DISPLAY_WAYLAND_GET_PRIVATE(display);
 
     priv->event_fd = -1;
+    priv->compositor    = NULL;
+    priv->shell         = NULL;
+    priv->output        = NULL;
 }
 
 static void
