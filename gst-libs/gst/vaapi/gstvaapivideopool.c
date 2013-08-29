@@ -64,6 +64,7 @@ gst_vaapi_video_pool_init(GstVaapiVideoPool *pool, GstVaapiDisplay *display,
     pool->capacity      = 0;
 
     g_queue_init(&pool->free_objects);
+    pool->mutex = g_mutex_new();
 }
 
 void
@@ -73,6 +74,7 @@ gst_vaapi_video_pool_finalize(GstVaapiVideoPool *pool)
     g_queue_foreach(&pool->free_objects, (GFunc)gst_vaapi_object_unref, NULL);
     g_queue_clear(&pool->free_objects);
     gst_vaapi_display_replace(&pool->display, NULL);
+    g_mutex_free(pool->mutex);
 }
 
 /**
@@ -169,19 +171,23 @@ gst_vaapi_video_pool_get_object(GstVaapiVideoPool *pool)
     gpointer object;
 
     g_return_val_if_fail(pool != NULL, NULL);
-
+    g_mutex_lock(pool->mutex);
     object = g_queue_pop_head(&pool->free_objects);
     if (!object) {
         gint total = pool->used_count  + g_queue_get_length(&pool->free_objects);
         if (!pool->capacity || total < pool->capacity)
              object = gst_vaapi_video_pool_alloc_object(pool);
-        if (!object)
+        if (!object) {
+	    g_mutex_unlock(pool->mutex);
             return NULL;
+	}
     }
 
     ++pool->used_count;
     pool->used_objects = g_list_prepend(pool->used_objects, object);
-    return gst_vaapi_object_ref(object);
+    gst_vaapi_object_ref(object);
+    g_mutex_unlock(pool->mutex);
+    return object;
 }
 
 /**
@@ -202,16 +208,25 @@ gst_vaapi_video_pool_put_object(GstVaapiVideoPool *pool, gpointer object)
     g_return_if_fail(pool != NULL);
     g_return_if_fail(object != NULL);
 
+    g_mutex_lock(pool->mutex);
     elem = g_list_find(pool->used_objects, object);
-    if (!elem)
+    if (!elem) {
+        g_mutex_unlock(pool->mutex);
         return;
+    }
 
     gst_vaapi_object_unref(object);
     --pool->used_count;
     pool->used_objects = g_list_delete_link(pool->used_objects, elem);
     g_queue_push_tail(&pool->free_objects, object);
+    g_mutex_unlock(pool->mutex);
 }
 
+gboolean gst_vaapi_video_pool_add_object_with_lock(GstVaapiVideoPool *pool, gpointer object)
+{
+    g_queue_push_tail(&pool->free_objects, gst_vaapi_object_ref(object));
+    return TRUE;
+}
 /**
  * gst_vaapi_video_pool_add_object:
  * @pool: a #GstVaapiVideoPool
@@ -226,11 +241,14 @@ gst_vaapi_video_pool_put_object(GstVaapiVideoPool *pool, gpointer object)
 gboolean
 gst_vaapi_video_pool_add_object(GstVaapiVideoPool *pool, gpointer object)
 {
+    gboolean ret;
     g_return_val_if_fail(pool != NULL, FALSE);
     g_return_val_if_fail(object != NULL, FALSE);
 
-    g_queue_push_tail(&pool->free_objects, gst_vaapi_object_ref(object));
-    return TRUE;
+    g_mutex_lock(pool->mutex);
+    ret = gst_vaapi_video_pool_add_object_with_lock(pool, object);
+    g_mutex_unlock(pool->mutex);
+    return ret;
 }
 
 /**
@@ -251,11 +269,15 @@ gst_vaapi_video_pool_add_objects(GstVaapiVideoPool *pool, GPtrArray *objects)
 
     g_return_val_if_fail(pool != NULL, FALSE);
 
+    g_mutex_lock(pool->mutex);
     for (i = 0; i < objects->len; i++) {
         gpointer const object = g_ptr_array_index(objects, i);
-        if (!gst_vaapi_video_pool_add_object(pool, object))
+        if (!gst_vaapi_video_pool_add_object_with_lock(pool, object)) {
+	    g_mutex_unlock(pool->mutex);
             return FALSE;
+	}
     }
+    g_mutex_unlock(pool->mutex);
     return TRUE;
 }
 
@@ -270,9 +292,13 @@ gst_vaapi_video_pool_add_objects(GstVaapiVideoPool *pool, GPtrArray *objects)
 guint
 gst_vaapi_video_pool_get_size(GstVaapiVideoPool *pool)
 {
+    guint size;
     g_return_val_if_fail(pool != NULL, 0);
 
-    return g_queue_get_length(&pool->free_objects);
+    g_mutex_lock(pool->mutex);
+    size = g_queue_get_length(&pool->free_objects);
+    g_mutex_unlock(pool->mutex);
+    return size;
 }
 
 /**
@@ -294,19 +320,26 @@ gst_vaapi_video_pool_reserve(GstVaapiVideoPool *pool, guint n)
 
     g_return_val_if_fail(pool != NULL, 0);
 
+    g_mutex_lock(pool->mutex);
     num_allocated = gst_vaapi_video_pool_get_size(pool) + pool->used_count;
-    if (n < num_allocated)
+    if (n < num_allocated) {
+        g_mutex_unlock(pool->mutex);
         return TRUE;
+    }
+
 
     if ((n -= num_allocated) > pool->capacity)
         n = pool->capacity;
 
     for (i = num_allocated; i < n; i++) {
         gpointer const object = gst_vaapi_video_pool_alloc_object(pool);
-        if (!object)
+        if (!object) {
+            g_mutex_unlock(pool->mutex);
             return FALSE;
+        }
         g_queue_push_tail(&pool->free_objects, object);
     }
+    g_mutex_unlock(pool->mutex);
     return TRUE;
 }
 
