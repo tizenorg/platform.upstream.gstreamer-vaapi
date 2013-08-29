@@ -66,7 +66,7 @@ gst_vaapi_surface_proxy_new_from_pool(GstVaapiSurfacePool *pool)
     g_return_val_if_fail(pool != NULL, NULL);
 
     proxy = (GstVaapiSurfaceProxy *)
-        gst_vaapi_mini_object_new(gst_vaapi_surface_proxy_class());
+        gst_vaapi_mini_object_new0(gst_vaapi_surface_proxy_class());
     if (!proxy)
         return NULL;
 
