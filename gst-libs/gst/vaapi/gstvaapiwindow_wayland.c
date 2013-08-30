@@ -35,7 +35,7 @@
 
 #define DEBUG 1
 #include "gstvaapidebug.h"
-#define WL_BUFFER_ON_EVENT_QUEUE    1
+#define WL_BUFFER_ON_EVENT_QUEUE    0
 
 #define GST_VAAPI_WINDOW_WAYLAND_CAST(obj) \
     ((GstVaapiWindowWayland *)(obj))
@@ -100,11 +100,10 @@ gst_vaapi_window_wayland_sync(GstVaapiWindow *window)
 {
     GstVaapiWindowWaylandPrivate * const priv =
         GST_VAAPI_WINDOW_WAYLAND_GET_PRIVATE(window);
-
-    if (priv->redraw_pending) {
         struct wl_display * const wl_display =
             GST_VAAPI_OBJECT_WL_DISPLAY(window);
 
+    if (priv->redraw_pending) {
         do {
             if (wl_display_dispatch_queue(wl_display, priv->event_queue) < 0) {
                 GST_ERROR("Wayland sync fail of wl_display_dispatch_queue");
@@ -112,6 +111,8 @@ gst_vaapi_window_wayland_sync(GstVaapiWindow *window)
             }
         } while (priv->redraw_pending);
     }
+    wl_display_dispatch_pending(wl_display);
+
     return TRUE;
 }
 
