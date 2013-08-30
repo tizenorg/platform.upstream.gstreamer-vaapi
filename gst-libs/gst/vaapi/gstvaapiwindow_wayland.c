@@ -35,6 +35,7 @@
 
 #define DEBUG 1
 #include "gstvaapidebug.h"
+#define WL_BUFFER_ON_EVENT_QUEUE    1
 
 #define GST_VAAPI_WINDOW_WAYLAND_CAST(obj) \
     ((GstVaapiWindowWayland *)(obj))
@@ -264,10 +265,12 @@ gst_vaapi_window_wayland_destroy(GstVaapiWindow * window)
         priv->callback = NULL;
     }
 
+#if !WL_BUFFER_ON_EVENT_QUEUE
     if (priv->event_queue) {
         wl_event_queue_destroy(priv->event_queue);
         priv->event_queue = NULL;
     }
+#endif
 }
 
 static gboolean
@@ -388,10 +391,13 @@ gst_vaapi_window_wayland_render(
     wl_proxy_set_queue((struct wl_proxy *)priv->callback, priv->event_queue);
 
     wl_buffer_add_listener(buffer, &wl_buf_listener, NULL);
+#if WL_BUFFER_ON_EVENT_QUEUE
     // XXXX, it is not ok to use internal event_queue here,
     // since there may still be future WL_BUFFER_RELEASE event when we try to destroy event_queue in gst_vaapi_window_wayland_destroy
     // it potential can be resolved if wl_surface has WL_SURFACE_RELEACE event
-    // wl_proxy_set_queue((struct wl_proxy *)priv->buffer, priv->event_queue);
+     wl_proxy_set_queue((struct wl_proxy *)buffer, priv->event_queue);
+#endif
+
     wl_surface_commit(priv->surface);
     wl_display_flush(wl_display);
     GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
