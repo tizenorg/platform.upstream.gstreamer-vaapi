@@ -107,6 +107,7 @@ gst_vaapi_window_wayland_sync(GstVaapiWindow *window)
         do {
             if (wl_display_dispatch_queue(wl_display, priv->event_queue) < 0) {
                 GST_ERROR("Wayland sync fail of wl_display_dispatch_queue");
+                priv->redraw_pending = FALSE;
             }
         } while (priv->redraw_pending);
     }
