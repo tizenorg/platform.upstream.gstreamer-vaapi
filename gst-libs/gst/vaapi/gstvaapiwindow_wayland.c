@@ -48,8 +48,6 @@ typedef struct _GstVaapiWindowWaylandClass      GstVaapiWindowWaylandClass;
 struct _GstVaapiWindowWaylandPrivate {
     struct wl_shell_surface    *shell_surface;
     struct wl_surface          *surface;
-    struct wl_buffer           *pre_buf;
-    struct wl_buffer           *buffer;
     struct wl_region           *opaque_region;
     struct wl_event_queue      *event_queue;
     struct wl_callback         *callback;
@@ -139,6 +137,15 @@ static const struct wl_shell_surface_listener shell_surface_listener = {
     handle_popup_done
 };
 
+static void handle_wl_buffer_release(void *data, struct wl_buffer *wl_buffer)
+{
+    wl_buffer_destroy(wl_buffer);
+}
+
+static const struct wl_buffer_listener wl_buf_listener = {
+    handle_wl_buffer_release
+};
+
 static gboolean
 gst_vaapi_window_wayland_set_fullscreen(GstVaapiWindow *window, gboolean fullscreen)
 {
@@ -181,8 +188,6 @@ gst_vaapi_window_wayland_create(
 
     priv->shell_surface     = NULL;
     priv->surface           = NULL;
-    priv->pre_buf           = NULL;
-    priv->buffer            = NULL;
     priv->opaque_region     = NULL;
     priv->event_queue       = NULL;
     priv->callback          = NULL;
@@ -252,17 +257,7 @@ gst_vaapi_window_wayland_destroy(GstVaapiWindow * window)
         priv->surface = NULL;
     }
 
-    if (priv->pre_buf) {
-        wl_buffer_destroy(priv->pre_buf);
-        priv->pre_buf = NULL;
-    }
-#if 0
-    if (priv->buffer) {
-        wl_buffer_destroy(priv->buffer);
-        priv->buffer = NULL;
-    }
-#endif
-
+    wl_display_dispatch_queue_pending(GST_VAAPI_OBJECT_WL_DISPLAY(window), priv->event_queue);
     if (priv->callback) {
         wl_callback_destroy(priv->callback);
         priv->callback = NULL;
@@ -303,10 +298,6 @@ static void
 frame_redraw_callback(void *data, struct wl_callback *callback, uint32_t time)
 {
     GstVaapiWindowWaylandPrivate * const priv = data;
-    if (priv->pre_buf) {
-        wl_buffer_destroy(priv->pre_buf);
-    }
-    priv->pre_buf = priv->buffer;
 
     wl_callback_destroy(callback);
     priv->redraw_pending = FALSE;
@@ -391,11 +382,15 @@ gst_vaapi_window_wayland_render(
     }
 
     priv->redraw_pending = TRUE;
-    priv->buffer = buffer;
     priv->callback = wl_surface_frame(priv->surface);
     wl_callback_add_listener(priv->callback, &frame_callback_listener, priv);
     wl_proxy_set_queue((struct wl_proxy *)priv->callback, priv->event_queue);
 
+    wl_buffer_add_listener(buffer, &wl_buf_listener, NULL);
+    // XXXX, it is not ok to use internal event_queue here,
+    // since there may still be future WL_BUFFER_RELEASE event when we try to destroy event_queue in gst_vaapi_window_wayland_destroy
+    // it potential can be resolved if wl_surface has WL_SURFACE_RELEACE event
+    // wl_proxy_set_queue((struct wl_proxy *)priv->buffer, priv->event_queue);
     wl_surface_commit(priv->surface);
     wl_display_flush(wl_display);
     GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
