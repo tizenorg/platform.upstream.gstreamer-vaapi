@@ -64,6 +64,12 @@ typedef struct _GstVaapiSinkClass               GstVaapiSinkClass;
 typedef struct _GstVaapiTexture                 GstVaapiTexture;
 #endif
 
+#if USE_WAYLAND
+#define RETAIN_BUFFER_COUNT     3
+#else
+#define RETAIN_BUFFER_COUNT     1
+#endif
+
 struct _GstVaapiSink {
     /*< private >*/
     GstVideoSink parent_instance;
@@ -80,7 +86,7 @@ struct _GstVaapiSink {
     GstBufferPool      *video_buffer_pool;
 #endif
     guint               video_buffer_size;
-    GstBuffer          *video_buffer;
+    GstBuffer          *video_buffer[RETAIN_BUFFER_COUNT];
     guint               video_width;
     guint               video_height;
     gint                video_par_n;
