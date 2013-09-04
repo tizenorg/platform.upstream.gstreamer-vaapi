@@ -1,3 +1,10 @@
+* Wed Sep 04 2013 Zhao Halley <halley.zhao@intel.com> submit/tizen/20130819.083536@4330ce4
+- wayland: retain additional 3 gst buffer after video rendering
+- wayland: destroy wl_buffer by register to wl_buffer_listener
+- vaapidecode: pull from master to fix pause&seek.
+- wayland: ignore none full-size video rendering, for example: crop support
+- wayland: gst_vaapi_display_wayland_setup fix
+
 * Thu Aug 15 2013 Zhao Halley <halley.zhao@intel.com> submit/tizen/20130807.090602@d6cb0a6
 - add 'frame-rendered' signal for wayland platform
 - fixes when vappsink renders to simple wayland compositor
