@@ -32,6 +32,8 @@ typedef struct _GstVaapiWindowWayland           GstVaapiWindowWayland;
 
 GstVaapiWindow *
 gst_vaapi_window_wayland_new(GstVaapiDisplay *display, guint width, guint height);
+GstVaapiWindow *
+gst_vaapi_window_wayland_new_with_surface(GstVaapiDisplay *display, gpointer wld_surface);
 
 G_END_DECLS
 
