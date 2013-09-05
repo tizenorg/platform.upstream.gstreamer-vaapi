@@ -291,7 +291,7 @@ gst_vaapisink_video_overlay_expose(GstVideoOverlay *overlay)
     GstBuffer *buffer;
 
     if (sink->use_overlay)
-        buffer = sink->video_buffer ? gst_buffer_ref(sink->video_buffer) : NULL;
+        buffer = sink->video_buffer[0] ? gst_buffer_ref(sink->video_buffer[0]) : NULL;
     else {
 #if GST_CHECK_VERSION(1,0,0)
         GstSample * const sample = gst_base_sink_get_last_sample(base_sink);
@@ -320,7 +320,12 @@ gst_vaapisink_video_overlay_iface_init(GstVideoOverlayInterface *iface)
 static void
 gst_vaapisink_destroy(GstVaapiSink *sink)
 {
-    gst_buffer_replace(&sink->video_buffer, NULL);
+    int i;
+
+    for (i=0; i<RETAIN_BUFFER_COUNT; i++) {
+        gst_buffer_replace(&sink->video_buffer[i], NULL);
+        sink->video_buffer[i] = NULL;
+    }
 #if USE_GLX
     gst_vaapi_texture_replace(&sink->texture, NULL);
 #endif
@@ -807,7 +812,10 @@ gst_vaapisink_stop(GstBaseSink *base_sink)
     int i = 0;
     GstVaapiSink * const sink = GST_VAAPISINK(base_sink);
 
-    gst_buffer_replace(&sink->video_buffer, NULL);
+    for (i=0; i<RETAIN_BUFFER_COUNT; i++) {
+        gst_buffer_replace(&sink->video_buffer[i], NULL);
+        sink->video_buffer[i] = NULL;
+    }
 #if GST_CHECK_VERSION(1,0,0)
     g_clear_object(&sink->video_buffer_pool);
 #endif
@@ -1285,6 +1293,7 @@ gst_vaapisink_show_frame(GstBaseSink *base_sink, GstBuffer *src_buffer)
     guint flags;
     gboolean success;
     GstVaapiRectangle *surface_rect = NULL;
+    int i;
 #if GST_CHECK_VERSION(1,0,0)
     GstVaapiRectangle tmp_rect;
 #endif
@@ -1371,8 +1380,17 @@ gst_vaapisink_show_frame(GstBaseSink *base_sink, GstBuffer *src_buffer)
         goto error;
 
     /* Retain VA surface until the next one is displayed */
+#if !USE_WAYLAND
     if (sink->use_overlay)
-        gst_buffer_replace(&sink->video_buffer, buffer);
+#endif
+    {
+        gst_buffer_unref(sink->video_buffer[RETAIN_BUFFER_COUNT-1]);
+        for (i=RETAIN_BUFFER_COUNT-1; i>0; i--) {
+            sink->video_buffer[i] = sink->video_buffer[i-1];
+        }
+        sink->video_buffer[0] = gst_buffer_ref(buffer);
+    }
+
     gst_buffer_unref(buffer);
 
 #if USE_WAYLAND
@@ -1772,7 +1790,6 @@ gst_vaapisink_init(GstVaapiSink *sink)
     sink->window_width   = 0;
     sink->window_height  = 0;
     sink->texture        = NULL;
-    sink->video_buffer   = NULL;
     sink->video_width    = 0;
     sink->video_height   = 0;
     sink->video_par_n    = 1;
@@ -1793,4 +1810,9 @@ gst_vaapisink_init(GstVaapiSink *sink)
         sink->pixmap_pool[i] = NULL;
     }
     gst_video_info_init(&sink->video_info);
+
+    for (i=0; i<RETAIN_BUFFER_COUNT; i++) {
+        sink->video_buffer[i]   = NULL;
+    }
+
 }
