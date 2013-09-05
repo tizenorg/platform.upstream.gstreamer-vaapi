@@ -205,6 +205,7 @@ G_DEFINE_TYPE_WITH_CODE(
 enum {
     PROP_0,
 
+    PROP_DISPLAY,
     PROP_DISPLAY_TYPE,
     PROP_FULLSCREEN,
     PROP_SYNCHRONOUS,
@@ -223,6 +224,10 @@ enum {
 #if USE_X11
 static gboolean
 gst_vaapisink_ensure_window_xid(GstVaapiSink *sink, guintptr window_id);
+#endif
+#if USE_WAYLAND
+static gboolean
+gst_vaapisink_ensure_window_wl_surface(GstVaapiSink *sink, gpointer wld_surface);
 #endif
 
 static GstFlowReturn
@@ -244,6 +249,11 @@ gst_vaapisink_video_overlay_set_window_handle(GstVideoOverlay *overlay, guintptr
 #if USE_X11
     case GST_VAAPI_DISPLAY_TYPE_X11:
         gst_vaapisink_ensure_window_xid(sink, window);
+        break;
+#endif
+#if USE_WAYLAND
+    case GST_VAAPI_DISPLAY_TYPE_WAYLAND:
+        gst_vaapisink_ensure_window_wl_surface(sink, (gpointer)window);
         break;
 #endif
     default:
@@ -656,6 +666,24 @@ gst_vaapisink_ensure_window_xid(GstVaapiSink *sink, guintptr window_id)
         GST_WARNING("exceed MAX_PIXMAP_COUNT: %d", MAX_PIXMAP_COUNT);
     }
 
+    return sink->window != NULL;
+}
+#endif
+#if USE_WAYLAND
+static gboolean
+gst_vaapisink_ensure_window_wl_surface(GstVaapiSink *sink, gpointer wld_surface)
+{
+    if (!gst_vaapisink_ensure_display(sink))
+        return FALSE;
+
+    switch (sink->display_type) {
+	case GST_VAAPI_DISPLAY_TYPE_WAYLAND:
+        sink->window = gst_vaapi_window_wayland_new_with_surface(sink->display, wld_surface);
+        break;
+    default:
+        GST_ERROR("unsupported display type %d", sink->display_type);
+        return FALSE;
+    }
     return sink->window != NULL;
 }
 #endif
@@ -1479,8 +1507,20 @@ gst_vaapisink_set_property(
 )
 {
     GstVaapiSink * const sink = GST_VAAPISINK(object);
+#if USE_WAYLAND
+    struct wl_display *wld_display = NULL;
+#endif
 
     switch (prop_id) {
+#if USE_WAYLAND
+    case PROP_DISPLAY:
+        wld_display = g_value_get_pointer(value);
+        if(wld_display==NULL)
+            return;
+        sink->display = gst_vaapi_display_wayland_new_with_display(wld_display);
+        sink->display_type = GST_VAAPI_DISPLAY_TYPE_WAYLAND;
+        break;
+#endif
     case PROP_DISPLAY_TYPE:
         sink->display_type = g_value_get_enum(value);
         break;
@@ -1522,6 +1562,11 @@ gst_vaapisink_get_property(
     GstVaapiSink * const sink = GST_VAAPISINK(object);
 
     switch (prop_id) {
+#if USE_WAYLAND
+    case PROP_DISPLAY:
+        g_value_set_pointer(value,sink->display);
+        break;
+#endif
     case PROP_DISPLAY_TYPE:
         g_value_set_enum(value, sink->display_type);
         break;
@@ -1592,6 +1637,20 @@ gst_vaapisink_class_init(GstVaapiSinkClass *klass)
 
     pad_template = gst_static_pad_template_get(&gst_vaapisink_sink_factory);
     gst_element_class_add_pad_template(element_class, pad_template);
+
+#if USE_WAYLAND
+    /**
+     * GstVaapiSink:wl-display:
+     * Pointer of wayland display connection
+     */
+    g_object_class_install_property
+        (object_class,
+         PROP_DISPLAY,
+         g_param_spec_pointer("wl-display",
+                             "wl-display",
+                             "the pointer of wayland's display",
+                             G_PARAM_READWRITE));
+#endif
 
     g_object_class_install_property
         (object_class,
