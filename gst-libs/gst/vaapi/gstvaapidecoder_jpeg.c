@@ -537,7 +537,7 @@ decode_buffer(GstVaapiDecoderJpeg *decoder, const guchar *buf, guint buf_size)
             GST_DEBUG("buffer to short for parsing");
             return GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA;
         }
-        ofs += seg.size;
+        ofs = seg.offset + seg.size;
 
         /* Decode scan, if complete */
         if (seg.marker == GST_JPEG_MARKER_EOI && scan_seg.header_size > 0) {
@@ -655,6 +655,13 @@ scan_for_start_code(GstAdapter *adapter, guint ofs, guint size, guint32 *scp)
         0xffff0000, 0xffd80000, ofs, size, scp);
 }
 
+static inline gint
+scan_for_end_code(GstAdapter *adapter, guint ofs, guint size, guint32 *scp)
+{
+     return (gint)gst_adapter_masked_scan_uint32_peek(adapter,
+        0x0000ffff, 0x0000ffd9, ofs, size, scp);
+}
+
 static GstVaapiDecoderStatus
 gst_vaapi_decoder_jpeg_parse(GstVaapiDecoder *base_decoder,
     GstAdapter *adapter, gboolean at_eos, GstVaapiDecoderUnit *unit)
@@ -663,7 +670,8 @@ gst_vaapi_decoder_jpeg_parse(GstVaapiDecoder *base_decoder,
         GST_VAAPI_DECODER_JPEG_CAST(base_decoder);
     GstVaapiDecoderStatus status;
     guint size, buf_size, flags = 0;
-    gint ofs;
+    gint ofs = 0;
+    gint soi_ofs = 0, eoi_ofs = 0;
 
     status = ensure_decoder(decoder);
     if (status != GST_VAAPI_DECODER_STATUS_SUCCESS)
@@ -674,29 +682,24 @@ gst_vaapi_decoder_jpeg_parse(GstVaapiDecoder *base_decoder,
     if (size < 4)
         return GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA;
 
-    ofs = scan_for_start_code(adapter, 0, size, NULL);
-    if (ofs < 0)
-        return GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA;
-    gst_adapter_flush(adapter, ofs);
-    size -= ofs;
-
-    ofs = G_UNLIKELY(size < 4) ? -1 :
-        scan_for_start_code(adapter, 2, size - 2, NULL);
-    if (ofs < 0) {
-        // Assume the whole packet is present if end-of-stream
-        if (!at_eos)
-            return GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA;
-        ofs = size;
+    // It can only handle one-depth nest like SOI ... SOI ... EOI ... EOI
+    soi_ofs = scan_for_start_code(adapter, 0, size, NULL);
+    ofs = soi_ofs;
+    while ((eoi_ofs = scan_for_end_code(adapter, ofs + 2, size - (ofs + 2), NULL)) >= 0) {
+        if ((ofs = scan_for_start_code(adapter, ofs + 2, size - (ofs + 2), NULL)) >= 0) {
+	     // another SOI appears between SOI and EOI
+	     ofs = eoi_ofs + 2;
+        } else {
+            // the true EOI found
+	     unit->size = eoi_ofs + 4 - soi_ofs;
+	     flags |= GST_VAAPI_DECODER_UNIT_FLAG_FRAME_START;
+	     flags |= GST_VAAPI_DECODER_UNIT_FLAG_FRAME_END;
+            flags |= GST_VAAPI_DECODER_UNIT_FLAG_SLICE;
+            GST_VAAPI_DECODER_UNIT_FLAG_SET(unit, flags);
+	     return GST_VAAPI_DECODER_STATUS_SUCCESS;
+        }
     }
-    buf_size = ofs;
-
-    unit->size = buf_size;
-
-    flags |= GST_VAAPI_DECODER_UNIT_FLAG_FRAME_START;
-    flags |= GST_VAAPI_DECODER_UNIT_FLAG_FRAME_END;
-    flags |= GST_VAAPI_DECODER_UNIT_FLAG_SLICE;
-    GST_VAAPI_DECODER_UNIT_FLAG_SET(unit, flags);
-    return GST_VAAPI_DECODER_STATUS_SUCCESS;
+    return GST_VAAPI_DECODER_STATUS_ERROR_NO_DATA;
 }
 
 static GstVaapiDecoderStatus
