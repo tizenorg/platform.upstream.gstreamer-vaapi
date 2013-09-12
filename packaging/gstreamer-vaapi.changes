@@ -1,3 +1,11 @@
+* Thu Sep 12 2013 Zhao Halley <halley.zhao@intel.com> 0.2.6@1392323
+  Rebase to upstream 0.5.6 release with hw encoder support
+  Fix TIVI-1478 JPEG issue
+
+* Thu Sep 4 2013 Zhao Halley <halley.zhao@intel.com> submit/tizen/20130807.090602@d6cb0a6
+- wayland: retain additional 3 gst buffer after video rendering
+- destroy wl_buffer by register to wl_buffer_listener
+
 * Thu Aug 15 2013 Zhao Halley <halley.zhao@intel.com> submit/tizen/20130807.090602@d6cb0a6
 - add 'frame-rendered' signal for wayland platform
 - fixes when vappsink renders to simple wayland compositor
@@ -14,11 +22,4 @@
 * Wed Jul 03 2013 Zhao Halley <halley.zhao@intel.com> 0.5.4@14489ad
 - calculate decoder caps from driver capability
 - set higher rank for vaapidecode
-- remove codecparsers/videoutils submodule check in autogen.sh
-- git add codecparsers/videoutils instead of git submodule
-- add packaging folder
-
-* Mon Apr 22 2013 Patrick McCarty <patrick.mccarty@linux.intel.com> 3c1a231
-- (TZPC-1487) Imported Upstream version 0.5.3, which supports gstreamer 1.0
-- Add packaging files
 
