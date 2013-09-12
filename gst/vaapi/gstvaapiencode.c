@@ -40,6 +40,11 @@
 #define GST_VAAPI_ENCODE_FLOW_CONVERT_ERROR     GST_FLOW_CUSTOM_ERROR_1
 #define GST_VAAPI_ENCODE_FLOW_CODEC_DATA_ERROR  GST_FLOW_CUSTOM_ERROR_2
 
+typedef struct _GstVaapiEncodeFrameUserData {
+    GstVaapiEncObjUserDataHead head;
+    GstBuffer *vaapi_buf;
+} GstVaapiEncodeFrameUserData;
+
 GST_DEBUG_CATEGORY_STATIC (gst_vaapiencode_debug);
 #define GST_CAT_DEFAULT gst_vaapiencode_debug
 
@@ -386,6 +391,7 @@ gst_vaapiencode_update_sink_caps(
     GstVideoCodecState *state)
 {
     gst_caps_replace(&encode->sinkpad_caps, state->caps);
+    encode->sink_video_info = state->info;
     return TRUE;
 }
 
@@ -497,6 +503,8 @@ gst_vaapiencode_ensure_video_buffer_pool(GstVaapiEncode *encode, GstCaps *caps)
         0, 0);
     gst_buffer_pool_config_add_option(config,
         GST_BUFFER_POOL_OPTION_VAAPI_VIDEO_META);
+    gst_buffer_pool_config_add_option(config,
+        GST_BUFFER_POOL_OPTION_VIDEO_META);
     if (!gst_buffer_pool_set_config(pool, config))
         goto error_pool_config;
     encode->video_buffer_pool = pool;
@@ -578,6 +586,113 @@ gst_vaapiencode_reset(
 }
 
 static GstFlowReturn
+gst_vaapiencode_get_vaapi_buffer(
+    GstVaapiEncode *encode,
+    GstBuffer *src_buffer,
+    GstBuffer **out_buffer_ptr
+)
+{
+    GstVaapiVideoMeta *meta;
+    GstBuffer *out_buffer;
+    GstVideoFrame src_frame, out_frame;
+    GstFlowReturn ret;
+
+    *out_buffer_ptr = NULL;
+    meta = gst_buffer_get_vaapi_video_meta(src_buffer);
+    if (meta) {
+        *out_buffer_ptr = gst_buffer_ref(src_buffer);
+        return GST_FLOW_OK;
+    }
+
+    if (!GST_VIDEO_INFO_IS_YUV(&encode->sink_video_info)) {
+        GST_ERROR("unsupported video buffer");
+        return GST_FLOW_EOS;
+    }
+
+    GST_DEBUG("buffer %p not from our pool, copying", src_buffer);
+
+    if (!encode->video_buffer_pool)
+        goto error_no_pool;
+
+    if (!gst_buffer_pool_set_active(encode->video_buffer_pool, TRUE))
+        goto error_activate_pool;
+
+    ret = gst_buffer_pool_acquire_buffer(encode->video_buffer_pool,
+          &out_buffer, NULL);
+    if (ret != GST_FLOW_OK)
+        goto error_create_buffer;
+
+    if (!gst_video_frame_map(&src_frame, &encode->sink_video_info, src_buffer,
+            GST_MAP_READ))
+        goto error_map_src_buffer;
+
+    if (!gst_video_frame_map(&out_frame, &encode->sink_video_info, out_buffer,
+            GST_MAP_WRITE))
+        goto error_map_dst_buffer;
+
+    gst_video_frame_copy(&out_frame, &src_frame);
+    gst_video_frame_unmap(&out_frame);
+    gst_video_frame_unmap(&src_frame);
+
+    *out_buffer_ptr = out_buffer;
+    return GST_FLOW_OK;
+
+    /* ERRORS */
+error_no_pool:
+    GST_ERROR("no buffer pool was negotiated");
+    return GST_FLOW_ERROR;
+error_activate_pool:
+    GST_ERROR("failed to activate buffer pool");
+    return GST_FLOW_ERROR;
+error_create_buffer:
+    GST_WARNING("failed to create image. Skipping this frame");
+    return GST_FLOW_OK;
+error_map_dst_buffer:
+    gst_video_frame_unmap(&src_frame);
+    // fall-through
+error_map_src_buffer:
+    GST_WARNING("failed to map buffer. Skipping this frame");
+    gst_buffer_unref(out_buffer);
+    return GST_FLOW_OK;
+}
+
+static inline gpointer
+_create_user_data(GstBuffer *buf)
+{
+    GstVaapiVideoMeta *meta;
+    GstVaapiSurface *surface;
+    GstVaapiEncodeFrameUserData *user_data;
+
+    meta = gst_buffer_get_vaapi_video_meta(buf);
+    if (!meta) {
+        GST_DEBUG("convert to vaapi buffer failed");
+        return NULL;
+    }
+    surface = gst_vaapi_video_meta_get_surface(meta);
+    if (!surface) {
+        GST_DEBUG("vaapi_meta of codec frame doesn't have vaapisurfaceproxy");
+        return NULL;
+    }
+
+    user_data = g_slice_new0(GstVaapiEncodeFrameUserData);
+    user_data->head.surface = surface;
+    user_data->vaapi_buf = gst_buffer_ref(buf);
+    return user_data;
+}
+
+static void
+_destroy_user_data(gpointer data)
+{
+    GstVaapiEncodeFrameUserData *user_data = (GstVaapiEncodeFrameUserData*)data;
+
+    g_assert(data);
+    if (!user_data)
+        return;
+    gst_buffer_replace(&user_data->vaapi_buf, NULL);
+    g_slice_free(GstVaapiEncodeFrameUserData, user_data);
+}
+
+static GstFlowReturn
 gst_vaapiencode_handle_frame (
     GstVideoEncoder *base,
     GstVideoCodecFrame *frame
@@ -586,23 +701,23 @@ gst_vaapiencode_handle_frame (
     GstVaapiEncode * const encode = GST_VAAPIENCODE(base);
     GstFlowReturn ret = GST_FLOW_OK;
     GstVaapiEncoderStatus encoder_ret = GST_VAAPI_ENCODER_STATUS_SUCCESS;
-    GstVaapiVideoMeta *meta;
-    GstVaapiSurface *surface;
+    GstBuffer *vaapi_buf = NULL;
+    gpointer user_data;
 
     g_assert(encode && encode->encoder);
     g_assert(frame && frame->input_buffer);
 
-    meta = gst_buffer_get_vaapi_video_meta(frame->input_buffer);
-    GST_VAAPI_ENCODER_CHECK_STATUS(meta,
-        GST_FLOW_ERROR,
-        "codec frame doesn't have vaapi video meta");
+    ret = gst_vaapiencode_get_vaapi_buffer(encode, frame->input_buffer, &vaapi_buf);
+    GST_VAAPI_ENCODER_CHECK_STATUS(ret == GST_FLOW_OK,
+        ret,
+        "convert to vaapi buffer failed");
 
-    surface = gst_vaapi_video_meta_get_surface(meta);
-    GST_VAAPI_ENCODER_CHECK_STATUS(surface,
-        GST_FLOW_ERROR,
-        "vaapi_meta of codec frame doesn't have vaapisurfaceproxy");
+    user_data = _create_user_data(vaapi_buf);
+    GST_VAAPI_ENCODER_CHECK_STATUS(user_data,
+        ret,
+        "create frame user data failed");
 
-    gst_video_codec_frame_set_user_data(frame, surface, NULL);
+    gst_video_codec_frame_set_user_data(frame, user_data, _destroy_user_data);
 
     GST_VIDEO_ENCODER_STREAM_UNLOCK (encode);
     /*encoding frames*/
@@ -616,6 +731,7 @@ gst_vaapiencode_handle_frame (
 
 end:
     gst_video_codec_frame_unref(frame);
+    gst_buffer_replace(&vaapi_buf, NULL);
     return ret;
 }
 
@@ -741,6 +857,7 @@ gst_vaapiencode_init(GstVaapiEncode *encode)
   encode->sinkpad = GST_VIDEO_ENCODER_SINK_PAD(encode);
   encode->sinkpad_query = GST_PAD_QUERYFUNC(encode->sinkpad);
   gst_pad_set_query_function(encode->sinkpad, gst_vaapiencode_query);
+  gst_video_info_init(&encode->sink_video_info);
 
   /* src pad */
   encode->srcpad = GST_VIDEO_ENCODER_SRC_PAD(encode);

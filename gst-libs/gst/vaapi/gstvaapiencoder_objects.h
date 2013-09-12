@@ -280,6 +280,10 @@ typedef enum {
 #define GST_VAAPI_ENC_PICTURE_GET_FRAME(picture) \
     (picture)->frame
 
+typedef struct _GstVaapiEncObjUserDataHead {
+    GstVaapiSurface *surface;
+} GstVaapiEncObjUserDataHead;
+
 /**
  * GstVaapiEncPicture:
  *

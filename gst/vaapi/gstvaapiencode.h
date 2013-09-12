@@ -61,6 +61,7 @@ struct _GstVaapiEncode {
     GstPad             *sinkpad;
     GstCaps            *sinkpad_caps;
     GstPadQueryFunction sinkpad_query;
+    GstVideoInfo        sink_video_info;
 
     GstPad             *srcpad;
     GstCaps            *srcpad_caps;

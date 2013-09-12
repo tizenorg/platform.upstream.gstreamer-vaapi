@@ -496,17 +496,16 @@ gst_vaapi_enc_picture_create(
     GstVideoCodecFrame *frame;
     GstBuffer *buf;
     GstVaapiSurface *surface;
+    GstVaapiEncObjUserDataHead *user_data;
     gboolean success;
 
     g_assert(args->data);
     g_return_val_if_fail(args->data, FALSE);
 
     frame = (GstVideoCodecFrame*)args->data;
-    buf = frame->input_buffer;
-    g_return_val_if_fail(buf, FALSE);
-
-    surface = gst_video_codec_frame_get_user_data(frame);
-    g_assert(surface);
+    user_data = gst_video_codec_frame_get_user_data(frame);
+    g_assert(user_data);
+    surface = user_data->surface;
     g_return_val_if_fail(surface, FALSE);
 
     picture->sequence = NULL;
