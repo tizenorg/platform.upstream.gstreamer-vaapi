@@ -87,7 +87,8 @@ ensure_sampling_desity(GstVaapiEncoderMpeg2 *encoder)
     if (mpeg2_upper_samplings[p][l].samplers_per_line <  GST_VAAPI_ENCODER_WIDTH(encoder)  ||
         mpeg2_upper_samplings[p][l].line_per_frame <  GST_VAAPI_ENCODER_HEIGHT(encoder)  ||
         mpeg2_upper_samplings[p][l].frame_per_sec < fps ) {
-        GST_ERROR("acording to slected profile and level the max resolution is %dx%d@%f",
+        GST_ERROR("acording to slected profile(%d) and level(%d) the max resolution is %dx%d@%d",
+             p,l,
              mpeg2_upper_samplings[p][l].samplers_per_line,
              mpeg2_upper_samplings[p][l].line_per_frame,
              mpeg2_upper_samplings[p][l].frame_per_sec);
@@ -107,8 +108,6 @@ ensure_public_attributes(GstVaapiEncoderMpeg2 *encoder)
         return FALSE;
     }
 
-    if (!ensure_sampling_desity(encoder))
-        return FALSE;
 
     if (encoder->ip_period > encoder->intra_period) {
         encoder->ip_period = encoder->intra_period - 1;
@@ -117,7 +116,12 @@ ensure_public_attributes(GstVaapiEncoderMpeg2 *encoder)
     if (encoder->profile == GST_ENCODER_MPEG2_PROFILE_SIMPLE) {
         /* no  b frames*/
         encoder->ip_period = 0;
+        /* only main level is defined in mpeg2*/
+        encoder->level = GST_VAAPI_ENCODER_MPEG2_LEVEL_MAIN;
     }
+
+    if (!ensure_sampling_desity(encoder))
+        return FALSE;
 
 
     /* default compress ratio 1: (4*8*1.5) */
