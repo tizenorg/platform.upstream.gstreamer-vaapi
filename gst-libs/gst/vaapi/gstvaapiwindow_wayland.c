@@ -536,6 +536,7 @@ gst_vaapi_window_wayland_render(
     }
 
     frame->callback = wl_surface_frame(priv->surface);
+    wl_proxy_set_queue((struct wl_proxy *)frame->callback, priv->event_queue);
     wl_callback_add_listener(frame->callback, &frame_callback_listener, frame);
     wl_buffer_add_listener(buffer, &wl_buf_listener, NULL);
     // XXXX, it is not ok to use internal event_queue here,
