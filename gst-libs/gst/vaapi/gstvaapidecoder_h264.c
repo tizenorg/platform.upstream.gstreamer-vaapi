@@ -844,6 +844,8 @@ h264_get_profile(GstH264SPS *sps)
         profile = GST_VAAPI_PROFILE_H264_MAIN;
         break;
     case GST_H264_PROFILE_HIGH:
+    case GST_H264_PROFILE_MULTIVIEW_HIGH:
+    case GST_H264_PROFILE_STEREO_HIGH:
         profile = GST_VAAPI_PROFILE_H264_HIGH;
         break;
     }
