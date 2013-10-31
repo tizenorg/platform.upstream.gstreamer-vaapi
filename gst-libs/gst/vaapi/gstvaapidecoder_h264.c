@@ -70,6 +70,7 @@ struct _GstVaapiParserInfoH264 {
         GstH264PPS      pps;
         GstH264SliceHdr slice_hdr;
     }                   data;
+    gboolean is_mvc_nal;
 };
 
 static inline const GstVaapiMiniObjectClass *
@@ -395,6 +396,7 @@ struct _GstVaapiDecoderH264Private {
     GstH264NalParser           *parser;
     GstVaapiPictureH264        *current_picture;
     GstVaapiParserInfoH264     *prev_slice_pi;
+    GstVaapiParserInfoH264     *prev_prefix_pi;
     GstVaapiFrameStore         *prev_frame;
     GstVaapiDecPicBufLayer      dpb_layers[MAX_VIEW_NUM];
     GstVaapiDecPicBufLayer*     current_dpb_layer;
@@ -821,6 +823,7 @@ gst_vaapi_decoder_h264_close(GstVaapiDecoderH264 *decoder)
 
     gst_vaapi_picture_replace(&priv->current_picture, NULL);
     gst_vaapi_parser_info_h264_replace(&priv->prev_slice_pi, NULL);
+    gst_vaapi_parser_info_h264_replace(&priv->prev_prefix_pi, NULL);
 
     dpb_clear(decoder);
 
@@ -1243,6 +1246,37 @@ parse_slice(GstVaapiDecoderH264 *decoder, GstVaapiDecoderUnit *unit)
         slice_hdr, TRUE, TRUE);
     if (result != GST_H264_PARSER_OK)
         return get_status(result);
+
+    return GST_VAAPI_DECODER_STATUS_SUCCESS;
+}
+
+static GstVaapiDecoderStatus
+mvc_info_update(GstVaapiDecoderH264 *decoder,
+                GstVaapiParserInfoH264 * parser_info,
+                guint* flags)
+{
+    GstVaapiDecoderH264Private * const priv = &decoder->priv;
+    GstVaapiParserInfoH264 * pi = parser_info;
+
+    pi->is_mvc_nal = FALSE;
+
+    if (pi->nalu.type == GST_H264_NAL_SLICE_EXT) {
+        pi->is_mvc_nal = TRUE;
+        return GST_VAAPI_DECODER_STATUS_SUCCESS;
+    }
+
+    if (priv->prev_prefix_pi) {
+       if (pi->nalu.type == GST_H264_NAL_SLICE ||
+           pi->nalu.type == GST_H264_NAL_SLICE_IDR) {
+             memcpy(&pi->nalu.extension.mvc,
+                    &priv->prev_prefix_pi->nalu.extension.mvc,
+                    sizeof(GstH264NalUnitExtensionMVC));
+          pi->is_mvc_nal = TRUE;
+       } else {
+          (*flags) |= GST_VAAPI_DECODER_UNIT_FLAG_SKIP;
+          pi->is_mvc_nal = FALSE;
+       }
+    }
 
     return GST_VAAPI_DECODER_STATUS_SUCCESS;
 }
@@ -3016,7 +3050,6 @@ mvc_get_VOIdx(GstH264SPSExtMVC *mvc, guint16 view_id)
         VOIdx = i;
         break;
    }
-
    return VOIdx;
 }
 
@@ -3036,17 +3069,18 @@ decode_picture(GstVaapiDecoderH264 *decoder, GstVaapiDecoderUnit *unit)
     if (status != GST_VAAPI_DECODER_STATUS_SUCCESS)
         return status;
 
-    if (GST_H264_IS_MVC_NALU(nalu)) {
-        gint16 iVOIdx;
-        GstH264NalUnitExtensionMVC *const nal_ext_mvc = &nalu->extension.mvc;
-        GstH264SPSExtMVC * const sps_ext_mvc = &sps->extension.mvc;
+    if (pi->is_mvc_nal) {
+        GstH264NalUnitExtensionMVC * nalu_ext_mvc = &pi->nalu.extension.mvc;
 
-        priv->current_view_id = nal_ext_mvc->view_id;
-        priv->anchor_pic_flag = nal_ext_mvc->anchor_pic_flag;
-        iVOIdx = mvc_get_VOIdx(sps_ext_mvc, priv->current_view_id);
-        g_assert(iVOIdx >= 0);
-        priv->iVOIdx = iVOIdx;
-        priv->current_dpb_layer = &priv->dpb_layers[iVOIdx];
+        priv->current_view_id = nalu_ext_mvc->view_id;
+        priv->anchor_pic_flag = nalu_ext_mvc->anchor_pic_flag;
+
+        if (sps->extension_type == GST_H264_NAL_EXTENSION_MVC)
+            priv->iVOIdx = mvc_get_VOIdx(&sps->extension.mvc, priv->current_view_id);
+	else
+	    priv->iVOIdx = 0;
+
+        priv->current_dpb_layer = &priv->dpb_layers[priv->iVOIdx];
     } else {
         priv->current_view_id       = 0;
         priv->iVOIdx                = 0;
@@ -3416,6 +3450,7 @@ ensure_decoder(GstVaapiDecoderH264 *decoder)
     return GST_VAAPI_DECODER_STATUS_SUCCESS;
 }
 
+
 static GstVaapiDecoderStatus
 gst_vaapi_decoder_h264_parse(GstVaapiDecoder *base_decoder,
     GstAdapter *adapter, gboolean at_eos, GstVaapiDecoderUnit *unit)
@@ -3537,6 +3572,7 @@ gst_vaapi_decoder_h264_parse(GstVaapiDecoder *base_decoder,
         return status;
 
     flags = 0;
+
     switch (pi->nalu.type) {
     case GST_H264_NAL_AU_DELIMITER:
         flags |= GST_VAAPI_DECODER_UNIT_FLAG_FRAME_START;
@@ -3562,9 +3598,18 @@ gst_vaapi_decoder_h264_parse(GstVaapiDecoder *base_decoder,
     case GST_H264_NAL_SLICE_EXT:
     case GST_H264_NAL_SLICE:
         flags |= GST_VAAPI_DECODER_UNIT_FLAG_SLICE;
+
+        if (priv->is_mvc)
+            mvc_info_update(decoder, pi, &flags);
+
         if (is_new_picture(pi, priv->prev_slice_pi))
             flags |= GST_VAAPI_DECODER_UNIT_FLAG_FRAME_START;
+
         gst_vaapi_parser_info_h264_replace(&priv->prev_slice_pi, pi);
+        break;
+    case GST_H264_NAL_PREFIX_UNIT:
+        gst_vaapi_parser_info_h264_replace(&priv->prev_prefix_pi, pi);
+        flags |= GST_VAAPI_DECODER_UNIT_FLAG_SKIP;
         break;
     default:
         if (pi->nalu.type >= 14 && pi->nalu.type <= 18)
