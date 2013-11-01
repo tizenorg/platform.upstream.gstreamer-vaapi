@@ -630,6 +630,7 @@ get_source_buffer(GstVaapiPostproc *postproc, GstBuffer *inbuf)
 {
     GstVaapiVideoMeta *meta;
     GstBuffer *outbuf;
+    GstVideoFrame src_frame, out_frame;
 
     meta = gst_buffer_get_vaapi_video_meta(inbuf);
     if (meta)
@@ -637,10 +638,50 @@ get_source_buffer(GstVaapiPostproc *postproc, GstBuffer *inbuf)
 
 #if GST_CHECK_VERSION(1,0,0)
     outbuf = NULL;
-    goto error_invalid_buffer;
+    if(!postproc->is_raw_yuv)
+        goto error_invalid_buffer;
+
+    if (!postproc->sinkpad_buffer_pool)
+        goto error_no_pool;
+
+    if (!gst_buffer_pool_set_active(postproc->sinkpad_buffer_pool, TRUE))
+        goto error_active_pool;
+
+    if (gst_buffer_pool_acquire_buffer(postproc->sinkpad_buffer_pool,
+            &outbuf, NULL) != GST_FLOW_OK)
+        goto error_create_buffer;
+
+    if (!gst_video_frame_map(&src_frame, &postproc->sinkpad_info, inbuf,
+            GST_MAP_READ))
+        goto error_copy_buffer;
+
+    if (!gst_video_frame_map(&out_frame, &postproc->sinkpad_info, outbuf,
+            GST_MAP_WRITE))
+        goto error_copy_buffer;
+
+    if (!gst_video_frame_copy(&out_frame, &src_frame))
+        goto error_copy_buffer;
+
+    gst_video_frame_unmap(&out_frame);
+    gst_video_frame_unmap(&src_frame);
+
+    GST_BUFFER_TIMESTAMP(outbuf) = GST_BUFFER_TIMESTAMP(inbuf);
+    GST_BUFFER_DTS(outbuf) = GST_BUFFER_DTS(inbuf);
+    GST_BUFFER_DURATION(outbuf)  = GST_BUFFER_DURATION(inbuf);
+
     return outbuf;
 
     /* ERRORS */
+error_no_pool:
+    {
+        GST_ERROR("no buffer pool was negotiated");
+        return NULL;
+    }
+error_active_pool:
+    {
+        GST_ERROR("failed to activate buffer pool");
+        return NULL;
+    }
 error_invalid_buffer:
     {
         GST_ERROR("failed to validate source buffer");
@@ -656,6 +697,7 @@ error_invalid_buffer:
     gst_buffer_copy_metadata(outbuf, inbuf,
         GST_BUFFER_COPY_FLAGS | GST_BUFFER_COPY_TIMESTAMPS);
     return outbuf;
+#endif
 
     /* ERRORS */
 error_create_buffer:
@@ -669,7 +711,7 @@ error_copy_buffer:
         gst_buffer_unref(outbuf);
         return NULL;
     }
-#endif
+
 }
 
 static GstFlowReturn
