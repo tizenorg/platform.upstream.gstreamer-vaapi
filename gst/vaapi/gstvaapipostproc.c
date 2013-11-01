@@ -521,13 +521,14 @@ gst_vaapipostproc_transform_caps_impl(GstBaseTransform *trans,
     GstCaps *out_caps;
     gint fps_n, fps_d, par_n, par_d;
 
+    /* Generate the allowed set of caps on the sink pad */
+    if (!ensure_allowed_caps(postproc))
+        return NULL;
+
     if (!gst_caps_is_fixed(caps)) {
         if (direction == GST_PAD_SINK)
             return gst_caps_from_string(gst_vaapipostproc_src_caps_str);
 
-        /* Generate the allowed set of caps on the sink pad */
-        if (!ensure_allowed_caps(postproc))
-            return NULL;
         return gst_caps_ref(postproc->allowed_caps);
     }
 
@@ -570,20 +571,30 @@ gst_vaapipostproc_transform_caps_impl(GstBaseTransform *trans,
     else {
         /* XXX: gst_video_info_to_caps() from GStreamer 0.10 does not
            reconstruct suitable caps for "encoded" video formats */
-        out_caps = gst_caps_from_string(GST_VAAPI_SURFACE_CAPS_NAME);
-        if (!out_caps)
-            return NULL;
+        if (direction == GST_PAD_SINK) {
+            out_caps = gst_caps_from_string(GST_VAAPI_SURFACE_CAPS_NAME);
+            if (!out_caps)
+                return NULL;
 
-        par_n = GST_VIDEO_INFO_PAR_N(&vi);
-        par_d = GST_VIDEO_INFO_PAR_D(&vi);
-        gst_caps_set_simple(out_caps,
-            "type", G_TYPE_STRING, "vaapi",
-            "opengl", G_TYPE_BOOLEAN, USE_GLX,
-            "width", G_TYPE_INT, GST_VIDEO_INFO_WIDTH(&vi),
-            "height", G_TYPE_INT, GST_VIDEO_INFO_HEIGHT(&vi),
-            "framerate", GST_TYPE_FRACTION, fps_n, fps_d,
-            "pixel-aspect-ratio", GST_TYPE_FRACTION, par_n, par_d,
-            NULL);
+            par_n = GST_VIDEO_INFO_PAR_N(&vi);
+            par_d = GST_VIDEO_INFO_PAR_D(&vi);
+
+            gst_caps_set_simple(out_caps,
+                "type", G_TYPE_STRING, "vaapi",
+                "opengl", G_TYPE_BOOLEAN, USE_GLX,
+                "width", G_TYPE_INT, GST_VIDEO_INFO_WIDTH(&vi),
+                "height", G_TYPE_INT, GST_VIDEO_INFO_HEIGHT(&vi),
+                "framerate", GST_TYPE_FRACTION, fps_n, fps_d,
+                "pixel-aspect-ratio", GST_TYPE_FRACTION, par_n, par_d,
+                NULL);
+        } else {
+            out_caps = gst_caps_copy(postproc->allowed_caps);
+            gst_caps_set_simple(out_caps,
+                "width", G_TYPE_INT, GST_VIDEO_INFO_WIDTH(&vi),
+                "height", G_TYPE_INT, GST_VIDEO_INFO_HEIGHT(&vi),
+                "framerate", GST_TYPE_FRACTION, fps_n, fps_d,
+                NULL);
+        }
     }
 
     gst_caps_set_interlaced(out_caps, &vi);
