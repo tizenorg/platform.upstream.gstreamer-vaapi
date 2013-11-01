@@ -89,8 +89,19 @@ gst_vaapi_parser_info_h264_class(void)
 static inline GstVaapiParserInfoH264 *
 gst_vaapi_parser_info_h264_new(void)
 {
-    return (GstVaapiParserInfoH264 *)
+    GstVaapiParserInfoH264 *parser_info;
+
+    parser_info = (GstVaapiParserInfoH264 *)
         gst_vaapi_mini_object_new(gst_vaapi_parser_info_h264_class());
+
+    if (!parser_info)
+        return NULL;
+
+    memset(&parser_info->nalu, 0, sizeof(GstH264NalUnit));
+    memset(&parser_info->data, 0, sizeof(parser_info->data));
+    parser_info->is_mvc_nal = FALSE;
+
+    return parser_info;
 }
 
 #define gst_vaapi_parser_info_h264_ref(pi) \
