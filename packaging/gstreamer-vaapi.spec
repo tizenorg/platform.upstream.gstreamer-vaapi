@@ -12,7 +12,6 @@ Source2002: videoutils.tar.bz2
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(gstreamer-1.0)
-BuildRequires:  pkgconfig(gstreamer-basevideo-1.0)
 BuildRequires:  pkgconfig(gstreamer-plugins-base-1.0)
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  which
@@ -46,7 +45,7 @@ developing applications that use %{name}.
 %build
 cp %{SOURCE1001} .
 
-%autogen --with-gstreamer-api=1.0 --enable-encoders
+%autogen --with-gstreamer-api=1.2 
 make %{?_smp_mflags}
 
 %install
@@ -65,7 +64,7 @@ make %{?_smp_mflags}
 %files devel
 %manifest %{name}.manifest
 %license COPYING.LIB
-%dir %{_includedir}/gstreamer-1.0/gst/vaapi
-%{_includedir}/gstreamer-1.0/gst/vaapi/*.h
+%dir %{_includedir}/gstreamer-1.2/gst/vaapi
+%{_includedir}/gstreamer-1.2/gst/vaapi/*.h
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/%{name}*.pc
