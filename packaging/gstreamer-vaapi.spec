@@ -1,5 +1,5 @@
 Name:       gstreamer-vaapi
-Version:    0.5.6
+Version:    0.5.7pre
 Release:    0
 Summary:    VA-API based plugins for GStreamer and helper libraries
 Group:      Multimedia/Multimedia Framework
