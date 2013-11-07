@@ -27,7 +27,7 @@
 #include "gst/vaapi/gstvaapiencoder_priv.h"
 #include "gst/vaapi/gstvaapiencoder_objects.h"
 #include <gst/vaapi/gstvaapidisplay.h>
-#include <gst/video/videocontext.h>
+#include "gstvaapivideocontext.h"
 #include "gstvaapipluginutil.h"
 #include "gstvaapivideobufferpool.h"
 #include "gstvaapivideomemory.h"
@@ -76,6 +76,20 @@ gst_vaapiencode_implements_iface_init(GstImplementsInterfaceClass *iface)
 #endif
 
 /* context(display) interface */
+#if GST_CHECK_VERSION(1,1,0)
+static void
+gst_vaapiencode_set_context(GstElement *element, GstContext *context)
+{
+    GstVaapiEncode *encode = GST_VAAPIENCODE (element);
+    GstVaapiDisplay *display = NULL;
+
+    if (gst_vaapi_video_context_get_display(context, &display)) {
+        GST_INFO_OBJECT(element, "set display %p", display);
+        gst_vaapi_display_replace(&encode->display, display);
+    }
+}
+
+#else
 static void
 gst_vaapiencode_set_video_context(
     GstVideoContext *context,
@@ -93,6 +107,7 @@ gst_video_context_interface_init(GstVideoContextInterface *iface)
 {
     iface->set_context = gst_vaapiencode_set_video_context;
 }
+#endif
 
 G_DEFINE_TYPE_WITH_CODE(
     GstVaapiEncode,
@@ -102,8 +117,11 @@ G_DEFINE_TYPE_WITH_CODE(
     G_IMPLEMENT_INTERFACE(GST_TYPE_IMPLEMENTS_INTERFACE,
                           gst_vaapiencode_implements_iface_init);
 #endif
+#if !GST_CHECK_VERSION(1,1,0)
     G_IMPLEMENT_INTERFACE(GST_TYPE_VIDEO_CONTEXT,
-                          gst_video_context_interface_init))
+                          gst_video_context_interface_init)
+#endif
+    )
 
 enum {
     PROP_0,
@@ -872,6 +890,7 @@ static void
 gst_vaapiencode_class_init(GstVaapiEncodeClass *klass)
 {
     GObjectClass * const object_class = G_OBJECT_CLASS(klass);
+    GstElementClass * const element_class = GST_ELEMENT_CLASS(klass);
     GstVideoEncoderClass * const venc_class = GST_VIDEO_ENCODER_CLASS(klass);
 
     object_class->finalize      = gst_vaapiencode_finalize;
@@ -894,6 +913,10 @@ gst_vaapiencode_class_init(GstVaapiEncodeClass *klass)
     //venc_class->decide_allocation = GST_DEBUG_FUNCPTR(gst_vaapiencode_decide_allocation);
     venc_class->propose_allocation = GST_DEBUG_FUNCPTR(gst_vaapiencode_propose_allocation);
     //venc_class->negotiate = GST_DEBUG_FUNCPTR(gst_vaapiencode_negotiate);
+
+#if GST_CHECK_VERSION(1,1,0)
+    element_class->set_context = GST_DEBUG_FUNCPTR(gst_vaapiencode_set_context);
+#endif
 
     /* Registering debug symbols for function pointers */
     GST_DEBUG_REGISTER_FUNCPTR (gst_vaapiencode_get_caps);
