@@ -55,7 +55,6 @@ typedef enum {
   GST_VAAPI_ENCODER_H264_NAL_PPS         = 8
 } GstVaapiEncoderH264NalType;
 
-
 typedef enum {
   SLICE_TYPE_P  = 0,
   SLICE_TYPE_B  = 1,
@@ -82,53 +81,121 @@ typedef enum {
     GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES = 2
 }GstVaapiEncH264ReorderState;
 
-static gboolean
-gst_bit_writer_write_nal_header(
-    GstBitWriter *bitwriter,
-    guint nal_ref_idc,
-    guint nal_unit_type
-);
-
-static gboolean
-gst_bit_writer_write_sps(
-    GstBitWriter *bitwriter,
-    VAEncSequenceParameterBufferH264 *seq,
-    GstVaapiProfile profile
-);
-
-static gboolean
-gst_bit_writer_write_pps(
-    GstBitWriter *bitwriter,
-    VAEncPictureParameterBufferH264 *pic
-);
-
-static void
-init_public_values(GstVaapiEncoderH264* encoder)
+static inline gboolean
+_poc_greater_than(guint poc1, guint poc2, guint max_poc)
 {
-  encoder->profile = 0;
-  encoder->level = 0;
-  encoder->bitrate = 0;
-  encoder->idr_period = 0;
-  encoder->intra_period = 0;
-  encoder->init_qp = -1;
-  encoder->min_qp = -1;
-  encoder->slice_num = 0;
-  encoder->b_frame_num = 0;
+    return (((poc1 - poc2) & (max_poc - 1)) < max_poc/2);
 }
 
-void
-gst_vaapi_encoder_h264_set_avc(
-    GstVaapiEncoderH264* encoder,
-    gboolean is_avc
+static inline guint8
+_get_va_slice_type(GstVaapiPictureType type)
+{
+    switch(type) {
+    case GST_VAAPI_PICTURE_TYPE_I:
+        return 2;
+    case GST_VAAPI_PICTURE_TYPE_P:
+        return 0;
+    case GST_VAAPI_PICTURE_TYPE_B:
+        return 1;
+    default:
+        return -1;
+    }
+    return -1;
+}
+
+static inline gboolean
+_read_sps_attributes(
+    const guint8 *sps_data,
+    guint32 sps_size,
+    guint32 *profile_idc,
+    guint32 *profile_comp,
+    guint32 *level_idc
 )
 {
-  encoder->is_avc = is_avc;
+  g_assert(profile_idc && profile_comp && level_idc);
+  g_assert(sps_size >= 4);
+  if (sps_size < 4) {
+    return FALSE;
+  }
+  /* skip sps_data[0], nal_type */
+  *profile_idc = sps_data[1];
+  *profile_comp = sps_data[2];
+  *level_idc = sps_data[3];
+  return TRUE;
 }
 
-gboolean
-gst_vaapi_encoder_h264_is_avc(GstVaapiEncoderH264* encoder)
+static inline guint
+_get_log2_max_frame_num(guint num)
 {
-  return encoder->is_avc;
+    guint ret = 0;
+
+    while (num) {
+        ++ret;
+        num >>= 1;
+    }
+    if (ret <= 4)
+        ret = 4;
+    else if (ret > 10)
+        ret = 10;
+    /* must greater than 4 */
+    return ret;
+}
+
+static inline void
+_start_code_to_size(guint8 nal_start_code[4], guint32 nal_size)
+{
+    nal_start_code[0] = ((nal_size >> 24)&0xFF);
+    nal_start_code[1] = ((nal_size >> 16)&0xFF);
+    nal_start_code[2] = ((nal_size >> 8)&0xFF);
+    nal_start_code[3] = (nal_size&0xFF);
+}
+
+static inline guint
+_profile_to_value(GstVaapiProfile profile)
+{
+    switch (profile) {
+    case GST_VAAPI_PROFILE_H264_BASELINE:
+        return 66;
+    case GST_VAAPI_PROFILE_H264_MAIN:
+        return 77;
+    case GST_VAAPI_PROFILE_H264_HIGH:
+        return 100;
+    default:
+        break;
+    }
+    return 0;
+}
+
+static inline void
+_check_sps_pps_status(
+    GstVaapiEncoderH264 *encoder,
+    const guint8 *nal,
+    guint32 size
+)
+{
+    guint8 nal_type;
+    gsize ret;
+
+    g_assert(size);
+
+    if (encoder->sps_data && encoder->pps_data)
+        return;
+
+    nal_type = nal[0]&0x1F;
+    switch(nal_type) {
+    case GST_VAAPI_ENCODER_H264_NAL_SPS:
+        encoder->sps_data = gst_buffer_new_allocate(NULL, size, NULL);
+        ret = gst_buffer_fill(encoder->sps_data, 0, nal, size);
+        g_assert(ret == size);
+        break;
+    case GST_VAAPI_ENCODER_H264_NAL_PPS:
+        encoder->pps_data = gst_buffer_new_allocate(NULL, size, NULL);
+        ret = gst_buffer_fill(encoder->pps_data, 0, nal, size);
+        g_assert(ret == size);
+        break;
+    default:
+        break;
+    }
 }
 
 static void
@@ -208,908 +275,6 @@ _set_level(GstVaapiEncoderH264* encoder)
     encoder->level = (dbp_level > mbps_level ? dbp_level : mbps_level);
 }
 
-gboolean
-ensure_public_attributes(GstVaapiEncoderH264 *encoder)
-{
-    guint width_mbs, height_mbs, total_mbs;
-
-    if (!GST_VAAPI_ENCODER_WIDTH(encoder) ||
-        !GST_VAAPI_ENCODER_HEIGHT(encoder) ||
-        !GST_VAAPI_ENCODER_FPS_N(encoder) ||
-        !GST_VAAPI_ENCODER_FPS_D(encoder)) {
-        return FALSE;
-    }
-    if (!encoder->profile)
-        encoder->profile = GST_VAAPI_ENCODER_H264_DEFAULT_PROFILE;
-
-    _set_level(encoder);
-
-    if (!encoder->intra_period)
-        encoder->intra_period = GST_VAAPI_ENCODER_H264_DEFAULT_INTRA_PERIOD;
-    else if (encoder->intra_period > GST_VAAPI_ENCODER_H264_MAX_INTRA_PERIOD)
-        encoder->intra_period = GST_VAAPI_ENCODER_H264_MAX_INTRA_PERIOD;
-
-    if (encoder->idr_period < encoder->intra_period)
-        encoder->idr_period = encoder->intra_period;
-    if (encoder->idr_period > GST_VAAPI_ENCODER_H264_MAX_IDR_PERIOD)
-        encoder->idr_period = GST_VAAPI_ENCODER_H264_MAX_IDR_PERIOD;
-
-    if (-1 == encoder->init_qp)
-        encoder->init_qp = GST_VAAPI_ENCODER_H264_DEFAULT_INIT_QP;
-
-    if (-1 == encoder->min_qp) {
-        if (GST_VAAPI_RATECONTROL_CQP == GST_VAAPI_ENCODER_RATE_CONTROL(encoder))
-            encoder->min_qp = encoder->init_qp;
-        else
-            encoder->min_qp = GST_VAAPI_ENCODER_H264_DEFAULT_MIN_QP;
-    }
-
-    if (encoder->min_qp > encoder->init_qp)
-        encoder->min_qp = encoder->init_qp;
-
-    /* default compress ratio 1: (4*8*1.5) */
-    if (GST_VAAPI_RATECONTROL_CBR == GST_VAAPI_ENCODER_RATE_CONTROL(encoder) ||
-      GST_VAAPI_RATECONTROL_VBR == GST_VAAPI_ENCODER_RATE_CONTROL(encoder) ||
-      GST_VAAPI_RATECONTROL_VBR_CONSTRAINED == GST_VAAPI_ENCODER_RATE_CONTROL(encoder))
-    {
-        if (!encoder->bitrate)
-            encoder->bitrate = GST_VAAPI_ENCODER_WIDTH(encoder) *
-                               GST_VAAPI_ENCODER_HEIGHT(encoder) *
-                               GST_VAAPI_ENCODER_FPS_N(encoder) /
-                               GST_VAAPI_ENCODER_FPS_D(encoder) / 4 / 1024;
-    } else
-        encoder->bitrate = 0;
-
-    if (!encoder->slice_num)
-        encoder->slice_num = GST_VAAPI_ENCODER_H264_DEFAULT_SLICE_NUM;
-
-    width_mbs = (GST_VAAPI_ENCODER_WIDTH(encoder) + 15) / 16;
-    height_mbs = (GST_VAAPI_ENCODER_HEIGHT(encoder) + 15) / 16;
-    total_mbs = width_mbs * height_mbs;
-
-    if (encoder->slice_num > (total_mbs+1)/2)
-        encoder->slice_num = (total_mbs+1)/2;
-    g_assert(encoder->slice_num);
-
-    if (encoder->b_frame_num > (encoder->intra_period + 1)/2)
-        encoder->b_frame_num = (encoder->intra_period + 1)/2;
-
-    if (encoder->b_frame_num > 50)
-        encoder->b_frame_num = 50;
-
-  return TRUE;
-}
-
-static inline const char *
-get_slice_type(H264_SLICE_TYPE type)
-{
-    switch (type) {
-    case SLICE_TYPE_I:
-        return "I";
-    case SLICE_TYPE_P:
-        return "P";
-    case SLICE_TYPE_B:
-        return "B";
-    default:
-        return "Unknown";
-    }
-}
-
-static guint
-_get_log2_max_frame_num(guint num)
-{
-    guint ret = 0;
-
-    while (num) {
-        ++ret;
-        num >>= 1;
-    }
-    if (ret <= 4)
-        ret = 4;
-    else if (ret > 10)
-        ret = 10;
-    /* must greater than 4 */
-    return ret;
-}
-
-static void
-free_reference(GstVaapiEncoderH264 *encoder, GstVaapiEncoderH264Ref*ref)
-{
-    if(!ref)
-        return;
-    if (ref->pic)
-        gst_vaapi_encoder_release_surface(GST_VAAPI_ENCODER(encoder), ref->pic);
-    g_slice_free(GstVaapiEncoderH264Ref, ref);
-}
-
-static inline GstVaapiEncoderH264Ref *
-create_reference(
-    GstVaapiEncoderH264 *encoder,
-    GstVaapiEncPicture *picture,
-    GstVaapiSurfaceProxy *surface)
-{
-    GstVaapiEncoderH264Ref *ref = g_slice_new0(GstVaapiEncoderH264Ref);
-
-    ref->pic = surface;
-    ref->frame_num = picture->frame_num;
-    ref->poc = picture->poc;
-    return ref;
-}
-
-static gboolean
-push_reference(
-    GstVaapiEncoderH264 *encoder,
-    GstVaapiEncPicture *picture,
-    GstVaapiSurfaceProxy *surface
-)
-{
-    GstVaapiEncoderH264Ref *ref;
-
-    if (GST_VAAPI_PICTURE_TYPE_B == picture->type) {
-        gst_vaapi_encoder_release_surface(
-            GST_VAAPI_ENCODER(encoder), surface);
-        return TRUE;
-    }
-    if (GST_VAAPI_ENC_PICTURE_IS_IDR(picture)) {
-        while(!g_queue_is_empty(&encoder->ref_list))
-            free_reference(encoder, g_queue_pop_head(&encoder->ref_list));
-    } else if (g_queue_get_length(&encoder->ref_list) >=
-               encoder->max_ref_num) {
-        free_reference(encoder, g_queue_pop_head(&encoder->ref_list));
-    }
-    ref = create_reference(encoder, picture, surface);
-    g_queue_push_tail(&encoder->ref_list, ref);
-    g_assert(g_queue_get_length(&encoder->ref_list) <= encoder->max_ref_num);
-
-    return TRUE;
-}
-
-static gboolean
-fill_sequence(GstVaapiEncoderH264* encoder, GstVaapiEncSequence *sequence)
-{
-    VAEncSequenceParameterBufferH264 *seq = sequence->param;
-    guint width_in_mbs, height_in_mbs;
-
-    width_in_mbs = (GST_VAAPI_ENCODER_WIDTH(encoder)+15)/16;
-    height_in_mbs = (GST_VAAPI_ENCODER_HEIGHT(encoder)+15)/16;
-
-    memset(seq, 0, sizeof(VAEncSequenceParameterBufferH264));
-    seq->seq_parameter_set_id = 0;
-    seq->level_idc = encoder->level;
-    seq->intra_period = encoder->intra_period;
-    seq->ip_period = 0;           // ?
-    if (encoder->bitrate> 0)
-        seq->bits_per_second = encoder->bitrate * 1024;
-    else
-        seq->bits_per_second = 0;
-
-    seq->max_num_ref_frames = encoder->max_ref_num;
-    seq->picture_width_in_mbs = width_in_mbs;
-    seq->picture_height_in_mbs = height_in_mbs;
-
-    /*sequence field values*/
-    seq->seq_fields.value = 0;
-    //seq_param->seq_fields.bits.chroma_format_idc = 1;
-    seq->seq_fields.bits.frame_mbs_only_flag = 1;
-    seq->seq_fields.bits.mb_adaptive_frame_field_flag = FALSE;
-    seq->seq_fields.bits.seq_scaling_matrix_present_flag = FALSE;
-    /* direct_8x8_inference_flag default false */
-    seq->seq_fields.bits.direct_8x8_inference_flag = FALSE;
-    g_assert(encoder->log2_max_frame_num >=4);
-    seq->seq_fields.bits.log2_max_frame_num_minus4 =
-                                  encoder->log2_max_frame_num - 4;
-    /* picture order count */
-    seq->seq_fields.bits.pic_order_cnt_type = 0;
-    g_assert(encoder->log2_max_pic_order_cnt >=4);
-    seq->seq_fields.bits.log2_max_pic_order_cnt_lsb_minus4 =
-                                encoder->log2_max_pic_order_cnt - 4;
-
-    seq->bit_depth_luma_minus8 = 0;
-    seq->bit_depth_chroma_minus8 = 0;
-
-    /* not used if pic_order_cnt_type == 0 */
-    if (seq->seq_fields.bits.pic_order_cnt_type == 1) {
-        seq->seq_fields.bits.delta_pic_order_always_zero_flag = TRUE;
-        seq->num_ref_frames_in_pic_order_cnt_cycle = 0;
-        seq->offset_for_non_ref_pic = 0;
-        seq->offset_for_top_to_bottom_field = 0;
-        memset(seq->offset_for_ref_frame, 0,
-               sizeof(seq->offset_for_ref_frame));
-    }
-
-    if (height_in_mbs * 16 - GST_VAAPI_ENCODER_HEIGHT(encoder)) {
-        seq->frame_cropping_flag = 1;
-        seq->frame_crop_left_offset = 0;
-        seq->frame_crop_right_offset = 0;
-        seq->frame_crop_top_offset = 0;
-        seq->frame_crop_bottom_offset =
-            ((height_in_mbs * 16 - GST_VAAPI_ENCODER_HEIGHT(encoder))/
-             (2 * (!seq->seq_fields.bits.frame_mbs_only_flag + 1)));
-    }
-
-    /*vui not set*/
-    seq->vui_parameters_present_flag = (encoder->bitrate> 0 ? TRUE : FALSE);
-    if (seq->vui_parameters_present_flag) {
-        seq->vui_fields.bits.aspect_ratio_info_present_flag = FALSE;
-        seq->vui_fields.bits.bitstream_restriction_flag = FALSE;
-        seq->vui_fields.bits.timing_info_present_flag = (encoder->bitrate> 0 ? TRUE : FALSE);
-        if (seq->vui_fields.bits.timing_info_present_flag) {
-            seq->num_units_in_tick = GST_VAAPI_ENCODER_FPS_D(encoder);
-            seq->time_scale = GST_VAAPI_ENCODER_FPS_N(encoder) * 2;
-        }
-    }
-
-    return TRUE;
-}
-
-static gboolean
-fill_picture(
-    GstVaapiEncoderH264* encoder,
-    GstVaapiEncPicture *picture,
-    GstVaapiCodedBuffer *codedbuf,
-    GstVaapiSurfaceProxy *surface
-)
-{
-    VAEncPictureParameterBufferH264 *pic = picture->param;
-    GstVaapiEncoderH264Ref *ref_pic;
-    GList *reflist;
-    guint i;
-
-    memset(pic, 0, sizeof(VAEncPictureParameterBufferH264));
-
-    /* reference list,  */
-    pic->CurrPic.picture_id = GST_VAAPI_SURFACE_PROXY_SURFACE_ID(surface);
-    pic->CurrPic.TopFieldOrderCnt = picture->poc;
-    i = 0;
-    if (picture->type != GST_VAAPI_PICTURE_TYPE_I) {
-        for (reflist = g_queue_peek_head_link(&encoder->ref_list);
-             reflist;
-             reflist = g_list_next(reflist)) {
-            ref_pic = reflist->data;
-            g_assert(ref_pic && ref_pic->pic &&
-               GST_VAAPI_SURFACE_PROXY_SURFACE_ID(ref_pic->pic) != VA_INVALID_ID);
-
-            pic->ReferenceFrames[i].picture_id =
-                GST_VAAPI_SURFACE_PROXY_SURFACE_ID(ref_pic->pic);
-            ++i;
-        }
-        g_assert(i <= 16 && i <= encoder->max_ref_num);
-    }
-    for (; i < 16; ++i) {
-        pic->ReferenceFrames[i].picture_id = VA_INVALID_ID;
-    }
-    pic->coded_buf = codedbuf->buf_id;
-
-    pic->pic_parameter_set_id = 0;
-    pic->seq_parameter_set_id = 0;
-    pic->last_picture = 0; /* means last encoding picture */
-    pic->frame_num = picture->frame_num;
-    pic->pic_init_qp = encoder->init_qp;
-    pic->num_ref_idx_l0_active_minus1 =
-        (encoder->max_reflist0_count ? (encoder->max_reflist0_count - 1) : 0);
-    pic->num_ref_idx_l1_active_minus1 =
-        (encoder->max_reflist1_count ? (encoder->max_reflist1_count - 1) : 0);
-    pic->chroma_qp_index_offset = 0;
-    pic->second_chroma_qp_index_offset = 0;
-
-    /* set picture fields */
-    pic->pic_fields.value = 0;
-    pic->pic_fields.bits.idr_pic_flag = GST_VAAPI_ENC_PICTURE_IS_IDR(picture);
-    pic->pic_fields.bits.reference_pic_flag =
-        (picture->type != GST_VAAPI_PICTURE_TYPE_B);
-    pic->pic_fields.bits.entropy_coding_mode_flag =
-        GST_VAAPI_ENCODER_H264_ENTROPY_MODE_CABAC;
-    pic->pic_fields.bits.weighted_pred_flag = FALSE;
-    pic->pic_fields.bits.weighted_bipred_idc = 0;
-    pic->pic_fields.bits.constrained_intra_pred_flag = 0;
-    pic->pic_fields.bits.transform_8x8_mode_flag =
-        (encoder->profile >= GST_VAAPI_PROFILE_H264_HIGH); /* enable 8x8 */
-    /* enable debloking */
-    pic->pic_fields.bits.deblocking_filter_control_present_flag = TRUE;
-    pic->pic_fields.bits.redundant_pic_cnt_present_flag = FALSE;
-    /* bottom_field_pic_order_in_frame_present_flag */
-    pic->pic_fields.bits.pic_order_present_flag = FALSE;
-    pic->pic_fields.bits.pic_scaling_matrix_present_flag = FALSE;
-
-    return TRUE;
-}
-
-static gboolean
-set_sequence_packed_header(
-    GstVaapiEncoderH264* encoder,
-     GstVaapiEncPicture *picture,
-    GstVaapiEncSequence *sequence
-)
-{
-    GstVaapiEncPackedHeader *packed_seq;
-    GstBitWriter writer;
-    VAEncPackedHeaderParameterBuffer packed_header_param_buffer = { 0 };
-    VAEncSequenceParameterBufferH264 *seq_param = sequence->param;
-    guint32 data_bit_size;
-    guint8 *data;
-
-    gst_bit_writer_init(&writer, 128*8);
-    gst_bit_writer_write_uint32(&writer, 0x00000001); /* start code*/
-    gst_bit_writer_write_nal_header(&writer,
-                GST_VAAPI_ENCODER_H264_NAL_REF_IDC_HIGH,
-                GST_VAAPI_ENCODER_H264_NAL_SPS);
-    gst_bit_writer_write_sps(&writer, seq_param, encoder->profile);
-    g_assert(GST_BIT_WRITER_BIT_SIZE(&writer)%8 == 0);
-    data_bit_size = GST_BIT_WRITER_BIT_SIZE(&writer);
-    data = GST_BIT_WRITER_BUFFER(&writer);
-
-    packed_header_param_buffer.type = VAEncPackedHeaderSequence;
-    packed_header_param_buffer.bit_length = data_bit_size;
-    packed_header_param_buffer.has_emulation_bytes = 0;
-
-    packed_seq = gst_vaapi_enc_packed_header_new(GST_VAAPI_ENCODER(encoder),
-                    &packed_header_param_buffer, sizeof(packed_header_param_buffer),
-                    data, (data_bit_size + 7) / 8);
-    g_assert(packed_seq);
-
-    gst_vaapi_enc_picture_add_packed_header(picture, packed_seq);
-    gst_vaapi_mini_object_replace((GstVaapiMiniObject **)&packed_seq, NULL);
-    gst_bit_writer_clear(&writer, TRUE);
-
-    return TRUE;
-}
-
-static gboolean
-set_picture_packed_header(
-    GstVaapiEncoderH264* encoder,
-    GstVaapiEncPicture *picture
-)
-{
-    GstVaapiEncPackedHeader *packed_pic;
-    GstBitWriter writer;
-    VAEncPackedHeaderParameterBuffer packed_header_param_buffer = { 0 };
-    VAEncPictureParameterBufferH264 *pic_param = picture->param;
-    guint32 data_bit_size;
-    guint8 *data;
-
-    gst_bit_writer_init(&writer, 128*8);
-    gst_bit_writer_write_uint32(&writer, 0x00000001); /* start code*/
-    gst_bit_writer_write_nal_header(&writer,
-        GST_VAAPI_ENCODER_H264_NAL_REF_IDC_HIGH,
-        GST_VAAPI_ENCODER_H264_NAL_PPS);
-    gst_bit_writer_write_pps(&writer, pic_param);
-    g_assert(GST_BIT_WRITER_BIT_SIZE(&writer)%8 == 0);
-    data_bit_size = GST_BIT_WRITER_BIT_SIZE(&writer);
-    data = GST_BIT_WRITER_BUFFER(&writer);
-
-
-    packed_header_param_buffer.type = VAEncPackedHeaderPicture;
-    packed_header_param_buffer.bit_length = data_bit_size;
-    packed_header_param_buffer.has_emulation_bytes = 0;
-
-    packed_pic = gst_vaapi_enc_packed_header_new(GST_VAAPI_ENCODER(encoder),
-                    &packed_header_param_buffer, sizeof(packed_header_param_buffer),
-                    data, (data_bit_size + 7) / 8);
-    g_assert(packed_pic);
-
-    gst_vaapi_enc_picture_add_packed_header(picture, packed_pic);
-    gst_vaapi_mini_object_replace((GstVaapiMiniObject **)&packed_pic, NULL);
-    gst_bit_writer_clear(&writer, TRUE);
-
-    return TRUE;
-}
-
-
-static gboolean
-ensure_sequence(
-    GstVaapiEncoderH264* encoder,
-    GstVaapiEncPicture *picture
-)
-{
-    GstVaapiEncSequence *sequence;
-
-    g_assert(picture);
-    sequence = GST_VAAPI_ENC_SEQUENCE_NEW(H264, encoder);
-    g_assert(sequence);
-    if (!sequence)
-        goto error;
-
-    if (!fill_sequence(encoder,sequence))
-        goto error;
-
-    if (picture->type == GST_VAAPI_PICTURE_TYPE_I &&
-        !set_sequence_packed_header(encoder, picture, sequence))
-        goto error;
-    gst_vaapi_enc_picture_set_sequence(picture, sequence);
-    gst_vaapi_mini_object_replace((GstVaapiMiniObject**)(&sequence), NULL);
-    return TRUE;
-
-error:
-    gst_vaapi_mini_object_replace((GstVaapiMiniObject**)(&sequence), NULL);
-    return FALSE;
-}
-
-static gboolean
-ensure_picture(
-    GstVaapiEncoderH264* encoder,
-    GstVaapiEncPicture *picture,
-    GstVaapiCodedBufferProxy *buf_proxy,
-    GstVaapiSurfaceProxy *surface
-)
-{
-    GstVaapiCodedBuffer *codedbuf = buf_proxy->buffer;
-
-    if (!fill_picture(encoder, picture, codedbuf, surface))
-        return FALSE;
-
-    if (picture->type == GST_VAAPI_PICTURE_TYPE_I &&
-        !set_picture_packed_header(encoder, picture)) {
-        GST_ERROR("set picture packed header failed");
-        return FALSE;
-    }
-
-    return TRUE;
-}
-
-static gboolean
-set_misc_parameters(
-    GstVaapiEncoderH264* encoder,
-    GstVaapiEncPicture *picture
-)
-{
-    GstVaapiEncMiscParam *misc = NULL;
-    VAEncMiscParameterHRD *hrd;
-    VAEncMiscParameterRateControl *rate_control;
-
-    /* add hrd */
-    misc = GST_VAAPI_ENC_MISC_PARAM_NEW(HRD, encoder);
-    g_assert(misc);
-    if (!misc)
-        return FALSE;
-    gst_vaapi_enc_picture_add_misc_buffer(picture, misc);
-    hrd = misc->impl;
-    if (encoder->bitrate > 0) {
-        hrd->initial_buffer_fullness = encoder->bitrate * 1024 * 4;
-        hrd->buffer_size = encoder->bitrate * 1024 * 8;
-    } else {
-        hrd->initial_buffer_fullness = 0;
-        hrd->buffer_size = 0;
-    }
-    gst_vaapi_mini_object_replace((GstVaapiMiniObject**)&misc, NULL);
-
-    /* add ratecontrol */
-    if (GST_VAAPI_ENCODER_RATE_CONTROL(encoder) == GST_VAAPI_RATECONTROL_CBR ||
-        GST_VAAPI_ENCODER_RATE_CONTROL(encoder) == GST_VAAPI_RATECONTROL_VBR) {
-        misc = GST_VAAPI_ENC_MISC_PARAM_NEW(RateControl, encoder);
-        g_assert(misc);
-        if (!misc)
-            return FALSE;
-        gst_vaapi_enc_picture_add_misc_buffer(picture, misc);
-        rate_control = misc->impl;
-        memset(rate_control, 0, sizeof(VAEncMiscParameterRateControl));
-        if (encoder->bitrate)
-            rate_control->bits_per_second =  encoder->bitrate * 1024;
-        else
-            rate_control->bits_per_second = 0;
-        rate_control->target_percentage = 70;
-        rate_control->window_size = 500;
-        rate_control->initial_qp = encoder->init_qp;
-        rate_control->min_qp = encoder->min_qp;
-        rate_control->basic_unit_size = 0;
-        gst_vaapi_mini_object_replace((GstVaapiMiniObject**)&misc, NULL);
-    }
-
-    return TRUE;
-}
-
-static inline gboolean
-_poc_greater_than(guint poc1, guint poc2, guint max_poc)
-{
-    return (((poc1 - poc2) & (max_poc - 1)) < max_poc/2);
-}
-
-static gboolean
-init_ref_lists(
-    GstVaapiEncoderH264* encoder,
-    GstVaapiEncPicture *picture,
-    GstVaapiEncoderH264Ref **reflist_0,
-    guint *reflist_0_count,
-    GstVaapiEncoderH264Ref **reflist_1,
-    guint *reflist_1_count
-)
-{
-    GstVaapiEncoderH264Ref *tmp;
-    GList *iter, *list_0_start = NULL, *list_1_start = NULL;
-    guint max_pic_order_cnt = (1 << encoder->log2_max_pic_order_cnt);
-    guint count;
-
-    *reflist_0_count = 0;
-    *reflist_1_count = 0;
-    if (picture->type == GST_VAAPI_PICTURE_TYPE_I)
-        return TRUE;
-
-    iter = g_queue_peek_tail_link(&encoder->ref_list);
-    for(; iter; iter = g_list_previous(iter)) {
-        tmp = (GstVaapiEncoderH264Ref*)iter->data;
-        g_assert(tmp && tmp->poc != picture->poc);
-        if (_poc_greater_than(picture->poc, tmp->poc, max_pic_order_cnt)) {
-            list_0_start = iter;
-            list_1_start = g_list_next(iter);
-            break;
-        }
-    }
-
-    /* order reflist_0 */
-    g_assert(list_0_start);
-    iter = list_0_start;
-    count = 0;
-    for(; iter; iter = g_list_previous(iter)) {
-        reflist_0[count] = (GstVaapiEncoderH264Ref *)iter->data;
-        ++count;
-    }
-    *reflist_0_count = count;
-
-    if (picture->type != GST_VAAPI_PICTURE_TYPE_B)
-        return TRUE;
-
-    /* order reflist_1 */
-    count = 0;
-    iter = list_1_start;
-    for(; iter; iter = g_list_next(iter)) {
-        reflist_1[count] = (GstVaapiEncoderH264Ref *)iter->data;
-        ++count;
-    }
-    *reflist_1_count = count;
-    return TRUE;
-}
-
-static inline guint8
-get_va_slice_type(GstVaapiPictureType type)
-{
-    switch(type) {
-    case GST_VAAPI_PICTURE_TYPE_I:
-        return 2;
-    case GST_VAAPI_PICTURE_TYPE_P:
-        return 0;
-    case GST_VAAPI_PICTURE_TYPE_B:
-        return 1;
-    default:
-        return -1;
-    }
-    return -1;
-}
-
-static gboolean
-fill_slices(
-    GstVaapiEncoderH264* encoder,
-    GstVaapiEncPicture *picture,
-    GstVaapiEncoderH264Ref **reflist_0,
-    guint reflist_0_count,
-    GstVaapiEncoderH264Ref **reflist_1,
-    guint reflist_1_count
-)
-{
-    VAEncSliceParameterBufferH264 *slice_param;
-    GstVaapiEncSlice *slice;
-    guint width_in_mbs, height_in_mbs;
-    guint slice_of_mbs, slice_mod_mbs, cur_slice_mbs;
-    guint total_mbs;
-    guint last_mb_index;
-    guint i_slice, i_ref;
-
-    g_assert(picture);
-
-    width_in_mbs = (GST_VAAPI_ENCODER_WIDTH(encoder)+15)/16;
-    height_in_mbs = (GST_VAAPI_ENCODER_HEIGHT(encoder)+15)/16;
-    total_mbs = width_in_mbs * height_in_mbs;
-
-    g_assert(encoder->slice_num && encoder->slice_num < total_mbs);
-    slice_of_mbs = total_mbs / encoder->slice_num;
-    slice_mod_mbs = total_mbs % encoder->slice_num;
-    last_mb_index = 0;
-    for (i_slice = 0; i_slice < encoder->slice_num; ++i_slice) {
-        cur_slice_mbs = slice_of_mbs;
-        if (slice_mod_mbs) {
-            ++cur_slice_mbs;
-            --slice_mod_mbs;
-        }
-        slice = GST_VAAPI_ENC_SLICE_NEW(H264, encoder);
-        g_assert(slice && slice->param_id != VA_INVALID_ID);
-        slice_param = slice->param;
-
-        memset (slice_param, 0, sizeof(VAEncSliceParameterBufferH264));
-        slice_param->macroblock_address = last_mb_index;
-        slice_param->num_macroblocks = cur_slice_mbs;
-        slice_param->macroblock_info = VA_INVALID_ID;
-        slice_param->slice_type = get_va_slice_type(picture->type);
-        g_assert(slice_param->slice_type != -1);
-        slice_param->pic_parameter_set_id = 0;
-        slice_param->idr_pic_id = encoder->idr_num;
-        slice_param->pic_order_cnt_lsb = picture->poc;
-
-        /* not used if pic_order_cnt_type = 0 */
-        slice_param->delta_pic_order_cnt_bottom = 0;
-        memset(slice_param->delta_pic_order_cnt,
-               0,
-               sizeof(slice_param->delta_pic_order_cnt));
-
-        /*only works for B frames*/
-        slice_param->direct_spatial_mv_pred_flag = FALSE;
-        /* default equal to picture parameters */
-        slice_param->num_ref_idx_active_override_flag = FALSE;
-        if (picture->type != GST_VAAPI_PICTURE_TYPE_I &&
-            reflist_0_count > 0 )
-            slice_param->num_ref_idx_l0_active_minus1 = reflist_0_count - 1;
-        else
-            slice_param->num_ref_idx_l0_active_minus1 = 0;
-        if (picture->type == GST_VAAPI_PICTURE_TYPE_B &&
-            reflist_1_count > 0)
-            slice_param->num_ref_idx_l1_active_minus1 = reflist_1_count - 1;
-        else
-            slice_param->num_ref_idx_l1_active_minus1 = 0;
-        g_assert(slice_param->num_ref_idx_l0_active_minus1 == 0);
-        g_assert(slice_param->num_ref_idx_l1_active_minus1 == 0);
-
-        i_ref = 0;
-        if (picture->type != GST_VAAPI_PICTURE_TYPE_I) {
-            for (; i_ref < reflist_0_count; ++i_ref) {
-                slice_param->RefPicList0[i_ref].picture_id =
-                    GST_VAAPI_SURFACE_PROXY_SURFACE_ID(reflist_0[i_ref]->pic);
-            }
-            g_assert(i_ref == 1);
-        }
-        for (; i_ref < sizeof(slice_param->RefPicList0)/sizeof(slice_param->RefPicList0[0]);
-              ++i_ref) {
-             slice_param->RefPicList0[i_ref].picture_id = VA_INVALID_SURFACE;
-        }
-
-        i_ref = 0;
-        if (picture->type == GST_VAAPI_PICTURE_TYPE_B) {
-            for (; i_ref < reflist_1_count; ++i_ref) {
-                slice_param->RefPicList1[i_ref].picture_id =
-                    GST_VAAPI_SURFACE_PROXY_SURFACE_ID(reflist_1[i_ref]->pic);
-            }
-            g_assert(i_ref == 1);
-        }
-        for (; i_ref < sizeof(slice_param->RefPicList1)/sizeof(slice_param->RefPicList1[0]);
-              ++i_ref) {
-             slice_param->RefPicList1[i_ref].picture_id = VA_INVALID_SURFACE;
-        }
-
-        /* not used if  pic_param.pic_fields.bits.weighted_pred_flag == FALSE */
-        slice_param->luma_log2_weight_denom = 0;
-        slice_param->chroma_log2_weight_denom = 0;
-        slice_param->luma_weight_l0_flag = FALSE;
-        memset(slice_param->luma_weight_l0, 0, sizeof(slice_param->luma_weight_l0));
-        memset(slice_param->luma_offset_l0, 0, sizeof(slice_param->luma_offset_l0));
-        slice_param->chroma_weight_l0_flag = FALSE;
-        memset(slice_param->chroma_weight_l0, 0, sizeof(slice_param->chroma_weight_l0));
-        memset(slice_param->chroma_offset_l0, 0, sizeof(slice_param->chroma_offset_l0));
-        slice_param->luma_weight_l1_flag = FALSE;
-        memset(slice_param->luma_weight_l1, 0, sizeof(slice_param->luma_weight_l1));
-        memset(slice_param->luma_offset_l1, 0, sizeof(slice_param->luma_offset_l1));
-        slice_param->chroma_weight_l1_flag = FALSE;
-        memset(slice_param->chroma_weight_l1, 0, sizeof(slice_param->chroma_weight_l1));
-        memset(slice_param->chroma_offset_l1, 0, sizeof(slice_param->chroma_offset_l1));
-
-        slice_param->cabac_init_idc = 0;
-        slice_param->slice_qp_delta = encoder->init_qp - encoder->min_qp;
-        if (slice_param->slice_qp_delta > 4)
-          slice_param->slice_qp_delta = 4;
-        slice_param->disable_deblocking_filter_idc = 0;
-        slice_param->slice_alpha_c0_offset_div2 = 2;
-        slice_param->slice_beta_offset_div2 = 2;
-
-        /* set calculation for next slice */
-        last_mb_index += cur_slice_mbs;
-
-        gst_vaapi_enc_picture_add_slice(picture, slice);
-        gst_vaapi_mini_object_replace((GstVaapiMiniObject**)&slice, NULL);
-
-    }
-    g_assert(last_mb_index == total_mbs);
-    return TRUE;
-}
-
-static gboolean
-ensure_slices(
-    GstVaapiEncoderH264* encoder,
-    GstVaapiEncPicture *picture
-)
-{
-    GstVaapiEncoderH264Ref *reflist_0[16];
-    GstVaapiEncoderH264Ref *reflist_1[16];
-    guint reflist_0_count = 0, reflist_1_count = 0;
-
-    g_assert(picture);
-
-    if (picture->type != GST_VAAPI_PICTURE_TYPE_I &&
-        !init_ref_lists(encoder, picture,
-                   reflist_0, &reflist_0_count,
-                   reflist_1, &reflist_1_count)) {
-        GST_ERROR("reference list reorder failed");
-        return FALSE;
-    }
-
-    g_assert(reflist_0_count + reflist_1_count <= encoder->max_ref_num);
-    if (reflist_0_count > encoder->max_reflist0_count)
-        reflist_0_count = encoder->max_reflist0_count;
-    if (reflist_1_count > encoder->max_reflist1_count)
-        reflist_1_count = encoder->max_reflist1_count;
-
-    if (!fill_slices(encoder, picture,
-                     reflist_0, reflist_0_count,
-                     reflist_1, reflist_1_count))
-        return FALSE;
-
-    return TRUE;
-}
-
-static GstVaapiEncoderStatus
-gst_vaapi_encoder_h264_encode(
-    GstVaapiEncoder* base,
-    GstVaapiEncPicture *picture,
-    GstVaapiCodedBufferProxy *codedbuf
-)
-{
-    GstVaapiEncoderH264* encoder = GST_VAAPI_ENCODER_H264_CAST(base);
-    GstVaapiEncoderStatus ret = GST_VAAPI_ENCODER_STATUS_UNKNOWN_ERR;
-    GstVaapiSurfaceProxy *reconstruct = NULL;
-
-    reconstruct = gst_vaapi_encoder_create_surface(base);
-
-    g_assert(GST_VAAPI_SURFACE_PROXY_SURFACE(reconstruct));
-
-    if (!ensure_sequence(encoder, picture))
-        goto error;
-    if (!ensure_picture(encoder, picture, codedbuf, reconstruct))
-        goto error;
-    if (!set_misc_parameters(encoder, picture))
-        goto error;
-    if (!ensure_slices(encoder, picture))
-        goto error;
-    if (!gst_vaapi_enc_picture_encode(picture))
-        goto error;
-
-    if (!push_reference(encoder, picture, reconstruct))
-        goto error;
-
-    return GST_VAAPI_ENCODER_STATUS_SUCCESS;
-error:
-    if (reconstruct)
-        gst_vaapi_encoder_release_surface(
-            GST_VAAPI_ENCODER(encoder), reconstruct);
-    return ret;
-}
-
-static GstVaapiEncoderStatus
-gst_vaapi_encoder_h264_flush(
-    GstVaapiEncoder* base
-)
-{
-    GstVaapiEncoderH264* encoder = GST_VAAPI_ENCODER_H264_CAST(base);
-    GstVaapiEncPicture *pic;
-
-    encoder->frame_index = 0;
-    encoder->cur_frame_num = 0;
-    encoder->cur_present_index = 0;
-    while(!g_queue_is_empty(&encoder->reorder_frame_list)) {
-        pic = (GstVaapiEncPicture*)g_queue_pop_head(&encoder->reorder_frame_list);
-        gst_vaapi_enc_picture_unref(pic);
-    }
-    g_queue_clear(&encoder->reorder_frame_list);
-
-    return GST_VAAPI_ENCODER_STATUS_SUCCESS;
-}
-
-static gboolean
-read_sps_attributes(
-    const guint8 *sps_data,
-    guint32 sps_size,
-    guint32 *profile_idc,
-    guint32 *profile_comp,
-    guint32 *level_idc
-)
-{
-  g_assert(profile_idc && profile_comp && level_idc);
-  g_assert(sps_size >= 4);
-  if (sps_size < 4) {
-    return FALSE;
-  }
-  /* skip sps_data[0], nal_type */
-  *profile_idc = sps_data[1];
-  *profile_comp = sps_data[2];
-  *level_idc = sps_data[3];
-  return TRUE;
-}
-
-
-static GstVaapiEncoderStatus
-gst_vaapi_encoder_h264_get_avcC_codec_data(
-    GstVaapiEncoderH264 *encoder,
-    GstBuffer **buffer
-)
-{
-    GstBuffer *avc_codec;
-    const guint32 configuration_version = 0x01;
-    const guint32 length_size_minus_one = 0x03;
-    guint32 profile, profile_comp, level_idc;
-    GstMapInfo sps_info, pps_info;
-    GstVaapiEncoderStatus ret = GST_VAAPI_ENCODER_STATUS_SUCCESS;
-    GstBitWriter writer;
-
-    g_assert(buffer);
-    if (!encoder->sps_data || !encoder->pps_data)
-        return GST_VAAPI_ENCODER_STATUS_NOT_READY;
-
-    if (!gst_buffer_map(encoder->sps_data, &sps_info, GST_MAP_READ))
-        return GST_VAAPI_ENCODER_STATUS_MEM_ERROR;
-
-    if (FALSE == read_sps_attributes(sps_info.data, sps_info.size,
-                                   &profile, &profile_comp, &level_idc)) {
-        ret = GST_VAAPI_ENCODER_STATUS_UNKNOWN_ERR;
-        goto end;
-    }
-
-    if (!gst_buffer_map(encoder->pps_data, &pps_info, GST_MAP_READ)) {
-        ret = GST_VAAPI_ENCODER_STATUS_MEM_ERROR;
-        goto end;
-    }
-
-    gst_bit_writer_init(&writer, (sps_info.size + pps_info.size + 64)*8);
-    /* codec_data */
-    gst_bit_writer_write_uint8(&writer, configuration_version);
-    gst_bit_writer_write_uint8(&writer, profile);
-    gst_bit_writer_write_uint8(&writer, profile_comp);
-    gst_bit_writer_write_uint8(&writer, level_idc);
-    gst_bit_writer_write_uint_value(&writer, 0x3F, 6); /*111111*/
-    gst_bit_writer_write_uint_value(&writer, length_size_minus_one, 2);
-    gst_bit_writer_write_uint_value(&writer, 0x07, 3); /*111*/
-
-    /* write sps */
-    gst_bit_writer_write_uint_value(&writer, 1, 5);   /* sps count = 1*/
-    g_assert(GST_BIT_WRITER_BIT_SIZE(&writer)%8 == 0);
-    gst_bit_writer_write_uint16(&writer, sps_info.size);
-    gst_bit_writer_write_byte_array(&writer, sps_info.data, sps_info.size);
-
-    /* write pps */
-    gst_bit_writer_write_uint8(&writer, 1); /*pps count = 1*/
-    gst_bit_writer_write_uint16(&writer, pps_info.size);
-    gst_bit_writer_write_byte_array(&writer, pps_info.data, pps_info.size);
-
-    avc_codec = gst_buffer_new_wrapped(GST_BIT_WRITER_BUFFER(&writer),
-                                       GST_BIT_WRITER_BIT_SIZE(&writer)/8);
-    g_assert(avc_codec);
-    if (!avc_codec) {
-        ret = GST_VAAPI_ENCODER_STATUS_MEM_ERROR;
-        goto clear_writer;
-    }
-    *buffer = avc_codec;
-
-    gst_buffer_unmap(encoder->pps_data, &pps_info);
-    gst_bit_writer_clear(&writer, FALSE);
-    ret = GST_VAAPI_ENCODER_STATUS_SUCCESS;
-    goto end;
-
-clear_writer:
-    gst_bit_writer_clear(&writer, TRUE);
-
-end:
-    gst_buffer_unmap(encoder->sps_data, &sps_info);
-
-    return ret;
-}
-
-static GstVaapiEncoderStatus
-gst_vaapi_encoder_h264_get_codec_data(
-    GstVaapiEncoder* base,
-    GstBuffer **buffer)
-{
-    GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264_CAST(base);
-
-    *buffer = NULL;
-
-    if (!encoder->is_avc)
-        return GST_VAAPI_ENCODER_STATUS_SUCCESS;
-
-    return gst_vaapi_encoder_h264_get_avcC_codec_data(encoder, buffer);
-}
-
 static inline void
 _reset_gop_start(GstVaapiEncoderH264 *encoder)
 {
@@ -1186,217 +351,7 @@ _set_key_frame(
 
 }
 
-static GstVaapiEncoderStatus
-gst_vaapi_encoder_h264_reordering(
-    GstVaapiEncoder* base,
-    GstVideoCodecFrame *frame,
-    gboolean flush,
-    GstVaapiEncPicture **output
-)
-{
-    GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264(base);
-    GstVaapiEncPicture *picture;
-    gboolean is_idr = FALSE;
-
-    *output = NULL;
-
-    if (!frame) {
-        if (encoder->reorder_state != GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES)
-            return GST_VAAPI_ENCODER_STATUS_FRAME_NOT_READY;
-
-        /* reorder_state = GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES
-           dump B frames from queue, sometime, there may also have P frame or I frame */
-        g_assert(encoder->b_frame_num > 0);
-        g_return_val_if_fail(!g_queue_is_empty(&encoder->reorder_frame_list),
-                             GST_VAAPI_ENCODER_STATUS_UNKNOWN_ERR);
-        picture = g_queue_pop_head(&encoder->reorder_frame_list);
-        g_assert(picture);
-        if (g_queue_is_empty(&encoder->reorder_frame_list)) {
-            encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES;
-        }
-        goto end;
-    }
-
-    /* new frame coming */
-    picture = GST_VAAPI_ENC_PICTURE_NEW(H264, encoder, frame);
-    if (!picture) {
-        GST_WARNING("create H264 picture failed, frame timestamp:%"
-                    GST_TIME_FORMAT,
-                    GST_TIME_ARGS(frame->pts));
-        return GST_VAAPI_ENCODER_STATUS_OBJECT_ERR;
-    }
-    ++encoder->cur_present_index;
-    picture->poc = ((encoder->cur_present_index * 2) %
-                           encoder->max_pic_order_cnt);
-
-    is_idr = (encoder->frame_index == 0 ||
-              encoder->frame_index >= encoder->idr_period);
-
-    /* check key frames */
-    if (is_idr || GST_VIDEO_CODEC_FRAME_IS_FORCE_KEYFRAME(frame) ||
-        (encoder->frame_index % encoder->intra_period) == 0) {
-        ++encoder->cur_frame_num;
-        ++encoder->frame_index;
-
-        /* b frame enabled,  check queue of reorder_frame_list */
-        if (encoder->b_frame_num && !g_queue_is_empty(&encoder->reorder_frame_list)) {
-            GstVaapiEncPicture *p_pic;
-
-            p_pic = g_queue_pop_tail(&encoder->reorder_frame_list);
-            _set_p_frame(p_pic, encoder);
-            g_queue_foreach(&encoder->reorder_frame_list,
-                            (GFunc)_set_b_frame, encoder);
-            ++encoder->cur_frame_num;
-            _set_key_frame(picture, encoder, is_idr);
-            g_queue_push_tail(&encoder->reorder_frame_list, picture);
-            picture = p_pic;
-            encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES;
-        } else { /* no b frames in queue */
-            _set_key_frame(picture, encoder, is_idr);
-            g_assert(g_queue_is_empty(&encoder->reorder_frame_list));
-            if (encoder->b_frame_num)
-                encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES;
-        }
-        goto end;
-    }
-
-    /* new p/b frames coming */
-    ++encoder->frame_index;
-    if (encoder->reorder_state == GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES &&
-        g_queue_get_length(&encoder->reorder_frame_list) < encoder->b_frame_num) {
-        g_queue_push_tail(&encoder->reorder_frame_list, picture);
-        return GST_VAAPI_ENCODER_STATUS_FRAME_NOT_READY;
-    }
-
-    ++encoder->cur_frame_num;
-    _set_p_frame(picture, encoder);
-
-    if (encoder->reorder_state == GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES) {
-        g_queue_foreach(&encoder->reorder_frame_list, _set_b_frame, encoder);
-        encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES;
-        g_assert(!g_queue_is_empty(&encoder->reorder_frame_list));
-    }
-
-end:
-    g_assert(picture);
-    frame = GST_VAAPI_ENC_PICTURE_GET_FRAME(picture);
-    if (GST_CLOCK_TIME_IS_VALID(frame->pts))
-        frame->pts += encoder->cts_offset;
-    *output = picture;
-
-    return GST_VAAPI_ENCODER_STATUS_SUCCESS;
-}
-
-static gboolean
-gst_vaapi_encoder_h264_get_context_info (
-    GstVaapiEncoder* base,
-    GstVaapiContextInfo *info
-)
-{
-    GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264(base);
-    const static guint default_surface_num = 3;
-
-    g_return_val_if_fail(info, FALSE);
-
-    info->profile = encoder->profile;
-    info->entrypoint = GST_VAAPI_ENTRYPOINT_SLICE_ENCODE;
-    info->width = GST_VAAPI_ENCODER_WIDTH(encoder);
-    info->height = GST_VAAPI_ENCODER_HEIGHT(encoder);
-    info->ref_frames = (encoder->b_frame_num ? 2 : 1) + default_surface_num;
-    info->rate_control = GST_VAAPI_ENCODER_RATE_CONTROL(encoder);
-
-    return TRUE;
-}
-
-static gboolean
-prepare_encoding(GstVaapiEncoderH264 *encoder, GstCaps* caps)
-{
-    if (encoder->b_frame_num)
-        encoder->cts_offset = GST_SECOND * GST_VAAPI_ENCODER_FPS_D(encoder) /
-                              GST_VAAPI_ENCODER_FPS_N(encoder);
-    else
-        encoder->cts_offset = 0;
-
-    /* init max_frame_num, max_poc */
-    encoder->log2_max_frame_num =
-        _get_log2_max_frame_num(encoder->idr_period);
-    g_assert(encoder->log2_max_frame_num >= 4);
-    encoder->max_frame_num = (1 << encoder->log2_max_frame_num);
-    encoder->log2_max_pic_order_cnt = encoder->log2_max_frame_num + 1;
-    encoder->max_pic_order_cnt = (1 << encoder->log2_max_pic_order_cnt);
-
-    encoder->frame_index = 0;
-    encoder->idr_num = 0;
-    encoder->max_reflist0_count = 1;
-    if (encoder->b_frame_num)
-        encoder->max_reflist1_count = 1;
-    else
-        encoder->max_reflist1_count = 0;
-    encoder->max_ref_num = encoder->max_reflist0_count + encoder->max_reflist1_count;
-    return TRUE;
-}
-
-static GstCaps *
-gst_vaapi_encoder_h264_set_format (
-    GstVaapiEncoder* base,
-    GstVideoCodecState *in_state,
-    GstCaps *ref_caps
-)
-{
-    GstVaapiEncoderH264 *encoder;
-    GstCaps *result = NULL, *tmp;
-    GstStructure *structure;
-    const GValue *value;
-    const gchar *stream_format;
-
-    encoder = GST_VAAPI_ENCODER_H264(base);
-
-    tmp = gst_caps_from_string("video/x-h264");
-    gst_caps_set_simple(tmp,
-        "width", G_TYPE_INT, GST_VAAPI_ENCODER_WIDTH(encoder),
-        "height", G_TYPE_INT, GST_VAAPI_ENCODER_HEIGHT(encoder),
-        "framerate", GST_TYPE_FRACTION,
-        GST_VAAPI_ENCODER_FPS_N(encoder), GST_VAAPI_ENCODER_FPS_D(encoder),
-        NULL);
-    result = gst_caps_intersect(tmp, ref_caps);
-    gst_caps_unref(tmp);
-
-    /* fixed stream-format and choose byte-stream first */
-    structure = gst_caps_get_structure(result, 0);
-    value = gst_structure_get_value(structure, "stream-format");
-    if (value) {
-        gst_structure_fixate_field_string(structure, "stream-format", "byte-stream");
-        stream_format = gst_structure_get_string(structure,"stream-format");
-    } else {
-        stream_format = "byte-stream";
-        gst_structure_set(structure, "stream-format", G_TYPE_STRING, stream_format, NULL);
-    }
-
-    if (strcmp(stream_format, "byte-stream") == 0)
-        encoder->is_avc = FALSE;
-    else /* need codec data later */
-        encoder->is_avc = TRUE;
-
-    result = gst_caps_fixate(result);
-
-    if (!ensure_public_attributes(encoder)) {
-        GST_WARNING("encoder ensure public attributes failed ");
-        goto error;
-    }
-
-    if (!prepare_encoding(encoder, result)) {
-        GST_WARNING("prepare encoding failed ");
-        goto error;
-    }
-
-    return result;
-
-error:
-     gst_caps_unref(result);
-      return NULL;
-
-}
-
+/* h264 NAL bitstream operations */
 static guint8 *
 h264_byte_stream_next_nal(
     guint8 *buffer,
@@ -1448,198 +403,6 @@ h264_byte_stream_next_nal(
     return nal_start;
 }
 
-static inline void
-check_sps_pps_status(
-    GstVaapiEncoderH264 *encoder,
-    const guint8 *nal,
-    guint32 size
-)
-{
-    guint8 nal_type;
-    gsize ret;
-
-    g_assert(size);
-
-    if (encoder->sps_data && encoder->pps_data)
-        return;
-
-    nal_type = nal[0]&0x1F;
-    switch(nal_type) {
-    case GST_VAAPI_ENCODER_H264_NAL_SPS:
-        encoder->sps_data = gst_buffer_new_allocate(NULL, size, NULL);
-        ret = gst_buffer_fill(encoder->sps_data, 0, nal, size);
-        g_assert(ret == size);
-        break;
-    case GST_VAAPI_ENCODER_H264_NAL_PPS:
-        encoder->pps_data = gst_buffer_new_allocate(NULL, size, NULL);
-        ret = gst_buffer_fill(encoder->pps_data, 0, nal, size);
-        g_assert(ret == size);
-        break;
-    default:
-        break;
-    }
-}
-
-static void
-start_code_to_size(guint8 nal_start_code[4], guint32 nal_size)
-{
-    nal_start_code[0] = ((nal_size >> 24)&0xFF);
-    nal_start_code[1] = ((nal_size >> 16)&0xFF);
-    nal_start_code[2] = ((nal_size >> 8)&0xFF);
-    nal_start_code[3] = (nal_size&0xFF);
-}
-
-static GstVaapiEncoderStatus
-gst_vaapi_encoder_h264_convert_frame(
-    GstVaapiEncoder *base,
-    GstVideoCodecFrame *frame
-)
-{
-    GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264_CAST(base);
-    GstVaapiEncoderStatus ret = GST_VAAPI_ENCODER_STATUS_SUCCESS;
-    GstBuffer *buf;
-    GstMapInfo info;
-    guint32 nal_size;
-    guint8 *nal_start_code, *nal_body;
-    guint8 *frame_end;
-
-    if (!encoder->is_avc) {
-        return GST_VAAPI_ENCODER_STATUS_SUCCESS;
-    }
-
-    g_assert(frame && frame->output_buffer);
-    buf = frame->output_buffer;
-
-    if (!gst_buffer_map (buf, &info, GST_MAP_READ|GST_MAP_WRITE))
-        return GST_VAAPI_ENCODER_STATUS_MEM_ERROR;
-
-    nal_start_code = info.data;
-    frame_end = info.data + info.size;
-    nal_size = 0;
-
-    while((frame_end > nal_start_code) &&
-        (nal_body = h264_byte_stream_next_nal(nal_start_code,
-             frame_end - nal_start_code, &nal_size)) != NULL) {
-        if (!nal_size) {
-            ret = GST_VAAPI_ENCODER_STATUS_UNKNOWN_ERR;
-            goto unmap;
-        }
-
-        check_sps_pps_status(encoder, nal_body, nal_size);
-
-        g_assert(nal_body - nal_start_code == 4);
-        start_code_to_size(nal_start_code, nal_size);
-        nal_start_code = nal_body + nal_size;
-    }
-    ret = GST_VAAPI_ENCODER_STATUS_SUCCESS;
-unmap:
-    gst_buffer_unmap(buf, &info);
-    return ret;
-}
-
-static gboolean
-gst_vaapi_encoder_h264_init(GstVaapiEncoder *base)
-{
-    GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264(base);
-
-    /* init attributes */
-    init_public_values(encoder);
-    //gst_vaapi_base_encoder_set_frame_notify(GST_VAAPI_BASE_ENCODER(encoder), TRUE);
-
-    /* init private values*/
-    encoder->is_avc = FALSE;
-    /* re-ordering */
-    g_queue_init(&encoder->reorder_frame_list);
-    encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_NONE;
-    encoder->frame_index = 0;
-    encoder->cur_frame_num = 0;
-    encoder->cur_present_index = 0;
-
-    g_queue_init(&encoder->ref_list);
-    encoder->max_ref_num = 0;
-    encoder->max_reflist0_count = 1;
-    encoder->max_reflist1_count = 1;
-
-    encoder->sps_data = NULL;
-    encoder->pps_data = NULL;
-
-    encoder->cts_offset = 0;
-
-    encoder->max_frame_num = 0;
-    encoder->log2_max_frame_num = 0;
-    encoder->max_pic_order_cnt = 0;
-    encoder->log2_max_pic_order_cnt = 0;
-    encoder->idr_num = 0;
-
-    return TRUE;
-}
-
-static void
-gst_vaapi_encoder_h264_destroy(GstVaapiEncoder *base)
-{
-    /*free private buffers*/
-    GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264(base);
-    GstVaapiEncPicture *pic;
-    GstVaapiEncoderH264Ref *ref;
-
-    gst_buffer_replace(&encoder->sps_data, NULL);
-    gst_buffer_replace(&encoder->pps_data, NULL);
-
-    while(!g_queue_is_empty(&encoder->ref_list)) {
-        ref = (GstVaapiEncoderH264Ref*)g_queue_pop_head(&encoder->ref_list);
-        free_reference(encoder, ref);
-    }
-    g_queue_clear(&encoder->ref_list);
-
-    while(!g_queue_is_empty(&encoder->reorder_frame_list)) {
-        pic = (GstVaapiEncPicture*)g_queue_pop_head(&encoder->reorder_frame_list);
-        gst_vaapi_enc_picture_unref(pic);
-    }
-    g_queue_clear(&encoder->reorder_frame_list);
-
-}
-
-static void
-gst_vaapi_encoder_h264_class_init(GstVaapiEncoderH264Class *klass)
-{
-    GstVaapiMiniObjectClass * const object_class =
-        GST_VAAPI_MINI_OBJECT_CLASS(klass);
-    GstVaapiEncoderClass * const encoder_class = GST_VAAPI_ENCODER_CLASS(klass);
-
-    gst_vaapi_encoder_class_init(encoder_class);
-
-    object_class->size = sizeof (GstVaapiEncoderH264);
-
-    encoder_class->init = gst_vaapi_encoder_h264_init;
-    encoder_class->destroy = gst_vaapi_encoder_h264_destroy;
-    encoder_class->set_format = gst_vaapi_encoder_h264_set_format;
-    encoder_class->get_context_info = gst_vaapi_encoder_h264_get_context_info;
-    encoder_class->reordering = gst_vaapi_encoder_h264_reordering;
-    encoder_class->encode = gst_vaapi_encoder_h264_encode;
-    encoder_class->convert_buf = gst_vaapi_encoder_h264_convert_frame;
-    encoder_class->get_codec_data = gst_vaapi_encoder_h264_get_codec_data;
-    encoder_class->flush = gst_vaapi_encoder_h264_flush;
-}
-
-static inline const GstVaapiEncoderClass*
-gst_vaapi_encoder_h264_class()
-{
-    static GstVaapiEncoderH264Class g_class;
-    static gsize g_class_init = FALSE;
-
-    if (g_once_init_enter(&g_class_init)) {
-        gst_vaapi_encoder_h264_class_init(&g_class);
-        g_once_init_leave(&g_class_init, TRUE);
-    }
-    return GST_VAAPI_ENCODER_CLASS(&g_class);
-}
-
-GstVaapiEncoder *
-gst_vaapi_encoder_h264_new(GstVaapiDisplay *display)
-{
-    return gst_vaapi_encoder_new(gst_vaapi_encoder_h264_class(), display);
-}
-
 static gboolean
 gst_bit_writer_write_nal_header(
     GstBitWriter *bitwriter,
@@ -1651,22 +414,6 @@ gst_bit_writer_write_nal_header(
   gst_bit_writer_write_uint_value(bitwriter, nal_ref_idc, 2);
   gst_bit_writer_write_uint_value(bitwriter, nal_unit_type, 5);
   return TRUE;
-}
-
-static inline guint
-_h26_profile_to_value(GstVaapiProfile profile)
-{
-    switch (profile) {
-    case GST_VAAPI_PROFILE_H264_BASELINE:
-        return 66;
-    case GST_VAAPI_PROFILE_H264_MAIN:
-        return 77;
-    case GST_VAAPI_PROFILE_H264_HIGH:
-        return 100;
-    default:
-        break;
-    }
-    return 0;
 }
 
 static gboolean
@@ -1704,7 +451,7 @@ gst_bit_writer_write_sps(
   constraint_set3_flag = 0;
 
   /* profile_idc */
-  gst_bit_writer_write_uint8(bitwriter, _h26_profile_to_value(profile));
+  gst_bit_writer_write_uint8(bitwriter, _profile_to_value(profile));
   /* constraint_set0_flag */
   gst_bit_writer_write_uint_value(bitwriter, constraint_set0_flag, 1);
   /* constraint_set1_flag */
@@ -1965,3 +712,1219 @@ gst_bit_writer_write_pps(
   gst_bit_writer_write_trailing_bits(bitwriter);
   return TRUE;
 }
+
+static gboolean
+add_sequence_packed_header(
+    GstVaapiEncoderH264* encoder,
+     GstVaapiEncPicture *picture,
+    GstVaapiEncSequence *sequence
+)
+{
+    GstVaapiEncPackedHeader *packed_seq;
+    GstBitWriter writer;
+    VAEncPackedHeaderParameterBuffer packed_header_param_buffer = { 0 };
+    VAEncSequenceParameterBufferH264 *seq_param = sequence->param;
+    guint32 data_bit_size;
+    guint8 *data;
+
+    gst_bit_writer_init(&writer, 128*8);
+    gst_bit_writer_write_uint32(&writer, 0x00000001); /* start code*/
+    gst_bit_writer_write_nal_header(&writer,
+                GST_VAAPI_ENCODER_H264_NAL_REF_IDC_HIGH,
+                GST_VAAPI_ENCODER_H264_NAL_SPS);
+    gst_bit_writer_write_sps(&writer, seq_param, encoder->profile);
+    g_assert(GST_BIT_WRITER_BIT_SIZE(&writer)%8 == 0);
+    data_bit_size = GST_BIT_WRITER_BIT_SIZE(&writer);
+    data = GST_BIT_WRITER_BUFFER(&writer);
+
+    packed_header_param_buffer.type = VAEncPackedHeaderSequence;
+    packed_header_param_buffer.bit_length = data_bit_size;
+    packed_header_param_buffer.has_emulation_bytes = 0;
+
+    packed_seq = gst_vaapi_enc_packed_header_new(GST_VAAPI_ENCODER(encoder),
+                    &packed_header_param_buffer, sizeof(packed_header_param_buffer),
+                    data, (data_bit_size + 7) / 8);
+    g_assert(packed_seq);
+
+    gst_vaapi_enc_picture_add_packed_header(picture, packed_seq);
+    gst_vaapi_mini_object_replace((GstVaapiMiniObject **)&packed_seq, NULL);
+    gst_bit_writer_clear(&writer, TRUE);
+
+    return TRUE;
+}
+
+static gboolean
+add_picture_packed_header(
+    GstVaapiEncoderH264* encoder,
+    GstVaapiEncPicture *picture
+)
+{
+    GstVaapiEncPackedHeader *packed_pic;
+    GstBitWriter writer;
+    VAEncPackedHeaderParameterBuffer packed_header_param_buffer = { 0 };
+    VAEncPictureParameterBufferH264 *pic_param = picture->param;
+    guint32 data_bit_size;
+    guint8 *data;
+
+    gst_bit_writer_init(&writer, 128*8);
+    gst_bit_writer_write_uint32(&writer, 0x00000001); /* start code*/
+    gst_bit_writer_write_nal_header(&writer,
+        GST_VAAPI_ENCODER_H264_NAL_REF_IDC_HIGH,
+        GST_VAAPI_ENCODER_H264_NAL_PPS);
+    gst_bit_writer_write_pps(&writer, pic_param);
+    g_assert(GST_BIT_WRITER_BIT_SIZE(&writer)%8 == 0);
+    data_bit_size = GST_BIT_WRITER_BIT_SIZE(&writer);
+    data = GST_BIT_WRITER_BUFFER(&writer);
+
+
+    packed_header_param_buffer.type = VAEncPackedHeaderPicture;
+    packed_header_param_buffer.bit_length = data_bit_size;
+    packed_header_param_buffer.has_emulation_bytes = 0;
+
+    packed_pic = gst_vaapi_enc_packed_header_new(GST_VAAPI_ENCODER(encoder),
+                    &packed_header_param_buffer, sizeof(packed_header_param_buffer),
+                    data, (data_bit_size + 7) / 8);
+    g_assert(packed_pic);
+
+    gst_vaapi_enc_picture_add_packed_header(picture, packed_pic);
+    gst_vaapi_mini_object_replace((GstVaapiMiniObject **)&packed_pic, NULL);
+    gst_bit_writer_clear(&writer, TRUE);
+
+    return TRUE;
+}
+
+/*  reference picture management */
+static void
+reference_pic_free(GstVaapiEncoderH264 *encoder, GstVaapiEncoderH264Ref*ref)
+{
+    if(!ref)
+        return;
+    if (ref->pic)
+        gst_vaapi_encoder_release_surface(GST_VAAPI_ENCODER(encoder), ref->pic);
+    g_slice_free(GstVaapiEncoderH264Ref, ref);
+}
+
+static inline GstVaapiEncoderH264Ref *
+reference_pic_create(
+    GstVaapiEncoderH264 *encoder,
+    GstVaapiEncPicture *picture,
+    GstVaapiSurfaceProxy *surface)
+{
+    GstVaapiEncoderH264Ref *ref = g_slice_new0(GstVaapiEncoderH264Ref);
+
+    ref->pic = surface;
+    ref->frame_num = picture->frame_num;
+    ref->poc = picture->poc;
+    return ref;
+}
+
+static gboolean
+reference_list_update(
+    GstVaapiEncoderH264 *encoder,
+    GstVaapiEncPicture *picture,
+    GstVaapiSurfaceProxy *surface
+)
+{
+    GstVaapiEncoderH264Ref *ref;
+
+    if (GST_VAAPI_PICTURE_TYPE_B == picture->type) {
+        gst_vaapi_encoder_release_surface(
+            GST_VAAPI_ENCODER(encoder), surface);
+        return TRUE;
+    }
+    if (GST_VAAPI_ENC_PICTURE_IS_IDR(picture)) {
+        while(!g_queue_is_empty(&encoder->ref_list))
+            reference_pic_free(encoder, g_queue_pop_head(&encoder->ref_list));
+    } else if (g_queue_get_length(&encoder->ref_list) >=
+               encoder->max_ref_num) {
+        reference_pic_free(encoder, g_queue_pop_head(&encoder->ref_list));
+    }
+    ref = reference_pic_create(encoder, picture, surface);
+    g_queue_push_tail(&encoder->ref_list, ref);
+    g_assert(g_queue_get_length(&encoder->ref_list) <= encoder->max_ref_num);
+    return TRUE;
+}
+
+static gboolean
+reference_list_init(
+    GstVaapiEncoderH264* encoder,
+    GstVaapiEncPicture *picture,
+    GstVaapiEncoderH264Ref **reflist_0,
+    guint *reflist_0_count,
+    GstVaapiEncoderH264Ref **reflist_1,
+    guint *reflist_1_count
+)
+{
+    GstVaapiEncoderH264Ref *tmp;
+    GList *iter, *list_0_start = NULL, *list_1_start = NULL;
+    guint max_pic_order_cnt = (1 << encoder->log2_max_pic_order_cnt);
+    guint count;
+
+    *reflist_0_count = 0;
+    *reflist_1_count = 0;
+    if (picture->type == GST_VAAPI_PICTURE_TYPE_I)
+        return TRUE;
+
+    iter = g_queue_peek_tail_link(&encoder->ref_list);
+    for(; iter; iter = g_list_previous(iter)) {
+        tmp = (GstVaapiEncoderH264Ref*)iter->data;
+        g_assert(tmp && tmp->poc != picture->poc);
+        if (_poc_greater_than(picture->poc, tmp->poc, max_pic_order_cnt)) {
+            list_0_start = iter;
+            list_1_start = g_list_next(iter);
+            break;
+        }
+    }
+
+    /* order reflist_0 */
+    g_assert(list_0_start);
+    iter = list_0_start;
+    count = 0;
+    for(; iter; iter = g_list_previous(iter)) {
+        reflist_0[count] = (GstVaapiEncoderH264Ref *)iter->data;
+        ++count;
+    }
+    *reflist_0_count = count;
+
+    if (picture->type != GST_VAAPI_PICTURE_TYPE_B)
+        return TRUE;
+
+    /* order reflist_1 */
+    count = 0;
+    iter = list_1_start;
+    for(; iter; iter = g_list_next(iter)) {
+        reflist_1[count] = (GstVaapiEncoderH264Ref *)iter->data;
+        ++count;
+    }
+    *reflist_1_count = count;
+    return TRUE;
+}
+
+/* fill the  H264 VA encoding parameters */
+static gboolean
+fill_va_sequence_param(GstVaapiEncoderH264* encoder, GstVaapiEncSequence *sequence)
+{
+    VAEncSequenceParameterBufferH264 *seq = sequence->param;
+    guint width_in_mbs, height_in_mbs;
+
+    width_in_mbs = (GST_VAAPI_ENCODER_WIDTH(encoder)+15)/16;
+    height_in_mbs = (GST_VAAPI_ENCODER_HEIGHT(encoder)+15)/16;
+
+    memset(seq, 0, sizeof(VAEncSequenceParameterBufferH264));
+    seq->seq_parameter_set_id = 0;
+    seq->level_idc = encoder->level;
+    seq->intra_period = encoder->intra_period;
+    seq->ip_period = 0;           // ?
+    if (encoder->bitrate> 0)
+        seq->bits_per_second = encoder->bitrate * 1024;
+    else
+        seq->bits_per_second = 0;
+
+    seq->max_num_ref_frames = encoder->max_ref_num;
+    seq->picture_width_in_mbs = width_in_mbs;
+    seq->picture_height_in_mbs = height_in_mbs;
+
+    /*sequence field values*/
+    seq->seq_fields.value = 0;
+    //seq_param->seq_fields.bits.chroma_format_idc = 1;
+    seq->seq_fields.bits.frame_mbs_only_flag = 1;
+    seq->seq_fields.bits.mb_adaptive_frame_field_flag = FALSE;
+    seq->seq_fields.bits.seq_scaling_matrix_present_flag = FALSE;
+    /* direct_8x8_inference_flag default false */
+    seq->seq_fields.bits.direct_8x8_inference_flag = FALSE;
+    g_assert(encoder->log2_max_frame_num >=4);
+    seq->seq_fields.bits.log2_max_frame_num_minus4 =
+                                  encoder->log2_max_frame_num - 4;
+    /* picture order count */
+    seq->seq_fields.bits.pic_order_cnt_type = 0;
+    g_assert(encoder->log2_max_pic_order_cnt >=4);
+    seq->seq_fields.bits.log2_max_pic_order_cnt_lsb_minus4 =
+                                encoder->log2_max_pic_order_cnt - 4;
+
+    seq->bit_depth_luma_minus8 = 0;
+    seq->bit_depth_chroma_minus8 = 0;
+
+    /* not used if pic_order_cnt_type == 0 */
+    if (seq->seq_fields.bits.pic_order_cnt_type == 1) {
+        seq->seq_fields.bits.delta_pic_order_always_zero_flag = TRUE;
+        seq->num_ref_frames_in_pic_order_cnt_cycle = 0;
+        seq->offset_for_non_ref_pic = 0;
+        seq->offset_for_top_to_bottom_field = 0;
+        memset(seq->offset_for_ref_frame, 0,
+               sizeof(seq->offset_for_ref_frame));
+    }
+
+    if (height_in_mbs * 16 - GST_VAAPI_ENCODER_HEIGHT(encoder)) {
+        seq->frame_cropping_flag = 1;
+        seq->frame_crop_left_offset = 0;
+        seq->frame_crop_right_offset = 0;
+        seq->frame_crop_top_offset = 0;
+        seq->frame_crop_bottom_offset =
+            ((height_in_mbs * 16 - GST_VAAPI_ENCODER_HEIGHT(encoder))/
+             (2 * (!seq->seq_fields.bits.frame_mbs_only_flag + 1)));
+    }
+
+    /*vui not set*/
+    seq->vui_parameters_present_flag = (encoder->bitrate> 0 ? TRUE : FALSE);
+    if (seq->vui_parameters_present_flag) {
+        seq->vui_fields.bits.aspect_ratio_info_present_flag = FALSE;
+        seq->vui_fields.bits.bitstream_restriction_flag = FALSE;
+        seq->vui_fields.bits.timing_info_present_flag = (encoder->bitrate> 0 ? TRUE : FALSE);
+        if (seq->vui_fields.bits.timing_info_present_flag) {
+            seq->num_units_in_tick = GST_VAAPI_ENCODER_FPS_D(encoder);
+            seq->time_scale = GST_VAAPI_ENCODER_FPS_N(encoder) * 2;
+        }
+    }
+
+    return TRUE;
+}
+
+static gboolean
+fill_va_picture_param(
+    GstVaapiEncoderH264* encoder,
+    GstVaapiEncPicture *picture,
+    GstVaapiCodedBuffer *codedbuf,
+    GstVaapiSurfaceProxy *surface
+)
+{
+    VAEncPictureParameterBufferH264 *pic = picture->param;
+    GstVaapiEncoderH264Ref *ref_pic;
+    GList *reflist;
+    guint i;
+
+    memset(pic, 0, sizeof(VAEncPictureParameterBufferH264));
+
+    /* reference list,  */
+    pic->CurrPic.picture_id = GST_VAAPI_SURFACE_PROXY_SURFACE_ID(surface);
+    pic->CurrPic.TopFieldOrderCnt = picture->poc;
+    i = 0;
+    if (picture->type != GST_VAAPI_PICTURE_TYPE_I) {
+        for (reflist = g_queue_peek_head_link(&encoder->ref_list);
+             reflist;
+             reflist = g_list_next(reflist)) {
+            ref_pic = reflist->data;
+            g_assert(ref_pic && ref_pic->pic &&
+               GST_VAAPI_SURFACE_PROXY_SURFACE_ID(ref_pic->pic) != VA_INVALID_ID);
+
+            pic->ReferenceFrames[i].picture_id =
+                GST_VAAPI_SURFACE_PROXY_SURFACE_ID(ref_pic->pic);
+            ++i;
+        }
+        g_assert(i <= 16 && i <= encoder->max_ref_num);
+    }
+    for (; i < 16; ++i) {
+        pic->ReferenceFrames[i].picture_id = VA_INVALID_ID;
+    }
+    pic->coded_buf = codedbuf->buf_id;
+
+    pic->pic_parameter_set_id = 0;
+    pic->seq_parameter_set_id = 0;
+    pic->last_picture = 0; /* means last encoding picture */
+    pic->frame_num = picture->frame_num;
+    pic->pic_init_qp = encoder->init_qp;
+    pic->num_ref_idx_l0_active_minus1 =
+        (encoder->max_reflist0_count ? (encoder->max_reflist0_count - 1) : 0);
+    pic->num_ref_idx_l1_active_minus1 =
+        (encoder->max_reflist1_count ? (encoder->max_reflist1_count - 1) : 0);
+    pic->chroma_qp_index_offset = 0;
+    pic->second_chroma_qp_index_offset = 0;
+
+    /* set picture fields */
+    pic->pic_fields.value = 0;
+    pic->pic_fields.bits.idr_pic_flag = GST_VAAPI_ENC_PICTURE_IS_IDR(picture);
+    pic->pic_fields.bits.reference_pic_flag =
+        (picture->type != GST_VAAPI_PICTURE_TYPE_B);
+    pic->pic_fields.bits.entropy_coding_mode_flag =
+        GST_VAAPI_ENCODER_H264_ENTROPY_MODE_CABAC;
+    pic->pic_fields.bits.weighted_pred_flag = FALSE;
+    pic->pic_fields.bits.weighted_bipred_idc = 0;
+    pic->pic_fields.bits.constrained_intra_pred_flag = 0;
+    pic->pic_fields.bits.transform_8x8_mode_flag =
+        (encoder->profile >= GST_VAAPI_PROFILE_H264_HIGH); /* enable 8x8 */
+    /* enable debloking */
+    pic->pic_fields.bits.deblocking_filter_control_present_flag = TRUE;
+    pic->pic_fields.bits.redundant_pic_cnt_present_flag = FALSE;
+    /* bottom_field_pic_order_in_frame_present_flag */
+    pic->pic_fields.bits.pic_order_present_flag = FALSE;
+    pic->pic_fields.bits.pic_scaling_matrix_present_flag = FALSE;
+
+    return TRUE;
+}
+
+static gboolean
+fill_va_slices_param(
+    GstVaapiEncoderH264* encoder,
+    GstVaapiEncPicture *picture,
+    GstVaapiEncoderH264Ref **reflist_0,
+    guint reflist_0_count,
+    GstVaapiEncoderH264Ref **reflist_1,
+    guint reflist_1_count
+)
+{
+    VAEncSliceParameterBufferH264 *slice_param;
+    GstVaapiEncSlice *slice;
+    guint width_in_mbs, height_in_mbs;
+    guint slice_of_mbs, slice_mod_mbs, cur_slice_mbs;
+    guint total_mbs;
+    guint last_mb_index;
+    guint i_slice, i_ref;
+
+    g_assert(picture);
+
+    width_in_mbs = (GST_VAAPI_ENCODER_WIDTH(encoder)+15)/16;
+    height_in_mbs = (GST_VAAPI_ENCODER_HEIGHT(encoder)+15)/16;
+    total_mbs = width_in_mbs * height_in_mbs;
+
+    g_assert(encoder->slice_num && encoder->slice_num < total_mbs);
+    slice_of_mbs = total_mbs / encoder->slice_num;
+    slice_mod_mbs = total_mbs % encoder->slice_num;
+    last_mb_index = 0;
+    for (i_slice = 0; i_slice < encoder->slice_num; ++i_slice) {
+        cur_slice_mbs = slice_of_mbs;
+        if (slice_mod_mbs) {
+            ++cur_slice_mbs;
+            --slice_mod_mbs;
+        }
+        slice = GST_VAAPI_ENC_SLICE_NEW(H264, encoder);
+        g_assert(slice && slice->param_id != VA_INVALID_ID);
+        slice_param = slice->param;
+
+        memset (slice_param, 0, sizeof(VAEncSliceParameterBufferH264));
+        slice_param->macroblock_address = last_mb_index;
+        slice_param->num_macroblocks = cur_slice_mbs;
+        slice_param->macroblock_info = VA_INVALID_ID;
+        slice_param->slice_type = _get_va_slice_type(picture->type);
+        g_assert(slice_param->slice_type != -1);
+        slice_param->pic_parameter_set_id = 0;
+        slice_param->idr_pic_id = encoder->idr_num;
+        slice_param->pic_order_cnt_lsb = picture->poc;
+
+        /* not used if pic_order_cnt_type = 0 */
+        slice_param->delta_pic_order_cnt_bottom = 0;
+        memset(slice_param->delta_pic_order_cnt,
+               0,
+               sizeof(slice_param->delta_pic_order_cnt));
+
+        /*only works for B frames*/
+        slice_param->direct_spatial_mv_pred_flag = FALSE;
+        /* default equal to picture parameters */
+        slice_param->num_ref_idx_active_override_flag = FALSE;
+        if (picture->type != GST_VAAPI_PICTURE_TYPE_I &&
+            reflist_0_count > 0 )
+            slice_param->num_ref_idx_l0_active_minus1 = reflist_0_count - 1;
+        else
+            slice_param->num_ref_idx_l0_active_minus1 = 0;
+        if (picture->type == GST_VAAPI_PICTURE_TYPE_B &&
+            reflist_1_count > 0)
+            slice_param->num_ref_idx_l1_active_minus1 = reflist_1_count - 1;
+        else
+            slice_param->num_ref_idx_l1_active_minus1 = 0;
+        g_assert(slice_param->num_ref_idx_l0_active_minus1 == 0);
+        g_assert(slice_param->num_ref_idx_l1_active_minus1 == 0);
+
+        i_ref = 0;
+        if (picture->type != GST_VAAPI_PICTURE_TYPE_I) {
+            for (; i_ref < reflist_0_count; ++i_ref) {
+                slice_param->RefPicList0[i_ref].picture_id =
+                    GST_VAAPI_SURFACE_PROXY_SURFACE_ID(reflist_0[i_ref]->pic);
+            }
+            g_assert(i_ref == 1);
+        }
+        for (; i_ref < sizeof(slice_param->RefPicList0)/sizeof(slice_param->RefPicList0[0]);
+              ++i_ref) {
+             slice_param->RefPicList0[i_ref].picture_id = VA_INVALID_SURFACE;
+        }
+
+        i_ref = 0;
+        if (picture->type == GST_VAAPI_PICTURE_TYPE_B) {
+            for (; i_ref < reflist_1_count; ++i_ref) {
+                slice_param->RefPicList1[i_ref].picture_id =
+                    GST_VAAPI_SURFACE_PROXY_SURFACE_ID(reflist_1[i_ref]->pic);
+            }
+            g_assert(i_ref == 1);
+        }
+        for (; i_ref < sizeof(slice_param->RefPicList1)/sizeof(slice_param->RefPicList1[0]);
+              ++i_ref) {
+             slice_param->RefPicList1[i_ref].picture_id = VA_INVALID_SURFACE;
+        }
+
+        /* not used if  pic_param.pic_fields.bits.weighted_pred_flag == FALSE */
+        slice_param->luma_log2_weight_denom = 0;
+        slice_param->chroma_log2_weight_denom = 0;
+        slice_param->luma_weight_l0_flag = FALSE;
+        memset(slice_param->luma_weight_l0, 0, sizeof(slice_param->luma_weight_l0));
+        memset(slice_param->luma_offset_l0, 0, sizeof(slice_param->luma_offset_l0));
+        slice_param->chroma_weight_l0_flag = FALSE;
+        memset(slice_param->chroma_weight_l0, 0, sizeof(slice_param->chroma_weight_l0));
+        memset(slice_param->chroma_offset_l0, 0, sizeof(slice_param->chroma_offset_l0));
+        slice_param->luma_weight_l1_flag = FALSE;
+        memset(slice_param->luma_weight_l1, 0, sizeof(slice_param->luma_weight_l1));
+        memset(slice_param->luma_offset_l1, 0, sizeof(slice_param->luma_offset_l1));
+        slice_param->chroma_weight_l1_flag = FALSE;
+        memset(slice_param->chroma_weight_l1, 0, sizeof(slice_param->chroma_weight_l1));
+        memset(slice_param->chroma_offset_l1, 0, sizeof(slice_param->chroma_offset_l1));
+
+        slice_param->cabac_init_idc = 0;
+        slice_param->slice_qp_delta = encoder->init_qp - encoder->min_qp;
+        if (slice_param->slice_qp_delta > 4)
+          slice_param->slice_qp_delta = 4;
+        slice_param->disable_deblocking_filter_idc = 0;
+        slice_param->slice_alpha_c0_offset_div2 = 2;
+        slice_param->slice_beta_offset_div2 = 2;
+
+        /* set calculation for next slice */
+        last_mb_index += cur_slice_mbs;
+
+        gst_vaapi_enc_picture_add_slice(picture, slice);
+        gst_vaapi_mini_object_replace((GstVaapiMiniObject**)&slice, NULL);
+
+    }
+    g_assert(last_mb_index == total_mbs);
+    return TRUE;
+}
+
+static gboolean
+ensure_sequence(
+    GstVaapiEncoderH264* encoder,
+    GstVaapiEncPicture *picture
+)
+{
+    GstVaapiEncSequence *sequence;
+
+    g_assert(picture);
+    sequence = GST_VAAPI_ENC_SEQUENCE_NEW(H264, encoder);
+    g_assert(sequence);
+    if (!sequence)
+        goto error;
+
+    if (!fill_va_sequence_param(encoder,sequence))
+        goto error;
+
+    if (picture->type == GST_VAAPI_PICTURE_TYPE_I &&
+        !add_sequence_packed_header(encoder, picture, sequence))
+        goto error;
+    gst_vaapi_enc_picture_set_sequence(picture, sequence);
+    gst_vaapi_mini_object_replace((GstVaapiMiniObject**)(&sequence), NULL);
+    return TRUE;
+
+error:
+    gst_vaapi_mini_object_replace((GstVaapiMiniObject**)(&sequence), NULL);
+    return FALSE;
+}
+
+static gboolean
+ensure_picture(
+    GstVaapiEncoderH264* encoder,
+    GstVaapiEncPicture *picture,
+    GstVaapiCodedBufferProxy *buf_proxy,
+    GstVaapiSurfaceProxy *surface
+)
+{
+    GstVaapiCodedBuffer *codedbuf = buf_proxy->buffer;
+
+    if (!fill_va_picture_param(encoder, picture, codedbuf, surface))
+        return FALSE;
+
+    if (picture->type == GST_VAAPI_PICTURE_TYPE_I &&
+        !add_picture_packed_header(encoder, picture)) {
+        GST_ERROR("set picture packed header failed");
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+
+static gboolean
+ensure_slices(
+    GstVaapiEncoderH264* encoder,
+    GstVaapiEncPicture *picture
+)
+{
+    GstVaapiEncoderH264Ref *reflist_0[16];
+    GstVaapiEncoderH264Ref *reflist_1[16];
+    guint reflist_0_count = 0, reflist_1_count = 0;
+
+    g_assert(picture);
+
+    if (picture->type != GST_VAAPI_PICTURE_TYPE_I &&
+        !reference_list_init(encoder, picture,
+                   reflist_0, &reflist_0_count,
+                   reflist_1, &reflist_1_count)) {
+        GST_ERROR("reference list reorder failed");
+        return FALSE;
+    }
+
+    g_assert(reflist_0_count + reflist_1_count <= encoder->max_ref_num);
+    if (reflist_0_count > encoder->max_reflist0_count)
+        reflist_0_count = encoder->max_reflist0_count;
+    if (reflist_1_count > encoder->max_reflist1_count)
+        reflist_1_count = encoder->max_reflist1_count;
+
+    if (!fill_va_slices_param(encoder, picture,
+                              reflist_0, reflist_0_count,
+                              reflist_1, reflist_1_count))
+        return FALSE;
+
+    return TRUE;
+}
+
+static gboolean
+ensure_misc(
+    GstVaapiEncoderH264* encoder,
+    GstVaapiEncPicture *picture
+)
+{
+    GstVaapiEncMiscParam *misc = NULL;
+    VAEncMiscParameterHRD *hrd;
+    VAEncMiscParameterRateControl *rate_control;
+
+    /* add hrd */
+    misc = GST_VAAPI_ENC_MISC_PARAM_NEW(HRD, encoder);
+    g_assert(misc);
+    if (!misc)
+        return FALSE;
+    gst_vaapi_enc_picture_add_misc_buffer(picture, misc);
+    hrd = misc->impl;
+    if (encoder->bitrate > 0) {
+        hrd->initial_buffer_fullness = encoder->bitrate * 1024 * 4;
+        hrd->buffer_size = encoder->bitrate * 1024 * 8;
+    } else {
+        hrd->initial_buffer_fullness = 0;
+        hrd->buffer_size = 0;
+    }
+    gst_vaapi_mini_object_replace((GstVaapiMiniObject**)&misc, NULL);
+
+    /* add ratecontrol */
+    if (GST_VAAPI_ENCODER_RATE_CONTROL(encoder) == GST_VAAPI_RATECONTROL_CBR ||
+        GST_VAAPI_ENCODER_RATE_CONTROL(encoder) == GST_VAAPI_RATECONTROL_VBR) {
+        misc = GST_VAAPI_ENC_MISC_PARAM_NEW(RateControl, encoder);
+        g_assert(misc);
+        if (!misc)
+            return FALSE;
+        gst_vaapi_enc_picture_add_misc_buffer(picture, misc);
+        rate_control = misc->impl;
+        memset(rate_control, 0, sizeof(VAEncMiscParameterRateControl));
+        if (encoder->bitrate)
+            rate_control->bits_per_second =  encoder->bitrate * 1024;
+        else
+            rate_control->bits_per_second = 0;
+        rate_control->target_percentage = 70;
+        rate_control->window_size = 500;
+        rate_control->initial_qp = encoder->init_qp;
+        rate_control->min_qp = encoder->min_qp;
+        rate_control->basic_unit_size = 0;
+        gst_vaapi_mini_object_replace((GstVaapiMiniObject**)&misc, NULL);
+    }
+
+    return TRUE;
+}
+
+gboolean
+init_encoder_public_attributes(GstVaapiEncoderH264 *encoder)
+{
+    guint width_mbs, height_mbs, total_mbs;
+
+    if (!GST_VAAPI_ENCODER_WIDTH(encoder) ||
+        !GST_VAAPI_ENCODER_HEIGHT(encoder) ||
+        !GST_VAAPI_ENCODER_FPS_N(encoder) ||
+        !GST_VAAPI_ENCODER_FPS_D(encoder)) {
+        return FALSE;
+    }
+    if (!encoder->profile)
+        encoder->profile = GST_VAAPI_ENCODER_H264_DEFAULT_PROFILE;
+
+    _set_level(encoder);
+
+    if (!encoder->intra_period)
+        encoder->intra_period = GST_VAAPI_ENCODER_H264_DEFAULT_INTRA_PERIOD;
+    else if (encoder->intra_period > GST_VAAPI_ENCODER_H264_MAX_INTRA_PERIOD)
+        encoder->intra_period = GST_VAAPI_ENCODER_H264_MAX_INTRA_PERIOD;
+
+    if (encoder->idr_period < encoder->intra_period)
+        encoder->idr_period = encoder->intra_period;
+    if (encoder->idr_period > GST_VAAPI_ENCODER_H264_MAX_IDR_PERIOD)
+        encoder->idr_period = GST_VAAPI_ENCODER_H264_MAX_IDR_PERIOD;
+
+    if (-1 == encoder->init_qp)
+        encoder->init_qp = GST_VAAPI_ENCODER_H264_DEFAULT_INIT_QP;
+
+    if (-1 == encoder->min_qp) {
+        if (GST_VAAPI_RATECONTROL_CQP == GST_VAAPI_ENCODER_RATE_CONTROL(encoder))
+            encoder->min_qp = encoder->init_qp;
+        else
+            encoder->min_qp = GST_VAAPI_ENCODER_H264_DEFAULT_MIN_QP;
+    }
+
+    if (encoder->min_qp > encoder->init_qp)
+        encoder->min_qp = encoder->init_qp;
+
+    /* default compress ratio 1: (4*8*1.5) */
+    if (GST_VAAPI_RATECONTROL_CBR == GST_VAAPI_ENCODER_RATE_CONTROL(encoder) ||
+      GST_VAAPI_RATECONTROL_VBR == GST_VAAPI_ENCODER_RATE_CONTROL(encoder) ||
+      GST_VAAPI_RATECONTROL_VBR_CONSTRAINED == GST_VAAPI_ENCODER_RATE_CONTROL(encoder))
+    {
+        if (!encoder->bitrate)
+            encoder->bitrate = GST_VAAPI_ENCODER_WIDTH(encoder) *
+                               GST_VAAPI_ENCODER_HEIGHT(encoder) *
+                               GST_VAAPI_ENCODER_FPS_N(encoder) /
+                               GST_VAAPI_ENCODER_FPS_D(encoder) / 4 / 1024;
+    } else
+        encoder->bitrate = 0;
+
+    if (!encoder->slice_num)
+        encoder->slice_num = GST_VAAPI_ENCODER_H264_DEFAULT_SLICE_NUM;
+
+    width_mbs = (GST_VAAPI_ENCODER_WIDTH(encoder) + 15) / 16;
+    height_mbs = (GST_VAAPI_ENCODER_HEIGHT(encoder) + 15) / 16;
+    total_mbs = width_mbs * height_mbs;
+
+    if (encoder->slice_num > (total_mbs+1)/2)
+        encoder->slice_num = (total_mbs+1)/2;
+    g_assert(encoder->slice_num);
+
+    if (encoder->b_frame_num > (encoder->intra_period + 1)/2)
+        encoder->b_frame_num = (encoder->intra_period + 1)/2;
+
+    if (encoder->b_frame_num > 50)
+        encoder->b_frame_num = 50;
+
+  return TRUE;
+}
+
+static gboolean
+init_encoder_private_attributes(GstVaapiEncoderH264 *encoder, GstCaps* caps)
+{
+    if (encoder->b_frame_num)
+        encoder->cts_offset = GST_SECOND * GST_VAAPI_ENCODER_FPS_D(encoder) /
+                              GST_VAAPI_ENCODER_FPS_N(encoder);
+    else
+        encoder->cts_offset = 0;
+
+    /* init max_frame_num, max_poc */
+    encoder->log2_max_frame_num =
+        _get_log2_max_frame_num(encoder->idr_period);
+    g_assert(encoder->log2_max_frame_num >= 4);
+    encoder->max_frame_num = (1 << encoder->log2_max_frame_num);
+    encoder->log2_max_pic_order_cnt = encoder->log2_max_frame_num + 1;
+    encoder->max_pic_order_cnt = (1 << encoder->log2_max_pic_order_cnt);
+
+    encoder->frame_index = 0;
+    encoder->idr_num = 0;
+    encoder->max_reflist0_count = 1;
+    if (encoder->b_frame_num)
+        encoder->max_reflist1_count = 1;
+    else
+        encoder->max_reflist1_count = 0;
+    encoder->max_ref_num = encoder->max_reflist0_count + encoder->max_reflist1_count;
+    return TRUE;
+}
+
+
+static GstVaapiEncoderStatus
+gst_vaapi_encoder_h264_encode(
+    GstVaapiEncoder* base,
+    GstVaapiEncPicture *picture,
+    GstVaapiCodedBufferProxy *codedbuf
+)
+{
+    GstVaapiEncoderH264* encoder = GST_VAAPI_ENCODER_H264_CAST(base);
+    GstVaapiEncoderStatus ret = GST_VAAPI_ENCODER_STATUS_UNKNOWN_ERR;
+    GstVaapiSurfaceProxy *reconstruct = NULL;
+
+    reconstruct = gst_vaapi_encoder_create_surface(base);
+
+    g_assert(GST_VAAPI_SURFACE_PROXY_SURFACE(reconstruct));
+
+    if (!ensure_sequence(encoder, picture))
+        goto error;
+    if (!ensure_picture(encoder, picture, codedbuf, reconstruct))
+        goto error;
+    if (!ensure_misc(encoder, picture))
+        goto error;
+    if (!ensure_slices(encoder, picture))
+        goto error;
+    if (!gst_vaapi_enc_picture_encode(picture))
+        goto error;
+
+    if (!reference_list_update(encoder, picture, reconstruct))
+        goto error;
+
+    return GST_VAAPI_ENCODER_STATUS_SUCCESS;
+error:
+    if (reconstruct)
+        gst_vaapi_encoder_release_surface(
+            GST_VAAPI_ENCODER(encoder), reconstruct);
+    return ret;
+}
+
+static GstVaapiEncoderStatus
+gst_vaapi_encoder_h264_flush(
+    GstVaapiEncoder* base
+)
+{
+    GstVaapiEncoderH264* encoder = GST_VAAPI_ENCODER_H264_CAST(base);
+    GstVaapiEncPicture *pic;
+
+    encoder->frame_index = 0;
+    encoder->cur_frame_num = 0;
+    encoder->cur_present_index = 0;
+    while(!g_queue_is_empty(&encoder->reorder_frame_list)) {
+        pic = (GstVaapiEncPicture*)g_queue_pop_head(&encoder->reorder_frame_list);
+        gst_vaapi_enc_picture_unref(pic);
+    }
+    g_queue_clear(&encoder->reorder_frame_list);
+
+    return GST_VAAPI_ENCODER_STATUS_SUCCESS;
+}
+
+
+static GstVaapiEncoderStatus
+gst_vaapi_encoder_h264_get_avcC_codec_data(
+    GstVaapiEncoderH264 *encoder,
+    GstBuffer **buffer
+)
+{
+    GstBuffer *avc_codec;
+    const guint32 configuration_version = 0x01;
+    const guint32 length_size_minus_one = 0x03;
+    guint32 profile, profile_comp, level_idc;
+    GstMapInfo sps_info, pps_info;
+    GstVaapiEncoderStatus ret = GST_VAAPI_ENCODER_STATUS_SUCCESS;
+    GstBitWriter writer;
+
+    g_assert(buffer);
+    if (!encoder->sps_data || !encoder->pps_data)
+        return GST_VAAPI_ENCODER_STATUS_NOT_READY;
+
+    if (!gst_buffer_map(encoder->sps_data, &sps_info, GST_MAP_READ))
+        return GST_VAAPI_ENCODER_STATUS_MEM_ERROR;
+
+    if (FALSE == _read_sps_attributes(sps_info.data, sps_info.size,
+                                   &profile, &profile_comp, &level_idc)) {
+        ret = GST_VAAPI_ENCODER_STATUS_UNKNOWN_ERR;
+        goto end;
+    }
+
+    if (!gst_buffer_map(encoder->pps_data, &pps_info, GST_MAP_READ)) {
+        ret = GST_VAAPI_ENCODER_STATUS_MEM_ERROR;
+        goto end;
+    }
+
+    gst_bit_writer_init(&writer, (sps_info.size + pps_info.size + 64)*8);
+    /* codec_data */
+    gst_bit_writer_write_uint8(&writer, configuration_version);
+    gst_bit_writer_write_uint8(&writer, profile);
+    gst_bit_writer_write_uint8(&writer, profile_comp);
+    gst_bit_writer_write_uint8(&writer, level_idc);
+    gst_bit_writer_write_uint_value(&writer, 0x3F, 6); /*111111*/
+    gst_bit_writer_write_uint_value(&writer, length_size_minus_one, 2);
+    gst_bit_writer_write_uint_value(&writer, 0x07, 3); /*111*/
+
+    /* write sps */
+    gst_bit_writer_write_uint_value(&writer, 1, 5);   /* sps count = 1*/
+    g_assert(GST_BIT_WRITER_BIT_SIZE(&writer)%8 == 0);
+    gst_bit_writer_write_uint16(&writer, sps_info.size);
+    gst_bit_writer_write_byte_array(&writer, sps_info.data, sps_info.size);
+
+    /* write pps */
+    gst_bit_writer_write_uint8(&writer, 1); /*pps count = 1*/
+    gst_bit_writer_write_uint16(&writer, pps_info.size);
+    gst_bit_writer_write_byte_array(&writer, pps_info.data, pps_info.size);
+
+    avc_codec = gst_buffer_new_wrapped(GST_BIT_WRITER_BUFFER(&writer),
+                                       GST_BIT_WRITER_BIT_SIZE(&writer)/8);
+    g_assert(avc_codec);
+    if (!avc_codec) {
+        ret = GST_VAAPI_ENCODER_STATUS_MEM_ERROR;
+        goto clear_writer;
+    }
+    *buffer = avc_codec;
+
+    gst_buffer_unmap(encoder->pps_data, &pps_info);
+    gst_bit_writer_clear(&writer, FALSE);
+    ret = GST_VAAPI_ENCODER_STATUS_SUCCESS;
+    goto end;
+
+clear_writer:
+    gst_bit_writer_clear(&writer, TRUE);
+
+end:
+    gst_buffer_unmap(encoder->sps_data, &sps_info);
+
+    return ret;
+}
+
+static GstVaapiEncoderStatus
+gst_vaapi_encoder_h264_get_codec_data(
+    GstVaapiEncoder* base,
+    GstBuffer **buffer)
+{
+    GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264_CAST(base);
+
+    *buffer = NULL;
+
+    if (!encoder->is_avc)
+        return GST_VAAPI_ENCODER_STATUS_SUCCESS;
+
+    return gst_vaapi_encoder_h264_get_avcC_codec_data(encoder, buffer);
+}
+
+
+static GstVaapiEncoderStatus
+gst_vaapi_encoder_h264_reordering(
+    GstVaapiEncoder* base,
+    GstVideoCodecFrame *frame,
+    gboolean flush,
+    GstVaapiEncPicture **output
+)
+{
+    GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264(base);
+    GstVaapiEncPicture *picture;
+    gboolean is_idr = FALSE;
+
+    *output = NULL;
+
+    if (!frame) {
+        if (encoder->reorder_state != GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES)
+            return GST_VAAPI_ENCODER_STATUS_FRAME_NOT_READY;
+
+        /* reorder_state = GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES
+           dump B frames from queue, sometime, there may also have P frame or I frame */
+        g_assert(encoder->b_frame_num > 0);
+        g_return_val_if_fail(!g_queue_is_empty(&encoder->reorder_frame_list),
+                             GST_VAAPI_ENCODER_STATUS_UNKNOWN_ERR);
+        picture = g_queue_pop_head(&encoder->reorder_frame_list);
+        g_assert(picture);
+        if (g_queue_is_empty(&encoder->reorder_frame_list)) {
+            encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES;
+        }
+        goto end;
+    }
+
+    /* new frame coming */
+    picture = GST_VAAPI_ENC_PICTURE_NEW(H264, encoder, frame);
+    if (!picture) {
+        GST_WARNING("create H264 picture failed, frame timestamp:%"
+                    GST_TIME_FORMAT,
+                    GST_TIME_ARGS(frame->pts));
+        return GST_VAAPI_ENCODER_STATUS_OBJECT_ERR;
+    }
+    ++encoder->cur_present_index;
+    picture->poc = ((encoder->cur_present_index * 2) %
+                           encoder->max_pic_order_cnt);
+
+    is_idr = (encoder->frame_index == 0 ||
+              encoder->frame_index >= encoder->idr_period);
+
+    /* check key frames */
+    if (is_idr || GST_VIDEO_CODEC_FRAME_IS_FORCE_KEYFRAME(frame) ||
+        (encoder->frame_index % encoder->intra_period) == 0) {
+        ++encoder->cur_frame_num;
+        ++encoder->frame_index;
+
+        /* b frame enabled,  check queue of reorder_frame_list */
+        if (encoder->b_frame_num && !g_queue_is_empty(&encoder->reorder_frame_list)) {
+            GstVaapiEncPicture *p_pic;
+
+            p_pic = g_queue_pop_tail(&encoder->reorder_frame_list);
+            _set_p_frame(p_pic, encoder);
+            g_queue_foreach(&encoder->reorder_frame_list,
+                            (GFunc)_set_b_frame, encoder);
+            ++encoder->cur_frame_num;
+            _set_key_frame(picture, encoder, is_idr);
+            g_queue_push_tail(&encoder->reorder_frame_list, picture);
+            picture = p_pic;
+            encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES;
+        } else { /* no b frames in queue */
+            _set_key_frame(picture, encoder, is_idr);
+            g_assert(g_queue_is_empty(&encoder->reorder_frame_list));
+            if (encoder->b_frame_num)
+                encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES;
+        }
+        goto end;
+    }
+
+    /* new p/b frames coming */
+    ++encoder->frame_index;
+    if (encoder->reorder_state == GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES &&
+        g_queue_get_length(&encoder->reorder_frame_list) < encoder->b_frame_num) {
+        g_queue_push_tail(&encoder->reorder_frame_list, picture);
+        return GST_VAAPI_ENCODER_STATUS_FRAME_NOT_READY;
+    }
+
+    ++encoder->cur_frame_num;
+    _set_p_frame(picture, encoder);
+
+    if (encoder->reorder_state == GST_VAAPI_ENC_H264_REORD_WAIT_FRAMES) {
+        g_queue_foreach(&encoder->reorder_frame_list, _set_b_frame, encoder);
+        encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_DUMP_FRAMES;
+        g_assert(!g_queue_is_empty(&encoder->reorder_frame_list));
+    }
+
+end:
+    g_assert(picture);
+    frame = GST_VAAPI_ENC_PICTURE_GET_FRAME(picture);
+    if (GST_CLOCK_TIME_IS_VALID(frame->pts))
+        frame->pts += encoder->cts_offset;
+    *output = picture;
+
+    return GST_VAAPI_ENCODER_STATUS_SUCCESS;
+}
+
+static gboolean
+gst_vaapi_encoder_h264_get_context_info (
+    GstVaapiEncoder* base,
+    GstVaapiContextInfo *info
+)
+{
+    GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264(base);
+    const static guint default_surface_num = 3;
+
+    g_return_val_if_fail(info, FALSE);
+
+    info->profile = encoder->profile;
+    info->entrypoint = GST_VAAPI_ENTRYPOINT_SLICE_ENCODE;
+    info->width = GST_VAAPI_ENCODER_WIDTH(encoder);
+    info->height = GST_VAAPI_ENCODER_HEIGHT(encoder);
+    info->ref_frames = (encoder->b_frame_num ? 2 : 1) + default_surface_num;
+    info->rate_control = GST_VAAPI_ENCODER_RATE_CONTROL(encoder);
+
+    return TRUE;
+}
+
+static GstCaps *
+gst_vaapi_encoder_h264_set_format (
+    GstVaapiEncoder* base,
+    GstVideoCodecState *in_state,
+    GstCaps *ref_caps
+)
+
+{
+    GstVaapiEncoderH264 *encoder;
+    GstCaps *result = NULL, *tmp;
+    GstStructure *structure;
+    const GValue *value;
+    const gchar *stream_format;
+
+    encoder = GST_VAAPI_ENCODER_H264(base);
+
+    tmp = gst_caps_from_string("video/x-h264");
+    gst_caps_set_simple(tmp,
+        "width", G_TYPE_INT, GST_VAAPI_ENCODER_WIDTH(encoder),
+        "height", G_TYPE_INT, GST_VAAPI_ENCODER_HEIGHT(encoder),
+        "framerate", GST_TYPE_FRACTION,
+        GST_VAAPI_ENCODER_FPS_N(encoder), GST_VAAPI_ENCODER_FPS_D(encoder),
+        NULL);
+    result = gst_caps_intersect(tmp, ref_caps);
+    gst_caps_unref(tmp);
+
+    /* fixed stream-format and choose byte-stream first */
+    structure = gst_caps_get_structure(result, 0);
+    value = gst_structure_get_value(structure, "stream-format");
+    if (value) {
+        gst_structure_fixate_field_string(structure, "stream-format", "byte-stream");
+        stream_format = gst_structure_get_string(structure,"stream-format");
+    } else {
+        stream_format = "byte-stream";
+        gst_structure_set(structure, "stream-format", G_TYPE_STRING, stream_format, NULL);
+    }
+
+    if (strcmp(stream_format, "byte-stream") == 0)
+        encoder->is_avc = FALSE;
+    else /* need codec data later */
+        encoder->is_avc = TRUE;
+
+    result = gst_caps_fixate(result);
+
+    if (!init_encoder_public_attributes(encoder)) {
+        GST_WARNING("encoder ensure public attributes failed ");
+        goto error;
+    }
+
+    if (!init_encoder_private_attributes(encoder, result)) {
+        GST_WARNING("prepare encoding failed ");
+        goto error;
+    }
+
+    return result;
+
+error:
+     gst_caps_unref(result);
+      return NULL;
+}
+
+static GstVaapiEncoderStatus
+gst_vaapi_encoder_h264_convert_frame(
+    GstVaapiEncoder *base,
+    GstVideoCodecFrame *frame
+)
+{
+    GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264_CAST(base);
+    GstVaapiEncoderStatus ret = GST_VAAPI_ENCODER_STATUS_SUCCESS;
+    GstBuffer *buf;
+    GstMapInfo info;
+    guint32 nal_size;
+    guint8 *nal_start_code, *nal_body;
+    guint8 *frame_end;
+
+    if (!encoder->is_avc) {
+        return GST_VAAPI_ENCODER_STATUS_SUCCESS;
+    }
+
+    g_assert(frame && frame->output_buffer);
+    buf = frame->output_buffer;
+
+    if (!gst_buffer_map (buf, &info, GST_MAP_READ|GST_MAP_WRITE))
+        return GST_VAAPI_ENCODER_STATUS_MEM_ERROR;
+
+    nal_start_code = info.data;
+    frame_end = info.data + info.size;
+    nal_size = 0;
+
+    while((frame_end > nal_start_code) &&
+        (nal_body = h264_byte_stream_next_nal(nal_start_code,
+             frame_end - nal_start_code, &nal_size)) != NULL) {
+        if (!nal_size) {
+            ret = GST_VAAPI_ENCODER_STATUS_UNKNOWN_ERR;
+            goto unmap;
+        }
+
+        _check_sps_pps_status(encoder, nal_body, nal_size);
+
+        g_assert(nal_body - nal_start_code == 4);
+        _start_code_to_size(nal_start_code, nal_size);
+        nal_start_code = nal_body + nal_size;
+    }
+    ret = GST_VAAPI_ENCODER_STATUS_SUCCESS;
+unmap:
+    gst_buffer_unmap(buf, &info);
+    return ret;
+}
+
+static gboolean
+gst_vaapi_encoder_h264_init(GstVaapiEncoder *base)
+{
+    GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264(base);
+
+    /* init attributes */
+    encoder->profile = 0;
+    encoder->level = 0;
+    encoder->bitrate = 0;
+    encoder->idr_period = 0;
+    encoder->intra_period = 0;
+    encoder->init_qp = -1;
+    encoder->min_qp = -1;
+    encoder->slice_num = 0;
+    encoder->b_frame_num = 0;
+   //gst_vaapi_base_encoder_set_frame_notify(GST_VAAPI_BASE_ENCODER(encoder), TRUE);
+
+    /* init private values*/
+    encoder->is_avc = FALSE;
+    /* re-ordering */
+    g_queue_init(&encoder->reorder_frame_list);
+    encoder->reorder_state = GST_VAAPI_ENC_H264_REORD_NONE;
+    encoder->frame_index = 0;
+    encoder->cur_frame_num = 0;
+    encoder->cur_present_index = 0;
+
+    g_queue_init(&encoder->ref_list);
+    encoder->max_ref_num = 0;
+    encoder->max_reflist0_count = 1;
+    encoder->max_reflist1_count = 1;
+
+    encoder->sps_data = NULL;
+    encoder->pps_data = NULL;
+
+    encoder->cts_offset = 0;
+
+    encoder->max_frame_num = 0;
+    encoder->log2_max_frame_num = 0;
+    encoder->max_pic_order_cnt = 0;
+    encoder->log2_max_pic_order_cnt = 0;
+    encoder->idr_num = 0;
+
+    return TRUE;
+}
+
+static void
+gst_vaapi_encoder_h264_destroy(GstVaapiEncoder *base)
+{
+    /*free private buffers*/
+    GstVaapiEncoderH264 *encoder = GST_VAAPI_ENCODER_H264(base);
+    GstVaapiEncPicture *pic;
+    GstVaapiEncoderH264Ref *ref;
+
+    gst_buffer_replace(&encoder->sps_data, NULL);
+    gst_buffer_replace(&encoder->pps_data, NULL);
+
+    while(!g_queue_is_empty(&encoder->ref_list)) {
+        ref = (GstVaapiEncoderH264Ref*)g_queue_pop_head(&encoder->ref_list);
+        reference_pic_free(encoder, ref);
+    }
+    g_queue_clear(&encoder->ref_list);
+
+    while(!g_queue_is_empty(&encoder->reorder_frame_list)) {
+        pic = (GstVaapiEncPicture*)g_queue_pop_head(&encoder->reorder_frame_list);
+        gst_vaapi_enc_picture_unref(pic);
+    }
+    g_queue_clear(&encoder->reorder_frame_list);
+
+}
+
+static void
+gst_vaapi_encoder_h264_class_init(GstVaapiEncoderH264Class *klass)
+{
+    GstVaapiMiniObjectClass * const object_class =
+        GST_VAAPI_MINI_OBJECT_CLASS(klass);
+    GstVaapiEncoderClass * const encoder_class = GST_VAAPI_ENCODER_CLASS(klass);
+
+    gst_vaapi_encoder_class_init(encoder_class);
+
+    object_class->size = sizeof (GstVaapiEncoderH264);
+
+    encoder_class->init = gst_vaapi_encoder_h264_init;
+    encoder_class->destroy = gst_vaapi_encoder_h264_destroy;
+    encoder_class->set_format = gst_vaapi_encoder_h264_set_format;
+    encoder_class->get_context_info = gst_vaapi_encoder_h264_get_context_info;
+    encoder_class->reordering = gst_vaapi_encoder_h264_reordering;
+    encoder_class->encode = gst_vaapi_encoder_h264_encode;
+    encoder_class->convert_buf = gst_vaapi_encoder_h264_convert_frame;
+    encoder_class->get_codec_data = gst_vaapi_encoder_h264_get_codec_data;
+    encoder_class->flush = gst_vaapi_encoder_h264_flush;
+}
+
+static inline const GstVaapiEncoderClass*
+gst_vaapi_encoder_h264_class()
+{
+    static GstVaapiEncoderH264Class g_class;
+    static gsize g_class_init = FALSE;
+
+    if (g_once_init_enter(&g_class_init)) {
+        gst_vaapi_encoder_h264_class_init(&g_class);
+        g_once_init_leave(&g_class_init, TRUE);
+    }
+    return GST_VAAPI_ENCODER_CLASS(&g_class);
+}
+
+GstVaapiEncoder *
+gst_vaapi_encoder_h264_new(GstVaapiDisplay *display)
+{
+    return gst_vaapi_encoder_new(gst_vaapi_encoder_h264_class(), display);
+}
+
+void
+gst_vaapi_encoder_h264_set_avc(
+    GstVaapiEncoderH264* encoder,
+    gboolean is_avc
+)
+{
+    encoder->is_avc = is_avc;
+}
+
+gboolean
+gst_vaapi_encoder_h264_is_avc(GstVaapiEncoderH264* encoder)
+{
+    return encoder->is_avc;
+}
+
