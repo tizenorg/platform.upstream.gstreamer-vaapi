@@ -83,6 +83,30 @@ enum {
     H264_PROP_B_FRAME_NUM,
 };
 
+#define GST_VAAPI_TYPE_ENCODER_H264_PROFILE gst_vaapiencoder_h264_profile_get_type()
+
+static GType
+gst_vaapiencoder_h264_profile_get_type(void)
+{
+    static GType g_type = 0;
+
+    static const GEnumValue h264_profile_values[] = {
+        { GST_VAAPI_PROFILE_H264_BASELINE,
+          "Baseline profile", "baseline" },
+        { GST_VAAPI_PROFILE_H264_MAIN,
+          "Main profile", "main" },
+        { GST_VAAPI_PROFILE_H264_HIGH,
+          "High profile", "high" },
+        { GST_VAAPI_PROFILE_UNKNOWN,
+          "auto", "auto" },
+        { 0, NULL, NULL },
+    };
+
+    if (!g_type)
+        g_type = g_enum_register_static("GstVaapiEncoderH264Profile", h264_profile_values);
+    return g_type;
+}
+
 static void
 gst_vaapiencode_h264_init(
     GstVaapiEncodeH264 *h264_encode
@@ -115,8 +139,7 @@ gst_vaapiencode_h264_set_property(
 
     switch (prop_id) {
     case H264_PROP_PROFILE: {
-        guint profile = g_value_get_uint(value);
-        h264encoder->profile = profile;
+        h264encoder->profile = g_value_get_enum(value);
         break;
     }
 
@@ -176,7 +199,7 @@ gst_vaapiencode_h264_get_property (
 
     switch (prop_id) {
     case H264_PROP_PROFILE:
-        g_value_set_uint (value, h264encoder->profile);
+        g_value_set_enum (value, h264encoder->profile);
         break;
     case H264_PROP_LEVEL:
         g_value_set_uint (value, h264encoder->level);
@@ -252,14 +275,13 @@ gst_vaapiencode_h264_class_init(GstVaapiEncodeH264Class *klass)
     g_object_class_install_property (
         object_class,
         H264_PROP_PROFILE,
-        g_param_spec_uint (
+        g_param_spec_enum (
             "profile",
             "H264 Profile",
             "Profile supports: Baseline, Main, High",
-            GST_VAAPI_PROFILE_H264_BASELINE,
-            GST_VAAPI_PROFILE_H264_HIGH,
-            GST_VAAPI_ENCODER_H264_DEFAULT_PROFILE,
-            G_PARAM_READWRITE));
+            GST_VAAPI_TYPE_ENCODER_H264_PROFILE,
+            GST_VAAPI_PROFILE_UNKNOWN,
+            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
     g_object_class_install_property (
       object_class,
