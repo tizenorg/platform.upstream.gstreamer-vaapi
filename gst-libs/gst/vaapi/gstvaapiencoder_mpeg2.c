@@ -330,7 +330,7 @@ set_sequence_packed_header(
     gst_bit_writer_write_sps(&writer, seq, encoder);
     g_assert(GST_BIT_WRITER_BIT_SIZE(&writer)%8 == 0);
     data_bit_size = GST_BIT_WRITER_BIT_SIZE(&writer);
-    data = GST_BIT_WRITER_BUFFER(&writer);
+    data = GST_BIT_WRITER_DATA(&writer);
 
     packed_header_param_buffer.type = VAEncPackedHeaderSequence;
     packed_header_param_buffer.bit_length = data_bit_size;
@@ -365,7 +365,7 @@ set_picture_packed_header(
     gst_bit_writer_write_pps(&writer, pic);
     g_assert(GST_BIT_WRITER_BIT_SIZE(&writer)%8 == 0);
     data_bit_size = GST_BIT_WRITER_BIT_SIZE(&writer);
-    data = GST_BIT_WRITER_BUFFER(&writer);
+    data = GST_BIT_WRITER_DATA(&writer);
 
 
     packed_header_param_buffer.type = VAEncPackedHeaderPicture;
@@ -902,43 +902,43 @@ gst_bit_writer_write_sps(
     int frame_rate_code = find_frame_rate_code(seq);
 
     if (encoder->new_gop) {
-        gst_bit_writer_write_uint_value(bitwriter, START_CODE_SEQ, 32);
-        gst_bit_writer_write_uint_value(bitwriter, seq->picture_width, 12);
-        gst_bit_writer_write_uint_value(bitwriter, seq->picture_height, 12);
-        gst_bit_writer_write_uint_value(bitwriter, seq->aspect_ratio_information, 4);
-        gst_bit_writer_write_uint_value(bitwriter, frame_rate_code, 4); /* frame_rate_code */
-        gst_bit_writer_write_uint_value(bitwriter, (seq->bits_per_second + 399) / 400, 18); /* the low 18 bits of bit_rate */
-        gst_bit_writer_write_uint_value(bitwriter, 1, 1); /* marker_bit */
-        gst_bit_writer_write_uint_value(bitwriter, seq->vbv_buffer_size, 10);
-        gst_bit_writer_write_uint_value(bitwriter, 0, 1); /* constraint_parameter_flag, always 0 for MPEG-2 */
-        gst_bit_writer_write_uint_value(bitwriter, 0, 1); /* load_intra_quantiser_matrix */
-        gst_bit_writer_write_uint_value(bitwriter, 0, 1); /* load_non_intra_quantiser_matrix */
+        gst_bit_writer_put_bits_uint32(bitwriter, START_CODE_SEQ, 32);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->picture_width, 12);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->picture_height, 12);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->aspect_ratio_information, 4);
+        gst_bit_writer_put_bits_uint32(bitwriter, frame_rate_code, 4); /* frame_rate_code */
+        gst_bit_writer_put_bits_uint32(bitwriter, (seq->bits_per_second + 399) / 400, 18); /* the low 18 bits of bit_rate */
+        gst_bit_writer_put_bits_uint32(bitwriter, 1, 1); /* marker_bit */
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->vbv_buffer_size, 10);
+        gst_bit_writer_put_bits_uint32(bitwriter, 0, 1); /* constraint_parameter_flag, always 0 for MPEG-2 */
+        gst_bit_writer_put_bits_uint32(bitwriter, 0, 1); /* load_intra_quantiser_matrix */
+        gst_bit_writer_put_bits_uint32(bitwriter, 0, 1); /* load_non_intra_quantiser_matrix */
 
-        gst_bit_writer_align_byte(bitwriter, 0);
+        gst_bit_writer_align_bytes(bitwriter, 0);
 
-        gst_bit_writer_write_uint_value(bitwriter, START_CODE_EXT, 32);
-        gst_bit_writer_write_uint_value(bitwriter, 1, 4); /* sequence_extension id */
-        gst_bit_writer_write_uint_value(bitwriter, seq->sequence_extension.bits.profile_and_level_indication, 8);
-        gst_bit_writer_write_uint_value(bitwriter, seq->sequence_extension.bits.progressive_sequence, 1);
-        gst_bit_writer_write_uint_value(bitwriter, seq->sequence_extension.bits.chroma_format, 2);
-        gst_bit_writer_write_uint_value(bitwriter, seq->picture_width >> 12, 2);
-        gst_bit_writer_write_uint_value(bitwriter, seq->picture_height >> 12, 2);
-        gst_bit_writer_write_uint_value(bitwriter, ((seq->bits_per_second + 399) / 400) >> 18, 12); /* bit_rate_extension */
-        gst_bit_writer_write_uint_value(bitwriter, 1, 1); /* marker_bit */
-        gst_bit_writer_write_uint_value(bitwriter, seq->vbv_buffer_size >> 10, 8);
-        gst_bit_writer_write_uint_value(bitwriter, seq->sequence_extension.bits.low_delay, 1);
-        gst_bit_writer_write_uint_value(bitwriter, seq->sequence_extension.bits.frame_rate_extension_n, 2);
-        gst_bit_writer_write_uint_value(bitwriter, seq->sequence_extension.bits.frame_rate_extension_d, 5);
+        gst_bit_writer_put_bits_uint32(bitwriter, START_CODE_EXT, 32);
+        gst_bit_writer_put_bits_uint32(bitwriter, 1, 4); /* sequence_extension id */
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->sequence_extension.bits.profile_and_level_indication, 8);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->sequence_extension.bits.progressive_sequence, 1);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->sequence_extension.bits.chroma_format, 2);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->picture_width >> 12, 2);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->picture_height >> 12, 2);
+        gst_bit_writer_put_bits_uint32(bitwriter, ((seq->bits_per_second + 399) / 400) >> 18, 12); /* bit_rate_extension */
+        gst_bit_writer_put_bits_uint32(bitwriter, 1, 1); /* marker_bit */
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->vbv_buffer_size >> 10, 8);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->sequence_extension.bits.low_delay, 1);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->sequence_extension.bits.frame_rate_extension_n, 2);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->sequence_extension.bits.frame_rate_extension_d, 5);
 
-        gst_bit_writer_align_byte(bitwriter, 0);
+        gst_bit_writer_align_bytes(bitwriter, 0);
 
         /* gop header*/
-        gst_bit_writer_write_uint_value(bitwriter, START_CODE_GOP, 32);
-        gst_bit_writer_write_uint_value(bitwriter, seq->gop_header.bits.time_code, 25);
-        gst_bit_writer_write_uint_value(bitwriter, seq->gop_header.bits.closed_gop, 1);
-        gst_bit_writer_write_uint_value(bitwriter, seq->gop_header.bits.broken_link, 1);
+        gst_bit_writer_put_bits_uint32(bitwriter, START_CODE_GOP, 32);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->gop_header.bits.time_code, 25);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->gop_header.bits.closed_gop, 1);
+        gst_bit_writer_put_bits_uint32(bitwriter, seq->gop_header.bits.broken_link, 1);
 
-        gst_bit_writer_align_byte(bitwriter, 0);
+        gst_bit_writer_align_bytes(bitwriter, 0);
     }
     return TRUE;
 }
@@ -950,50 +950,50 @@ gst_bit_writer_write_pps(
 )
 {
 
-    gst_bit_writer_write_uint_value(bitwriter, START_CODE_PICUTRE, 32);
-    gst_bit_writer_write_uint_value(bitwriter, pic->temporal_reference, 10);
-    gst_bit_writer_write_uint_value(bitwriter,
+    gst_bit_writer_put_bits_uint32(bitwriter, START_CODE_PICUTRE, 32);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->temporal_reference, 10);
+    gst_bit_writer_put_bits_uint32(bitwriter,
                      pic->picture_type == VAEncPictureTypeIntra ? 1 :
                      pic->picture_type == VAEncPictureTypePredictive ? 2 : 3,
                      3);
-    gst_bit_writer_write_uint_value(bitwriter, pic->vbv_delay, 16);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->vbv_delay, 16);
 
     if (pic->picture_type == VAEncPictureTypePredictive ||
         pic->picture_type == VAEncPictureTypeBidirectional) {
-        gst_bit_writer_write_uint_value(bitwriter, 0, 1); /* full_pel_forward_vector, always 0 for MPEG-2 */
-        gst_bit_writer_write_uint_value(bitwriter, 7, 3); /* forward_f_code, always 7 for MPEG-2 */
+        gst_bit_writer_put_bits_uint32(bitwriter, 0, 1); /* full_pel_forward_vector, always 0 for MPEG-2 */
+        gst_bit_writer_put_bits_uint32(bitwriter, 7, 3); /* forward_f_code, always 7 for MPEG-2 */
     }
 
     if (pic->picture_type == VAEncPictureTypeBidirectional) {
-        gst_bit_writer_write_uint_value(bitwriter, 0, 1); /* full_pel_backward_vector, always 0 for MPEG-2 */
-        gst_bit_writer_write_uint_value(bitwriter, 7, 3); /* backward_f_code, always 7 for MPEG-2 */
+        gst_bit_writer_put_bits_uint32(bitwriter, 0, 1); /* full_pel_backward_vector, always 0 for MPEG-2 */
+        gst_bit_writer_put_bits_uint32(bitwriter, 7, 3); /* backward_f_code, always 7 for MPEG-2 */
     }
 
-    gst_bit_writer_write_uint_value(bitwriter, 0, 1); /* extra_bit_picture, 0 */
+    gst_bit_writer_put_bits_uint32(bitwriter, 0, 1); /* extra_bit_picture, 0 */
 
-    gst_bit_writer_align_byte(bitwriter, 0);
+    gst_bit_writer_align_bytes(bitwriter, 0);
 
-    gst_bit_writer_write_uint_value(bitwriter, START_CODE_EXT, 32);
-    gst_bit_writer_write_uint_value(bitwriter, 8, 4); /* Picture Coding Extension ID: 8 */
-    gst_bit_writer_write_uint_value(bitwriter, pic->f_code[0][0], 4);
-    gst_bit_writer_write_uint_value(bitwriter, pic->f_code[0][1], 4);
-    gst_bit_writer_write_uint_value(bitwriter, pic->f_code[1][0], 4);
-    gst_bit_writer_write_uint_value(bitwriter, pic->f_code[1][1], 4);
+    gst_bit_writer_put_bits_uint32(bitwriter, START_CODE_EXT, 32);
+    gst_bit_writer_put_bits_uint32(bitwriter, 8, 4); /* Picture Coding Extension ID: 8 */
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->f_code[0][0], 4);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->f_code[0][1], 4);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->f_code[1][0], 4);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->f_code[1][1], 4);
 
-    gst_bit_writer_write_uint_value(bitwriter, pic->picture_coding_extension.bits.intra_dc_precision, 2);
-    gst_bit_writer_write_uint_value(bitwriter, pic->picture_coding_extension.bits.picture_structure, 2);
-    gst_bit_writer_write_uint_value(bitwriter, pic->picture_coding_extension.bits.top_field_first, 1);
-    gst_bit_writer_write_uint_value(bitwriter, pic->picture_coding_extension.bits.frame_pred_frame_dct, 1);
-    gst_bit_writer_write_uint_value(bitwriter, pic->picture_coding_extension.bits.concealment_motion_vectors, 1);
-    gst_bit_writer_write_uint_value(bitwriter, pic->picture_coding_extension.bits.q_scale_type, 1);
-    gst_bit_writer_write_uint_value(bitwriter, pic->picture_coding_extension.bits.intra_vlc_format, 1);
-    gst_bit_writer_write_uint_value(bitwriter, pic->picture_coding_extension.bits.alternate_scan, 1);
-    gst_bit_writer_write_uint_value(bitwriter, pic->picture_coding_extension.bits.repeat_first_field, 1);
-    gst_bit_writer_write_uint_value(bitwriter, 1, 1); /* always chroma 420*/
-    gst_bit_writer_write_uint_value(bitwriter, pic->picture_coding_extension.bits.progressive_frame, 1);
-    gst_bit_writer_write_uint_value(bitwriter, pic->picture_coding_extension.bits.composite_display_flag, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->picture_coding_extension.bits.intra_dc_precision, 2);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->picture_coding_extension.bits.picture_structure, 2);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->picture_coding_extension.bits.top_field_first, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->picture_coding_extension.bits.frame_pred_frame_dct, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->picture_coding_extension.bits.concealment_motion_vectors, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->picture_coding_extension.bits.q_scale_type, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->picture_coding_extension.bits.intra_vlc_format, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->picture_coding_extension.bits.alternate_scan, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->picture_coding_extension.bits.repeat_first_field, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter, 1, 1); /* always chroma 420*/
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->picture_coding_extension.bits.progressive_frame, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter, pic->picture_coding_extension.bits.composite_display_flag, 1);
 
-    gst_bit_writer_align_byte(bitwriter, 0);
+    gst_bit_writer_align_bytes(bitwriter, 0);
 
     return TRUE;
 }
