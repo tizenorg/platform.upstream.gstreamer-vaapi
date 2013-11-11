@@ -1,3 +1,6 @@
+* Tue Nov 12 2013 Zhao Halley <halley.zhao@intel.com> submit/devel/gst/20131106.224343@e214cbf
+- add encoder support after gst 1.2 api porting
+
 * Thu Nov 7 2013 Zhao Halley <halley.zhao@intel.com> 0.5.7pre@61bb68a6
   Rebase to upstream 0.5.7 pre release with gst 1.2 api support
   encoder is temporarily disabled since it doesn't support gst 1.2 api yet
