@@ -34,13 +34,24 @@ G_BEGIN_DECLS
 
 typedef struct _GstBitWriter     GstBitWriter;
 
+/**
+ * GstBitWriter:
+ * @data: Allocated @data for bit writer to write
+ * @bit_size: Size of written @data in bits
+ *
+ * Private:
+ * @bit_capacity: Capacity of the allocated @data
+ * @auto_grow: @data space can auto grow
+ *
+ * A bit writer instance.
+ */
 struct _GstBitWriter {
   guint8   *data;
   guint     bit_size;
-  guint     max_bit_capacity;
-  gboolean  auto_grow;
 
   /* < private > */
+  guint     bit_capacity;
+  gboolean  auto_grow;
   gpointer  _gst_reserved[GST_PADDING];
 };
 
@@ -81,8 +92,8 @@ _gst_bit_writer_check_space(GstBitWriter *bitwriter, guint32 bits)
     guint32 new_bit_size = bits + bitwriter->bit_size;
     guint32 clear_pos;
 
-    g_assert(bitwriter->bit_size <= bitwriter->max_bit_capacity);
-    if (new_bit_size <= bitwriter->max_bit_capacity)
+    g_assert(bitwriter->bit_size <= bitwriter->bit_capacity);
+    if (new_bit_size <= bitwriter->bit_capacity)
         return TRUE;
 
     if (!bitwriter->auto_grow)
@@ -94,7 +105,7 @@ _gst_bit_writer_check_space(GstBitWriter *bitwriter, guint32 bits)
     clear_pos = ((bitwriter->bit_size + 7) >> 3);
     bitwriter->data = g_realloc(bitwriter->data, (new_bit_size >> 3));
     memset(bitwriter->data + clear_pos, 0, (new_bit_size >> 3) - clear_pos);
-    bitwriter->max_bit_capacity = new_bit_size;
+    bitwriter->bit_capacity = new_bit_size;
     return TRUE;
 }
 
@@ -116,8 +127,9 @@ gst_bit_writer_put_bits_uint##bits##_unchecked( \
     byte_pos = (bitwriter->bit_size >> 3); \
     bit_offset = (bitwriter->bit_size & 0x07); \
     cur_byte = bitwriter->data + byte_pos; \
+    g_assert (nbits <= bits); \
     g_assert( bit_offset < 8 && \
-            bitwriter->bit_size <= bitwriter->max_bit_capacity); \
+            bitwriter->bit_size <= bitwriter->bit_capacity); \
     \
     while (nbits) { \
         fill_bits = ((8 - bit_offset) < nbits ? (8 - bit_offset) : nbits); \
@@ -130,7 +142,7 @@ gst_bit_writer_put_bits_uint##bits##_unchecked( \
         bit_offset = 0; \
     } \
     g_assert(cur_byte <= \
-           (bitwriter->data + (bitwriter->max_bit_capacity >> 3))); \
+           (bitwriter->data + (bitwriter->bit_capacity >> 3))); \
 }
 
 __GST_BIT_WRITER_WRITE_BITS_UNCHECKED(8)
@@ -161,7 +173,7 @@ gst_bit_writer_set_pos_unchecked(GstBitWriter *bitwriter, guint pos)
 static inline guint
 gst_bit_writer_get_space_unchecked(GstBitWriter *bitwriter)
 {
-    return bitwriter->max_bit_capacity - bitwriter->bit_size;
+    return bitwriter->bit_capacity - bitwriter->bit_size;
 }
 
 static inline void
@@ -245,7 +257,7 @@ static inline gboolean
 _gst_bit_writer_set_pos_inline(GstBitWriter *bitwriter, guint pos)
 {
     g_return_val_if_fail(bitwriter != NULL, FALSE);
-    g_return_val_if_fail(pos <= bitwriter->max_bit_capacity, FALSE);
+    g_return_val_if_fail(pos <= bitwriter->bit_capacity, FALSE);
 
     return gst_bit_writer_set_pos_unchecked(bitwriter, pos);
 }
@@ -254,7 +266,7 @@ static inline guint
 _gst_bit_writer_get_space_inline(GstBitWriter *bitwriter)
 {
     g_return_val_if_fail(bitwriter != NULL, 0);
-    g_return_val_if_fail(bitwriter->bit_size < bitwriter->max_bit_capacity,  0);
+    g_return_val_if_fail(bitwriter->bit_size < bitwriter->bit_capacity,  0);
 
     return gst_bit_writer_get_space_unchecked(bitwriter);
 }
@@ -282,7 +294,7 @@ _gst_bit_writer_align_bytes_inline(GstBitWriter *bitwriter, guint8 trailing_bit)
 {
     g_return_val_if_fail(bitwriter != NULL, FALSE);
     g_return_val_if_fail((trailing_bit == 0 || trailing_bit == 1), FALSE);
-    g_return_val_if_fail(((bitwriter->bit_size+7)&(~7)) <= bitwriter->max_bit_capacity, FALSE);
+    g_return_val_if_fail(((bitwriter->bit_size+7)&(~7)) <= bitwriter->bit_capacity, FALSE);
 
     gst_bit_writer_align_bytes_unchecked(bitwriter, trailing_bit);
     return TRUE;
