@@ -23,6 +23,8 @@
 #define GST_VAAPI_ENCODER_H264_PRIV_H
 
 #include <glib.h>
+#include "gst/bitwriter/gstbitwriter.h"
+
 #include <gst/vaapi/gstvaapiencoder.h>
 #include <gst/vaapi/gstvaapiencoder_priv.h>
 
@@ -121,6 +123,12 @@ struct _GstVaapiEncoderH264Class {
     /*< private >*/
     GstVaapiEncoderClass parent_class;
 };
+
+gboolean
+gst_bit_writer_put_ue(GstBitWriter *bitwriter, guint32 value);
+
+gboolean
+gst_bit_writer_put_se(GstBitWriter *bitwriter, gint32 value);
 
 G_END_DECLS
 

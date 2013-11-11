@@ -31,7 +31,6 @@
 #include "gstvaapicontext.h"
 #include "gstvaapisurface.h"
 #include "gstvaapidisplay_priv.h"
-#include "gst/bitwriter/gstbitwriter.h"
 
 #define DEBUG 1
 #include "gstvaapidebug.h"
@@ -412,24 +411,58 @@ h264_byte_stream_next_nal(
     return nal_start;
 }
 
+gboolean
+gst_bit_writer_put_ue(GstBitWriter *bitwriter, guint32 value)
+{
+    guint32  size_in_bits = 0;
+    guint32  tmp_value = ++value;
+
+    while (tmp_value) {
+        ++size_in_bits;
+        tmp_value >>= 1;
+    }
+    if (size_in_bits > 1
+        && !gst_bit_writer_put_bits_uint32(bitwriter, 0, size_in_bits-1))
+        return FALSE;
+    if (!gst_bit_writer_put_bits_uint32(bitwriter, value, size_in_bits))
+        return FALSE;
+    return TRUE;
+}
+
+gboolean
+gst_bit_writer_put_se(GstBitWriter *bitwriter, gint32 value)
+{
+    guint32 new_val;
+
+    if (value <= 0)
+        new_val = -(value<<1);
+    else
+        new_val = (value<<1) - 1;
+
+    if (!gst_bit_writer_put_ue(bitwriter, new_val))
+        return FALSE;
+    return TRUE;
+}
+
+
 static gboolean
 gst_bit_writer_write_nal_header(
     GstBitWriter *bitwriter,
-    guint nal_ref_idc,
-    guint nal_unit_type
+    guint32 nal_ref_idc,
+    guint32 nal_unit_type
 )
 {
-  gst_bit_writer_write_uint_value(bitwriter, 0, 1);
-  gst_bit_writer_write_uint_value(bitwriter, nal_ref_idc, 2);
-  gst_bit_writer_write_uint_value(bitwriter, nal_unit_type, 5);
-  return TRUE;
+    gst_bit_writer_put_bits_uint32(bitwriter, 0, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter, nal_ref_idc, 2);
+    gst_bit_writer_put_bits_uint32(bitwriter, nal_unit_type, 5);
+    return TRUE;
 }
 
 static gboolean
 gst_bit_writer_write_trailing_bits(GstBitWriter *bitwriter)
 {
-    gst_bit_writer_write_uint_value(bitwriter, 1, 1);
-    gst_bit_writer_align_byte(bitwriter, 0);
+    gst_bit_writer_put_bits_uint32(bitwriter, 1, 1);
+    gst_bit_writer_align_bytes_unchecked(bitwriter, 0);
     return TRUE;
 }
 
@@ -440,209 +473,203 @@ gst_bit_writer_write_sps(
     GstVaapiProfile profile
 )
 {
-  guint32 constraint_set0_flag, constraint_set1_flag;
-  guint32 constraint_set2_flag, constraint_set3_flag;
-  guint32 gaps_in_frame_num_value_allowed_flag = 0; // ??
-  gboolean nal_hrd_parameters_present_flag;
+    guint32 constraint_set0_flag, constraint_set1_flag;
+    guint32 constraint_set2_flag, constraint_set3_flag;
+    guint32 gaps_in_frame_num_value_allowed_flag = 0; // ??
+    gboolean nal_hrd_parameters_present_flag;
 
-  guint32 b_qpprime_y_zero_transform_bypass = 0;
-  guint32 residual_color_transform_flag = 0;
-  guint32 pic_height_in_map_units =
-    (seq->seq_fields.bits.frame_mbs_only_flag ?
-     seq->picture_height_in_mbs :
-     seq->picture_height_in_mbs/2);
-  guint32 mb_adaptive_frame_field = !seq->seq_fields.bits.frame_mbs_only_flag;
-  guint32 i = 0;
+    guint32 b_qpprime_y_zero_transform_bypass = 0;
+    guint32 residual_color_transform_flag = 0;
+    guint32 pic_height_in_map_units =
+        (seq->seq_fields.bits.frame_mbs_only_flag ?
+         seq->picture_height_in_mbs : seq->picture_height_in_mbs/2);
+    guint32 mb_adaptive_frame_field = !seq->seq_fields.bits.frame_mbs_only_flag;
+    guint32 i = 0;
 
-  constraint_set0_flag = profile == GST_VAAPI_PROFILE_H264_BASELINE;
-  constraint_set1_flag = profile <= GST_VAAPI_PROFILE_H264_MAIN;
-  constraint_set2_flag = 0;
-  constraint_set3_flag = 0;
+    constraint_set0_flag = profile == GST_VAAPI_PROFILE_H264_BASELINE;
+    constraint_set1_flag = profile <= GST_VAAPI_PROFILE_H264_MAIN;
+    constraint_set2_flag = 0;
+    constraint_set3_flag = 0;
 
-  /* profile_idc */
-  gst_bit_writer_write_uint8(bitwriter, _profile_to_value(profile));
-  /* constraint_set0_flag */
-  gst_bit_writer_write_uint_value(bitwriter, constraint_set0_flag, 1);
-  /* constraint_set1_flag */
-  gst_bit_writer_write_uint_value(bitwriter, constraint_set1_flag, 1);
-  /* constraint_set2_flag */
-  gst_bit_writer_write_uint_value(bitwriter, constraint_set2_flag, 1);
-  /* constraint_set3_flag */
-  gst_bit_writer_write_uint_value(bitwriter, constraint_set3_flag, 1);
-  /* reserved_zero_4bits */
-  gst_bit_writer_write_uint_value(bitwriter, 0, 4);
-  /* level_idc */
-  gst_bit_writer_write_uint8(bitwriter, seq->level_idc);
-  /* seq_parameter_set_id */
-  gst_bit_writer_write_ue(bitwriter, seq->seq_parameter_set_id);
+    /* profile_idc */
+    gst_bit_writer_put_bits_uint32(bitwriter, _profile_to_value(profile), 8);
+    /* constraint_set0_flag */
+    gst_bit_writer_put_bits_uint32(bitwriter, constraint_set0_flag, 1);
+    /* constraint_set1_flag */
+    gst_bit_writer_put_bits_uint32(bitwriter, constraint_set1_flag, 1);
+    /* constraint_set2_flag */
+    gst_bit_writer_put_bits_uint32(bitwriter, constraint_set2_flag, 1);
+    /* constraint_set3_flag */
+    gst_bit_writer_put_bits_uint32(bitwriter, constraint_set3_flag, 1);
+    /* reserved_zero_4bits */
+    gst_bit_writer_put_bits_uint32(bitwriter, 0, 4);
+    /* level_idc */
+    gst_bit_writer_put_bits_uint32(bitwriter, seq->level_idc, 8);
+    /* seq_parameter_set_id */
+    gst_bit_writer_put_ue(bitwriter, seq->seq_parameter_set_id);
 
-  if (profile == GST_VAAPI_PROFILE_H264_HIGH) {
-    /* for high profile */
-    /* chroma_format_idc  = 1, 4:2:0*/
-    gst_bit_writer_write_ue(bitwriter, seq->seq_fields.bits.chroma_format_idc);
-    if (3 == seq->seq_fields.bits.chroma_format_idc) {
-      gst_bit_writer_write_uint_value(bitwriter, residual_color_transform_flag, 1);
-    }
-    /* bit_depth_luma_minus8 */
-    gst_bit_writer_write_ue(bitwriter, seq->bit_depth_luma_minus8);
-    /* bit_depth_chroma_minus8 */
-    gst_bit_writer_write_ue(bitwriter, seq->bit_depth_chroma_minus8);
-    /* b_qpprime_y_zero_transform_bypass */
-    gst_bit_writer_write_uint_value(bitwriter, b_qpprime_y_zero_transform_bypass, 1);
-    g_assert(seq->seq_fields.bits.seq_scaling_matrix_present_flag == 0);
-    /*seq_scaling_matrix_present_flag  */
-    gst_bit_writer_write_uint_value(bitwriter,
-                              seq->seq_fields.bits.seq_scaling_matrix_present_flag,
-                              1);
+    if (profile == GST_VAAPI_PROFILE_H264_HIGH) {
+        /* for high profile */
+        /* chroma_format_idc  = 1, 4:2:0*/
+        gst_bit_writer_put_ue(bitwriter, seq->seq_fields.bits.chroma_format_idc);
+        if (3 == seq->seq_fields.bits.chroma_format_idc) {
+          gst_bit_writer_put_bits_uint32(bitwriter, residual_color_transform_flag, 1);
+        }
+        /* bit_depth_luma_minus8 */
+        gst_bit_writer_put_ue(bitwriter, seq->bit_depth_luma_minus8);
+        /* bit_depth_chroma_minus8 */
+        gst_bit_writer_put_ue(bitwriter, seq->bit_depth_chroma_minus8);
+        /* b_qpprime_y_zero_transform_bypass */
+        gst_bit_writer_put_bits_uint32(bitwriter, b_qpprime_y_zero_transform_bypass, 1);
+        g_assert(seq->seq_fields.bits.seq_scaling_matrix_present_flag == 0);
+        /*seq_scaling_matrix_present_flag  */
+        gst_bit_writer_put_bits_uint32(bitwriter,
+            seq->seq_fields.bits.seq_scaling_matrix_present_flag, 1);
 
     #if 0
-    if (seq->seq_fields.bits.seq_scaling_matrix_present_flag) {
-      for (i = 0; i < (seq->seq_fields.bits.chroma_format_idc != 3 ? 8 : 12); i++) {
-        gst_bit_writer_write_uint_value(bitwriter, seq->seq_fields.bits.seq_scaling_list_present_flag, 1);
-        if (seq->seq_fields.bits.seq_scaling_list_present_flag) {
-          g_assert(0);
-          /* FIXME, need write scaling list if seq_scaling_matrix_present_flag ==1*/
+        if (seq->seq_fields.bits.seq_scaling_matrix_present_flag) {
+          for (i = 0; i < (seq->seq_fields.bits.chroma_format_idc != 3 ? 8 : 12); i++) {
+            gst_bit_writer_put_bits_uint8(bitwriter, seq->seq_fields.bits.seq_scaling_list_present_flag, 1);
+            if (seq->seq_fields.bits.seq_scaling_list_present_flag) {
+              g_assert(0);
+              /* FIXME, need write scaling list if seq_scaling_matrix_present_flag ==1*/
+            }
+          }
         }
-      }
-    }
     #endif
-  }
-
-  /* log2_max_frame_num_minus4 */
-  gst_bit_writer_write_ue(bitwriter,
-                          seq->seq_fields.bits.log2_max_frame_num_minus4);
-  /* pic_order_cnt_type */
-  gst_bit_writer_write_ue(bitwriter, seq->seq_fields.bits.pic_order_cnt_type);
-
-  if (seq->seq_fields.bits.pic_order_cnt_type == 0) {
-    /* log2_max_pic_order_cnt_lsb_minus4 */
-    gst_bit_writer_write_ue(bitwriter,
-                            seq->seq_fields.bits.log2_max_pic_order_cnt_lsb_minus4);
-  } else if (seq->seq_fields.bits.pic_order_cnt_type == 1) {
-    g_assert(0);
-    gst_bit_writer_write_uint_value(bitwriter,
-                              seq->seq_fields.bits.delta_pic_order_always_zero_flag,
-                              1);
-    gst_bit_writer_write_se(bitwriter, seq->offset_for_non_ref_pic);
-    gst_bit_writer_write_se(bitwriter,
-                            seq->offset_for_top_to_bottom_field);
-    gst_bit_writer_write_ue(bitwriter,
-                            seq->num_ref_frames_in_pic_order_cnt_cycle);
-    for ( i = 0; i < seq->num_ref_frames_in_pic_order_cnt_cycle; i++) {
-      gst_bit_writer_write_se(bitwriter, seq->offset_for_ref_frame[i]);
-    }
-  }
-
-  /* num_ref_frames */
-  gst_bit_writer_write_ue(bitwriter, seq->max_num_ref_frames);
-  /* gaps_in_frame_num_value_allowed_flag */
-  gst_bit_writer_write_uint_value(bitwriter,
-                            gaps_in_frame_num_value_allowed_flag,
-                            1);
-
-  /* pic_width_in_mbs_minus1 */
-  gst_bit_writer_write_ue(bitwriter, seq->picture_width_in_mbs - 1);
-  /* pic_height_in_map_units_minus1 */
-  gst_bit_writer_write_ue(bitwriter, pic_height_in_map_units - 1);
-  /* frame_mbs_only_flag */
-  gst_bit_writer_write_uint_value(bitwriter,
-                            seq->seq_fields.bits.frame_mbs_only_flag,
-                            1);
-
-  if (!seq->seq_fields.bits.frame_mbs_only_flag) { //ONLY mbs
-      g_assert(0);
-      gst_bit_writer_write_uint_value(bitwriter, mb_adaptive_frame_field, 1);
-  }
-
-  /* direct_8x8_inference_flag */
-  gst_bit_writer_write_uint_value(bitwriter, 0, 1);
-  /* frame_cropping_flag */
-  gst_bit_writer_write_uint_value(bitwriter, seq->frame_cropping_flag, 1);
-
-  if (seq->frame_cropping_flag) {
-      /* frame_crop_left_offset */
-      gst_bit_writer_write_ue(bitwriter, seq->frame_crop_left_offset);
-      /* frame_crop_right_offset */
-      gst_bit_writer_write_ue(bitwriter, seq->frame_crop_right_offset);
-      /* frame_crop_top_offset */
-      gst_bit_writer_write_ue(bitwriter, seq->frame_crop_top_offset);
-      /* frame_crop_bottom_offset */
-      gst_bit_writer_write_ue(bitwriter, seq->frame_crop_bottom_offset);
-  }
-
-  /* vui_parameters_present_flag */
-  gst_bit_writer_write_uint_value(bitwriter, seq->vui_parameters_present_flag, 1);
-  if (seq->vui_parameters_present_flag) {
-    /* aspect_ratio_info_present_flag */
-    gst_bit_writer_write_uint_value(bitwriter,
-                              seq->vui_fields.bits.aspect_ratio_info_present_flag,
-                              1);
-    if (seq->vui_fields.bits.aspect_ratio_info_present_flag) {
-      gst_bit_writer_write_uint8(bitwriter, seq->aspect_ratio_idc);
-      if (seq->aspect_ratio_idc == 0xFF) {
-        gst_bit_writer_write_uint16(bitwriter, seq->sar_width);
-        gst_bit_writer_write_uint16(bitwriter, seq->sar_height);
-      }
     }
 
-    /* overscan_info_present_flag */
-    gst_bit_writer_write_uint_value(bitwriter, 0, 1);
-    /* video_signal_type_present_flag */
-    gst_bit_writer_write_uint_value(bitwriter, 0, 1);
-    /* chroma_loc_info_present_flag */
-    gst_bit_writer_write_uint_value(bitwriter, 0, 1);
+    /* log2_max_frame_num_minus4 */
+    gst_bit_writer_put_ue(bitwriter,
+        seq->seq_fields.bits.log2_max_frame_num_minus4);
+    /* pic_order_cnt_type */
+    gst_bit_writer_put_ue(bitwriter, seq->seq_fields.bits.pic_order_cnt_type);
 
-    /* timing_info_present_flag */
-    gst_bit_writer_write_uint_value(bitwriter,
-                              seq->vui_fields.bits.timing_info_present_flag,
-                              1);
-    if (seq->vui_fields.bits.timing_info_present_flag) {
-      gst_bit_writer_write_uint_value(bitwriter, seq->num_units_in_tick, 32);
-      gst_bit_writer_write_uint_value(bitwriter, seq->time_scale, 32);
-      gst_bit_writer_write_uint_value(bitwriter, 1, 1); /* fixed_frame_rate_flag */
+    if (seq->seq_fields.bits.pic_order_cnt_type == 0) {
+        /* log2_max_pic_order_cnt_lsb_minus4 */
+        gst_bit_writer_put_ue(bitwriter,
+            seq->seq_fields.bits.log2_max_pic_order_cnt_lsb_minus4);
+    } else if (seq->seq_fields.bits.pic_order_cnt_type == 1) {
+        g_assert(0);
+        gst_bit_writer_put_bits_uint32(bitwriter,
+            seq->seq_fields.bits.delta_pic_order_always_zero_flag, 1);
+        gst_bit_writer_put_se(bitwriter, seq->offset_for_non_ref_pic);
+        gst_bit_writer_put_se(bitwriter, seq->offset_for_top_to_bottom_field);
+        gst_bit_writer_put_ue(bitwriter,
+            seq->num_ref_frames_in_pic_order_cnt_cycle);
+        for ( i = 0; i < seq->num_ref_frames_in_pic_order_cnt_cycle; i++) {
+            gst_bit_writer_put_se(bitwriter, seq->offset_for_ref_frame[i]);
+        }
     }
 
-    nal_hrd_parameters_present_flag = (seq->bits_per_second > 0 ? TRUE : FALSE);
-    /* nal_hrd_parameters_present_flag */
-    gst_bit_writer_write_uint_value(bitwriter, nal_hrd_parameters_present_flag, 1);
-    if (nal_hrd_parameters_present_flag) {
-      /* hrd_parameters */
-      /* cpb_cnt_minus1 */
-      gst_bit_writer_write_ue(bitwriter, 0);
-      gst_bit_writer_write_uint_value(bitwriter, 4, 4); /* bit_rate_scale */
-      gst_bit_writer_write_uint_value(bitwriter, 6, 4); /* cpb_size_scale */
+    /* num_ref_frames */
+    gst_bit_writer_put_ue(bitwriter, seq->max_num_ref_frames);
+    /* gaps_in_frame_num_value_allowed_flag */
+    gst_bit_writer_put_bits_uint32(bitwriter,
+        gaps_in_frame_num_value_allowed_flag, 1);
 
-      for (i = 0; i < 1; ++i) {
-        /* bit_rate_value_minus1[0] */
-        gst_bit_writer_write_ue(bitwriter, seq->bits_per_second/1024- 1);
-        /* cpb_size_value_minus1[0] */
-        gst_bit_writer_write_ue(bitwriter, seq->bits_per_second/1024*8 - 1);
-        /* cbr_flag[0] */
-        gst_bit_writer_write_uint_value(bitwriter, 1, 1);
-      }
-      /* initial_cpb_removal_delay_length_minus1 */
-      gst_bit_writer_write_uint_value(bitwriter, 23, 5);
-      /* cpb_removal_delay_length_minus1 */
-      gst_bit_writer_write_uint_value(bitwriter, 23, 5);
-      /* dpb_output_delay_length_minus1 */
-      gst_bit_writer_write_uint_value(bitwriter, 23, 5);
-      /* time_offset_length  */
-      gst_bit_writer_write_uint_value(bitwriter, 23, 5);
+    /* pic_width_in_mbs_minus1 */
+    gst_bit_writer_put_ue(bitwriter, seq->picture_width_in_mbs - 1);
+    /* pic_height_in_map_units_minus1 */
+    gst_bit_writer_put_ue(bitwriter, pic_height_in_map_units - 1);
+    /* frame_mbs_only_flag */
+    gst_bit_writer_put_bits_uint32(bitwriter,
+        seq->seq_fields.bits.frame_mbs_only_flag, 1);
+
+    if (!seq->seq_fields.bits.frame_mbs_only_flag) { //ONLY mbs
+        g_assert(0);
+        gst_bit_writer_put_bits_uint32(bitwriter, mb_adaptive_frame_field, 1);
     }
-    /* vcl_hrd_parameters_present_flag */
-    gst_bit_writer_write_uint_value(bitwriter, 0, 1);
-    if (nal_hrd_parameters_present_flag || 0/*vcl_hrd_parameters_present_flag*/) {
-      /* low_delay_hrd_flag */
-      gst_bit_writer_write_uint_value(bitwriter, 0, 1);
+
+    /* direct_8x8_inference_flag */
+    gst_bit_writer_put_bits_uint32(bitwriter, 0, 1);
+    /* frame_cropping_flag */
+    gst_bit_writer_put_bits_uint32(bitwriter, seq->frame_cropping_flag, 1);
+
+    if (seq->frame_cropping_flag) {
+        /* frame_crop_left_offset */
+        gst_bit_writer_put_ue(bitwriter, seq->frame_crop_left_offset);
+        /* frame_crop_right_offset */
+        gst_bit_writer_put_ue(bitwriter, seq->frame_crop_right_offset);
+        /* frame_crop_top_offset */
+        gst_bit_writer_put_ue(bitwriter, seq->frame_crop_top_offset);
+        /* frame_crop_bottom_offset */
+        gst_bit_writer_put_ue(bitwriter, seq->frame_crop_bottom_offset);
     }
-    /* pic_struct_present_flag */
-    gst_bit_writer_write_uint_value(bitwriter, 0, 1);
-    /* bitwriter_restriction_flag */
-    gst_bit_writer_write_uint_value(bitwriter, 0, 1);
-  }
-  /* rbsp_trailing_bits */
-  gst_bit_writer_write_trailing_bits(bitwriter);
-  return TRUE;
+
+    /* vui_parameters_present_flag */
+    gst_bit_writer_put_bits_uint32(bitwriter, seq->vui_parameters_present_flag, 1);
+    if (seq->vui_parameters_present_flag) {
+        /* aspect_ratio_info_present_flag */
+        gst_bit_writer_put_bits_uint32(bitwriter,
+                                  seq->vui_fields.bits.aspect_ratio_info_present_flag,
+                                  1);
+        if (seq->vui_fields.bits.aspect_ratio_info_present_flag) {
+            gst_bit_writer_put_bits_uint32(bitwriter, seq->aspect_ratio_idc, 8);
+            if (seq->aspect_ratio_idc == 0xFF) {
+                gst_bit_writer_put_bits_uint32(bitwriter, seq->sar_width, 16);
+                gst_bit_writer_put_bits_uint32(bitwriter, seq->sar_height, 16);
+            }
+        }
+
+        /* overscan_info_present_flag */
+        gst_bit_writer_put_bits_uint32(bitwriter, 0, 1);
+        /* video_signal_type_present_flag */
+        gst_bit_writer_put_bits_uint32(bitwriter, 0, 1);
+        /* chroma_loc_info_present_flag */
+        gst_bit_writer_put_bits_uint32(bitwriter, 0, 1);
+
+        /* timing_info_present_flag */
+        gst_bit_writer_put_bits_uint32(bitwriter,
+            seq->vui_fields.bits.timing_info_present_flag, 1);
+        if (seq->vui_fields.bits.timing_info_present_flag) {
+            gst_bit_writer_put_bits_uint32(bitwriter, seq->num_units_in_tick, 32);
+            gst_bit_writer_put_bits_uint32(bitwriter, seq->time_scale, 32);
+            gst_bit_writer_put_bits_uint32(bitwriter, 1, 1); /* fixed_frame_rate_flag */
+        }
+
+        nal_hrd_parameters_present_flag = (seq->bits_per_second > 0 ? TRUE : FALSE);
+        /* nal_hrd_parameters_present_flag */
+        gst_bit_writer_put_bits_uint32(bitwriter, nal_hrd_parameters_present_flag, 1);
+        if (nal_hrd_parameters_present_flag) {
+            /* hrd_parameters */
+            /* cpb_cnt_minus1 */
+            gst_bit_writer_put_ue(bitwriter, 0);
+            gst_bit_writer_put_bits_uint32(bitwriter, 4, 4); /* bit_rate_scale */
+            gst_bit_writer_put_bits_uint32(bitwriter, 6, 4); /* cpb_size_scale */
+
+            for (i = 0; i < 1; ++i) {
+                /* bit_rate_value_minus1[0] */
+                gst_bit_writer_put_ue(bitwriter, seq->bits_per_second/1024- 1);
+                /* cpb_size_value_minus1[0] */
+                gst_bit_writer_put_ue(bitwriter, seq->bits_per_second/1024*8 - 1);
+                /* cbr_flag[0] */
+                gst_bit_writer_put_bits_uint32(bitwriter, 1, 1);
+            }
+            /* initial_cpb_removal_delay_length_minus1 */
+            gst_bit_writer_put_bits_uint32(bitwriter, 23, 5);
+            /* cpb_removal_delay_length_minus1 */
+            gst_bit_writer_put_bits_uint32(bitwriter, 23, 5);
+            /* dpb_output_delay_length_minus1 */
+            gst_bit_writer_put_bits_uint32(bitwriter, 23, 5);
+            /* time_offset_length  */
+            gst_bit_writer_put_bits_uint32(bitwriter, 23, 5);
+        }
+        /* vcl_hrd_parameters_present_flag */
+        gst_bit_writer_put_bits_uint32(bitwriter, 0, 1);
+        if (nal_hrd_parameters_present_flag || 0/*vcl_hrd_parameters_present_flag*/) {
+            /* low_delay_hrd_flag */
+            gst_bit_writer_put_bits_uint32(bitwriter, 0, 1);
+        }
+        /* pic_struct_present_flag */
+        gst_bit_writer_put_bits_uint32(bitwriter, 0, 1);
+        /* bitwriter_restriction_flag */
+        gst_bit_writer_put_bits_uint32(bitwriter, 0, 1);
+    }
+
+    /* rbsp_trailing_bits */
+    gst_bit_writer_write_trailing_bits(bitwriter);
+    return TRUE;
 }
 
 static gboolean
@@ -651,74 +678,67 @@ gst_bit_writer_write_pps(
     VAEncPictureParameterBufferH264 *pic
 )
 {
-  guint32 num_slice_groups_minus1 = 0;
-  guint32 pic_init_qs_minus26 = 0;
-  guint32 redundant_pic_cnt_present_flag = 0;
+    guint32 num_slice_groups_minus1 = 0;
+    guint32 pic_init_qs_minus26 = 0;
+    guint32 redundant_pic_cnt_present_flag = 0;
 
-  /* pic_parameter_set_id */
-  gst_bit_writer_write_ue(bitwriter, pic->pic_parameter_set_id);
-  /* seq_parameter_set_id */
-  gst_bit_writer_write_ue(bitwriter, pic->seq_parameter_set_id);
-  /* entropy_coding_mode_flag */
-  gst_bit_writer_write_uint_value(bitwriter,
-                            pic->pic_fields.bits.entropy_coding_mode_flag,
-                            1);
-  /* pic_order_present_flag */
-  gst_bit_writer_write_uint_value(bitwriter,
-                            pic->pic_fields.bits.pic_order_present_flag,
-                            1);
-  /*slice_groups-1*/
-  gst_bit_writer_write_ue(bitwriter, num_slice_groups_minus1);
+    /* pic_parameter_set_id */
+    gst_bit_writer_put_ue(bitwriter, pic->pic_parameter_set_id);
+    /* seq_parameter_set_id */
+    gst_bit_writer_put_ue(bitwriter, pic->seq_parameter_set_id);
+    /* entropy_coding_mode_flag */
+    gst_bit_writer_put_bits_uint32(bitwriter,
+        pic->pic_fields.bits.entropy_coding_mode_flag, 1);
+    /* pic_order_present_flag */
+    gst_bit_writer_put_bits_uint32(bitwriter,
+        pic->pic_fields.bits.pic_order_present_flag, 1);
+    /*slice_groups-1*/
+    gst_bit_writer_put_ue(bitwriter, num_slice_groups_minus1);
 
-  if (num_slice_groups_minus1 > 0) {
-    /*FIXME*/
-    g_assert(0);
-  }
-  gst_bit_writer_write_ue(bitwriter, pic->num_ref_idx_l0_active_minus1);
-  gst_bit_writer_write_ue(bitwriter, pic->num_ref_idx_l1_active_minus1);
-  gst_bit_writer_write_uint_value(bitwriter,
-                            pic->pic_fields.bits.weighted_pred_flag,
-                            1);
-  gst_bit_writer_write_uint_value(bitwriter,
-                            pic->pic_fields.bits.weighted_bipred_idc,
-                            2);
-  /* pic_init_qp_minus26 */
-  gst_bit_writer_write_se(bitwriter, pic->pic_init_qp-26);
-  /* pic_init_qs_minus26 */
-  gst_bit_writer_write_se(bitwriter, pic_init_qs_minus26);
-  /*chroma_qp_index_offset*/
-  gst_bit_writer_write_se(bitwriter, pic->chroma_qp_index_offset);
-
-  gst_bit_writer_write_uint_value(bitwriter,
-                            pic->pic_fields.bits.deblocking_filter_control_present_flag,
-                            1);
-  gst_bit_writer_write_uint_value(bitwriter,
-                            pic->pic_fields.bits.constrained_intra_pred_flag,
-                            1);
-  gst_bit_writer_write_uint_value(bitwriter, redundant_pic_cnt_present_flag, 1);
-
-  /*more_rbsp_data*/
-  gst_bit_writer_write_uint_value(bitwriter,
-                            pic->pic_fields.bits.transform_8x8_mode_flag,
-                            1);
-  gst_bit_writer_write_uint_value(bitwriter,
-                            pic->pic_fields.bits.pic_scaling_matrix_present_flag,
-                            1);
-  if (pic->pic_fields.bits.pic_scaling_matrix_present_flag) {
-    g_assert(0);
-    /* FIXME */
-    /*
-    for (i = 0; i <
-      (6+(-( (chroma_format_idc ! = 3) ? 2 : 6) * -pic->pic_fields.bits.transform_8x8_mode_flag));
-      i++) {
-      gst_bit_writer_write_uint_value(bitwriter, pic->pic_fields.bits.pic_scaling_list_present_flag, 1);
+    if (num_slice_groups_minus1 > 0) {
+        /*FIXME*/
+        g_assert(0);
     }
-    */
-  }
+    gst_bit_writer_put_ue(bitwriter, pic->num_ref_idx_l0_active_minus1);
+    gst_bit_writer_put_ue(bitwriter, pic->num_ref_idx_l1_active_minus1);
+    gst_bit_writer_put_bits_uint32(bitwriter,
+        pic->pic_fields.bits.weighted_pred_flag, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter,
+        pic->pic_fields.bits.weighted_bipred_idc, 2);
+    /* pic_init_qp_minus26 */
+    gst_bit_writer_put_se(bitwriter, pic->pic_init_qp-26);
+    /* pic_init_qs_minus26 */
+    gst_bit_writer_put_se(bitwriter, pic_init_qs_minus26);
+    /*chroma_qp_index_offset*/
+    gst_bit_writer_put_se(bitwriter, pic->chroma_qp_index_offset);
 
-  gst_bit_writer_write_se(bitwriter, pic->second_chroma_qp_index_offset);
-  gst_bit_writer_write_trailing_bits(bitwriter);
-  return TRUE;
+    gst_bit_writer_put_bits_uint32(bitwriter,
+        pic->pic_fields.bits.deblocking_filter_control_present_flag, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter,
+        pic->pic_fields.bits.constrained_intra_pred_flag, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter, redundant_pic_cnt_present_flag, 1);
+
+    /*more_rbsp_data*/
+    gst_bit_writer_put_bits_uint32(bitwriter,
+        pic->pic_fields.bits.transform_8x8_mode_flag, 1);
+    gst_bit_writer_put_bits_uint32(bitwriter,
+        pic->pic_fields.bits.pic_scaling_matrix_present_flag, 1);
+    if (pic->pic_fields.bits.pic_scaling_matrix_present_flag) {
+        g_assert(0);
+        /* FIXME */
+        /*
+        for (i = 0; i <
+            (6+(-( (chroma_format_idc ! = 3) ? 2 : 6) * -pic->pic_fields.bits.transform_8x8_mode_flag));
+            i++) {
+            gst_bit_writer_put_bits_uint8(bitwriter, pic->pic_fields.bits.pic_scaling_list_present_flag, 1);
+        }
+        */
+    }
+
+    gst_bit_writer_put_se(bitwriter, pic->second_chroma_qp_index_offset);
+    gst_bit_writer_write_trailing_bits(bitwriter);
+
+    return TRUE;
 }
 
 static gboolean
@@ -736,14 +756,14 @@ add_sequence_packed_header(
     guint8 *data;
 
     gst_bit_writer_init(&writer, 128*8);
-    gst_bit_writer_write_uint32(&writer, 0x00000001); /* start code*/
+    gst_bit_writer_put_bits_uint32(&writer, 0x00000001, 32); /* start code*/
     gst_bit_writer_write_nal_header(&writer,
                 GST_VAAPI_ENCODER_H264_NAL_REF_IDC_HIGH,
                 GST_VAAPI_ENCODER_H264_NAL_SPS);
     gst_bit_writer_write_sps(&writer, seq_param, encoder->profile);
     g_assert(GST_BIT_WRITER_BIT_SIZE(&writer)%8 == 0);
     data_bit_size = GST_BIT_WRITER_BIT_SIZE(&writer);
-    data = GST_BIT_WRITER_BUFFER(&writer);
+    data = GST_BIT_WRITER_DATA(&writer);
 
     packed_header_param_buffer.type = VAEncPackedHeaderSequence;
     packed_header_param_buffer.bit_length = data_bit_size;
@@ -775,14 +795,14 @@ add_picture_packed_header(
     guint8 *data;
 
     gst_bit_writer_init(&writer, 128*8);
-    gst_bit_writer_write_uint32(&writer, 0x00000001); /* start code*/
+    gst_bit_writer_put_bits_uint32(&writer, 0x00000001, 32); /* start code*/
     gst_bit_writer_write_nal_header(&writer,
         GST_VAAPI_ENCODER_H264_NAL_REF_IDC_HIGH,
         GST_VAAPI_ENCODER_H264_NAL_PPS);
     gst_bit_writer_write_pps(&writer, pic_param);
     g_assert(GST_BIT_WRITER_BIT_SIZE(&writer)%8 == 0);
     data_bit_size = GST_BIT_WRITER_BIT_SIZE(&writer);
-    data = GST_BIT_WRITER_BUFFER(&writer);
+    data = GST_BIT_WRITER_DATA(&writer);
 
 
     packed_header_param_buffer.type = VAEncPackedHeaderPicture;
@@ -1521,26 +1541,26 @@ gst_vaapi_encoder_h264_get_avcC_codec_data(
 
     gst_bit_writer_init(&writer, (sps_info.size + pps_info.size + 64)*8);
     /* codec_data */
-    gst_bit_writer_write_uint8(&writer, configuration_version);
-    gst_bit_writer_write_uint8(&writer, profile);
-    gst_bit_writer_write_uint8(&writer, profile_comp);
-    gst_bit_writer_write_uint8(&writer, level_idc);
-    gst_bit_writer_write_uint_value(&writer, 0x3F, 6); /*111111*/
-    gst_bit_writer_write_uint_value(&writer, length_size_minus_one, 2);
-    gst_bit_writer_write_uint_value(&writer, 0x07, 3); /*111*/
+    gst_bit_writer_put_bits_uint32(&writer, configuration_version, 8);
+    gst_bit_writer_put_bits_uint32(&writer, profile, 8);
+    gst_bit_writer_put_bits_uint32(&writer, profile_comp, 8);
+    gst_bit_writer_put_bits_uint32(&writer, level_idc, 8);
+    gst_bit_writer_put_bits_uint32(&writer, 0x3F, 6); /*111111*/
+    gst_bit_writer_put_bits_uint32(&writer, length_size_minus_one, 2);
+    gst_bit_writer_put_bits_uint32(&writer, 0x07, 3); /*111*/
 
     /* write sps */
-    gst_bit_writer_write_uint_value(&writer, 1, 5);   /* sps count = 1*/
+    gst_bit_writer_put_bits_uint32(&writer, 1, 5);   /* sps count = 1*/
     g_assert(GST_BIT_WRITER_BIT_SIZE(&writer)%8 == 0);
-    gst_bit_writer_write_uint16(&writer, sps_info.size);
-    gst_bit_writer_write_byte_array(&writer, sps_info.data, sps_info.size);
+    gst_bit_writer_put_bits_uint32(&writer, sps_info.size, 16);
+    gst_bit_writer_put_bytes(&writer, sps_info.data, sps_info.size);
 
     /* write pps */
-    gst_bit_writer_write_uint8(&writer, 1); /*pps count = 1*/
-    gst_bit_writer_write_uint16(&writer, pps_info.size);
-    gst_bit_writer_write_byte_array(&writer, pps_info.data, pps_info.size);
+    gst_bit_writer_put_bits_uint32(&writer, 1, 8); /*pps count = 1*/
+    gst_bit_writer_put_bits_uint32(&writer, pps_info.size, 16);
+    gst_bit_writer_put_bytes(&writer, pps_info.data, pps_info.size);
 
-    avc_codec = gst_buffer_new_wrapped(GST_BIT_WRITER_BUFFER(&writer),
+    avc_codec = gst_buffer_new_wrapped(GST_BIT_WRITER_DATA(&writer),
                                        GST_BIT_WRITER_BIT_SIZE(&writer)/8);
     g_assert(avc_codec);
     if (!avc_codec) {
