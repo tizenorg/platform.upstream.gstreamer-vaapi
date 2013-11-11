@@ -203,7 +203,7 @@ _set_level(GstVaapiEncoderH264* encoder)
 {
     guint pic_mb_size;
     guint MaxDpbMbs, MaxMBPS;
-    guint dbp_level, mbps_level;
+    guint dbp_level, mbps_level, profile_level;
 
     if (encoder->level) {
         if (encoder->level < GST_VAAPI_ENCODER_H264_LEVEL_10)
@@ -272,7 +272,16 @@ _set_level(GstVaapiEncoderH264* encoder)
     else
         mbps_level = GST_VAAPI_ENCODER_H264_LEVEL_10;
 
+    if (encoder->profile == GST_VAAPI_PROFILE_H264_HIGH)
+        profile_level = GST_VAAPI_ENCODER_H264_LEVEL_41;
+    else if (encoder->profile == GST_VAAPI_PROFILE_H264_MAIN)
+        profile_level = GST_VAAPI_ENCODER_H264_LEVEL_30;
+    else
+        profile_level = GST_VAAPI_ENCODER_H264_LEVEL_20;
+
     encoder->level = (dbp_level > mbps_level ? dbp_level : mbps_level);
+    if (encoder->level < profile_level)
+        encoder->level = profile_level;
 }
 
 static inline void
@@ -469,7 +478,6 @@ gst_bit_writer_write_sps(
 
   if (profile == GST_VAAPI_PROFILE_H264_HIGH) {
     /* for high profile */
-    g_assert(0);
     /* chroma_format_idc  = 1, 4:2:0*/
     gst_bit_writer_write_ue(bitwriter, seq->seq_fields.bits.chroma_format_idc);
     if (3 == seq->seq_fields.bits.chroma_format_idc) {
@@ -926,7 +934,7 @@ fill_va_sequence_param(GstVaapiEncoderH264* encoder, GstVaapiEncSequence *sequen
 
     /*sequence field values*/
     seq->seq_fields.value = 0;
-    //seq_param->seq_fields.bits.chroma_format_idc = 1;
+    seq->seq_fields.bits.chroma_format_idc = 1;
     seq->seq_fields.bits.frame_mbs_only_flag = 1;
     seq->seq_fields.bits.mb_adaptive_frame_field_flag = FALSE;
     seq->seq_fields.bits.seq_scaling_matrix_present_flag = FALSE;
