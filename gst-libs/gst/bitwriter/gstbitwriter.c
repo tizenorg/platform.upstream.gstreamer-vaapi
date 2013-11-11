@@ -19,178 +19,113 @@
  *  Boston, MA 02110-1301 USA
  */
 
+#define GST_BIT_WRITER_DISABLE_INLINES
+
 #include "gstbitwriter.h"
-#include <string.h>
 
-static const guint8 bit_pading_mask[9] = {
-    0x00, 0x01, 0x03, 0x07,
-    0x0F, 0x1F, 0x3F, 0x7F,
-    0xFF };
-
-#define GST_BITS_WRITER_ALIGNMENT_SIZE 2048
-
-#define GST_BITS_WRITER_ALIGN(bitsize)                       \
-    (((bitsize) + GST_BITS_WRITER_ALIGNMENT_SIZE - 1)&       \
-     (~(GST_BITS_WRITER_ALIGNMENT_SIZE - 1)))
-
-#define GST_BITS_WRITER_BYTE_ROUND_UP(bitsize)               \
-        (((bitsize)+7)>>3)
-
-#define GST_BITS_WRITER_BYTE_FLOOR(bitsize)                  \
-            ((bitsize)>>3)
-
-static gboolean
-gst_bit_writer_auto_grow(GstBitWriter *bitwriter, guint32 extra_bit_size)
+void
+gst_bit_writer_init(GstBitWriter *bitwriter, guint32 reserved_bits)
 {
-    guint32 new_bit_size = extra_bit_size + bitwriter->bit_size;
-    guint32 clear_pos;
-
-    g_assert(bitwriter->bit_size <= bitwriter->max_bit_capability);
-    if (new_bit_size <= bitwriter->max_bit_capability)
-        return TRUE;
-
-    new_bit_size = GST_BITS_WRITER_ALIGN(new_bit_size);
-    g_assert(new_bit_size && (new_bit_size%GST_BITS_WRITER_ALIGNMENT_SIZE == 0));
-    clear_pos = GST_BITS_WRITER_BYTE_ROUND_UP(bitwriter->bit_size);
-    bitwriter->buffer = g_realloc(bitwriter->buffer, (new_bit_size >> 3));
-    memset(bitwriter->buffer + clear_pos, 0, (new_bit_size >> 3) - clear_pos);
-    bitwriter->max_bit_capability = new_bit_size;
-    return TRUE;
+    bitwriter->bit_size = 0;
+    bitwriter->data = NULL;
+    bitwriter->max_bit_capacity = 0;
+    bitwriter->auto_grow = TRUE;
+    if (reserved_bits)
+        _gst_bit_writer_check_space(bitwriter, reserved_bits);
 }
 
 void
-gst_bit_writer_init(GstBitWriter *bitwriter, guint32 bit_capability)
+gst_bit_writer_init_fill(GstBitWriter *bitwriter, guint8 *data, guint bits)
 {
     bitwriter->bit_size = 0;
-    bitwriter->buffer = NULL;
-    bitwriter->max_bit_capability = 0;
-    if (bit_capability)
-        gst_bit_writer_auto_grow(bitwriter, bit_capability);
+    bitwriter->data = data;
+    bitwriter->max_bit_capacity = bits;
+    bitwriter->auto_grow = FALSE;
 }
 
 void
-gst_bit_writer_clear(GstBitWriter *bitwriter, gboolean free_flag)
+gst_bit_writer_clear(GstBitWriter *bitwriter, gboolean free_data)
 {
-    if (bitwriter->buffer && free_flag)
-        g_free (bitwriter->buffer);
+    if (bitwriter->auto_grow && bitwriter->data && free_data)
+        g_free (bitwriter->data);
 
-    bitwriter->buffer = NULL;
+    bitwriter->data = NULL;
     bitwriter->bit_size = 0;
-    bitwriter->max_bit_capability = 0;
+    bitwriter->max_bit_capacity = 0;
+}
+
+GstBitWriter *
+gst_bit_writer_new(guint32 reserved_bits)
+{
+    GstBitWriter *ret = g_slice_new0 (GstBitWriter);
+
+    gst_bit_writer_init(ret, reserved_bits);
+
+    return ret;
+}
+
+GstBitWriter *
+gst_bit_writer_new_fill(guint8 *data, guint bits)
+{
+    GstBitWriter *ret = g_slice_new0 (GstBitWriter);
+
+    gst_bit_writer_init_fill(ret, data, bits);
+
+    return ret;
+}
+
+void
+gst_bit_writer_free(GstBitWriter *writer, gboolean free_data)
+{
+    g_return_if_fail (writer != NULL);
+
+    gst_bit_writer_clear(writer, free_data);
+
+    g_slice_free (GstBitWriter, writer);
+}
+
+guint
+gst_bit_writer_get_size(GstBitWriter *bitwriter)
+{
+    return _gst_bit_writer_get_size_inline(bitwriter);
+}
+
+guint8 *
+gst_bit_writer_get_data(GstBitWriter *bitwriter)
+{
+    return _gst_bit_writer_get_data_inline(bitwriter);
 }
 
 gboolean
-gst_bit_writer_write_uint_value(
+gst_bit_writer_set_pos(GstBitWriter *bitwriter, guint pos)
+{
+    return _gst_bit_writer_set_pos_inline(bitwriter, pos);
+}
+
+#define GST_BIT_WRITER_WRITE_BITS(bits) \
+gboolean \
+gst_bit_writer_put_bits_uint##bits (GstBitWriter *bitwriter, guint##bits value, guint nbits) \
+{ \
+  return _gst_bit_writer_put_bits_uint##bits##_inline (bitwriter, value, nbits); \
+}
+
+GST_BIT_WRITER_WRITE_BITS(8)
+GST_BIT_WRITER_WRITE_BITS(16)
+GST_BIT_WRITER_WRITE_BITS(32)
+GST_BIT_WRITER_WRITE_BITS(64)
+
+gboolean
+gst_bit_writer_put_bytes(
     GstBitWriter *bitwriter,
-    guint32 value,
-    guint32 nbits
+    const guint8 *data,
+    guint nbytes
 )
 {
-    guint32 byte_pos, bit_offset;
-    guint8  *cur_byte;
-    guint32 fill_bits;
-
-    if (!nbits)
-        return TRUE;
-
-    if (!gst_bit_writer_auto_grow(bitwriter, nbits))
-        return FALSE;
-
-    byte_pos = GST_BITS_WRITER_BYTE_FLOOR(bitwriter->bit_size);
-    bit_offset = (bitwriter->bit_size & 0x07);
-    cur_byte = bitwriter->buffer + byte_pos;
-    g_assert( bit_offset < 8 &&
-            bitwriter->bit_size <= bitwriter->max_bit_capability);
-
-    while (nbits) {
-        fill_bits = ((8 - bit_offset) < nbits ? (8 - bit_offset) : nbits);
-        nbits -= fill_bits;
-        bitwriter->bit_size += fill_bits;
-
-        *cur_byte |= (((value >> nbits) & bit_pading_mask[fill_bits])
-                      << (8 - bit_offset - fill_bits));
-        ++cur_byte;
-        bit_offset = 0;
-    }
-    g_assert(cur_byte <=
-           (bitwriter->buffer + (bitwriter->max_bit_capability >> 3)));
-
-    return TRUE;
+    return _gst_bit_writer_put_bytes_inline(bitwriter, data, nbytes);
 }
 
 gboolean
-gst_bit_writer_align_byte(GstBitWriter *bitwriter, guint32 value)
+gst_bit_writer_align_bytes(GstBitWriter *bitwriter, guint8 trailing_bit)
 {
-    guint32 bit_offset, bit_left;
-
-    bit_offset = (bitwriter->bit_size & 0x07);
-    if (!bit_offset)
-        return TRUE;
-
-    bit_left = 8 - bit_offset;
-    if (value)
-        value = bit_pading_mask[bit_left];
-    return gst_bit_writer_write_uint_value(bitwriter, value, bit_left);
-}
-
-
-gboolean
-gst_bit_writer_write_byte_array(
-    GstBitWriter *bitwriter,
-    const guint8 *buf,
-    guint32 byte_size
-)
-{
-    if (!byte_size)
-        return FALSE;
-
-    if (!gst_bit_writer_auto_grow(bitwriter, byte_size << 3))
-        return FALSE;
-
-    if ((bitwriter->bit_size & 0x07) == 0) {
-        memcpy(&bitwriter->buffer[bitwriter->bit_size >> 3],
-               buf, byte_size);
-        bitwriter->bit_size += (byte_size << 3);
-    } else {
-        g_assert(0);
-        while(byte_size) {
-            gst_bit_writer_write_uint_value(bitwriter, *buf, 8);
-            --byte_size;
-            ++buf;
-        }
-    }
-
-    return TRUE;
-}
-
-gboolean
-gst_bit_writer_write_ue(GstBitWriter *bitwriter, guint32 value)
-{
-    guint32  size_in_bits = 0;
-    guint32  tmp_value = ++value;
-
-    while (tmp_value) {
-        ++size_in_bits;
-        tmp_value >>= 1;
-    }
-    if (!gst_bit_writer_write_uint_value(bitwriter, 0, size_in_bits-1))
-        return FALSE;
-    if (!gst_bit_writer_write_uint_value(bitwriter, value, size_in_bits))
-        return FALSE;
-    return TRUE;
-}
-
-gboolean
-gst_bit_writer_write_se(GstBitWriter *bitwriter, gint32 value)
-{
-    guint32 new_val;
-
-    if (value <= 0)
-        new_val = -(value<<1);
-    else
-        new_val = (value<<1) - 1;
-
-    if (!gst_bit_writer_write_ue(bitwriter, new_val))
-        return FALSE;
-    return TRUE;
+    return _gst_bit_writer_align_bytes_inline(bitwriter, trailing_bit);
 }
