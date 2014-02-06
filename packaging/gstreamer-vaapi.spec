@@ -1,3 +1,5 @@
+%bcond_with x
+
 Name:       gstreamer-vaapi
 Version:    0.5.6
 Release:    0
@@ -9,7 +11,10 @@ Source0:    %{name}-%{version}.tar.bz2
 Source1001: gstreamer-vaapi.manifest
 Source2001: codecparsers.tar.bz2
 Source2002: videoutils.tar.bz2
+%if %{with x}
 BuildRequires:  pkgconfig(x11)
+%endif
+
 BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(gstreamer-1.0)
 BuildRequires:  pkgconfig(gstreamer-basevideo-1.0)
