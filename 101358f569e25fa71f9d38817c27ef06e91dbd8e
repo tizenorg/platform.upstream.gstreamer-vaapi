@@ -1,3 +1,12 @@
+Code-Review+2: YAN YIN <yan.yin@intel.com>
+Verified+1: YAN YIN <yan.yin@intel.com>
+Code-Review+1: michael fu <michael.fu@intel.com>
+Submitted-by: YAN YIN <yan.yin@intel.com>
+Submitted-at: Sat, 08 Feb 2014 00:15:14 -0800
+Reviewed-on: https://review.tizen.org/gerrit/16096
+Project: platform/upstream/gstreamer-vaapi
+Branch: refs/heads/tizen
+
 Reviewed-on: https://review.tizen.org/gerrit/16096
 Project: platform/upstream/gstreamer-vaapi
 Branch: refs/heads/tizen
