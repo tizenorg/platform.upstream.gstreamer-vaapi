@@ -54,7 +54,6 @@ struct _FrameState {
     GstVaapiWindow             *window;
     GstVaapiSurface            *surface;
     GstVaapiVideoPool          *surface_pool;
-    struct wl_buffer           *buffer;
     struct wl_callback         *callback;
 };
 
@@ -70,7 +69,6 @@ frame_state_new(GstVaapiWindow *window)
     frame->window = window;
     frame->surface = NULL;
     frame->surface_pool = NULL;
-    frame->buffer = NULL;
     frame->callback = NULL;
     return frame;
 }
@@ -88,11 +86,6 @@ frame_state_free(FrameState *frame)
         frame->surface = NULL;
     }
     gst_vaapi_video_pool_replace(&frame->surface_pool, NULL);
-
-    if (frame->buffer) {
-        wl_buffer_destroy(frame->buffer);
-        frame->buffer = NULL;
-    }
 
     if (frame->callback) {
         wl_callback_destroy(frame->callback);
@@ -158,16 +151,17 @@ gst_vaapi_window_wayland_sync(GstVaapiWindow *window)
 {
     GstVaapiWindowWaylandPrivate * const priv =
         GST_VAAPI_WINDOW_WAYLAND_GET_PRIVATE(window);
+    struct wl_display * const wl_display =
+        GST_VAAPI_OBJECT_WL_DISPLAY(window);
 
     if (priv->frame) {
-        struct wl_display * const wl_display =
-            GST_VAAPI_OBJECT_WL_DISPLAY(window);
-
         do {
             if (wl_display_dispatch_queue(wl_display, priv->event_queue) < 0)
                 return FALSE;
         } while (priv->frame);
     }
+    wl_display_dispatch_pending(wl_display);
+
     return TRUE;
 }
 
@@ -193,6 +187,15 @@ static const struct wl_shell_surface_listener shell_surface_listener = {
     handle_ping,
     handle_configure,
     handle_popup_done
+};
+
+static void handle_wl_buffer_release(void *data, struct wl_buffer *wl_buffer)
+{
+    wl_buffer_destroy(wl_buffer);
+}
+
+static const struct wl_buffer_listener wl_buf_listener = {
+    handle_wl_buffer_release
 };
 
 static gboolean
@@ -529,9 +532,13 @@ gst_vaapi_window_wayland_render(
         priv->opaque_region = NULL;
     }
 
-    frame->buffer = buffer;
     frame->callback = wl_surface_frame(priv->surface);
     wl_callback_add_listener(frame->callback, &frame_callback_listener, frame);
+    wl_buffer_add_listener(buffer, &wl_buf_listener, NULL);
+    // XXXX, it is not ok to use internal event_queue here,
+    // since there may still be future WL_BUFFER_RELEASE event when we try to destroy event_queue in gst_vaapi_window_wayland_destroy
+    // it potential can be resolved if wl_surface has WL_SURFACE_RELEACE event
+    // wl_proxy_set_queue((struct wl_proxy *)buffer, priv->event_queue);
 
     wl_surface_commit(priv->surface);
     wl_display_flush(wl_display);
