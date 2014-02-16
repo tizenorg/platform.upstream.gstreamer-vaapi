@@ -111,7 +111,11 @@ context_create_surfaces (GstVaapiContext * context)
   guint i, num_surfaces;
 
   /* Number of scratch surfaces beyond those used as reference */
+#if USE_WAYLAND
+  const guint SCRATCH_SURFACES_COUNT = 8;
+#else
   const guint SCRATCH_SURFACES_COUNT = 4;
+#endif
 
   if (!gst_vaapi_context_overlay_reset (context))
     return FALSE;
