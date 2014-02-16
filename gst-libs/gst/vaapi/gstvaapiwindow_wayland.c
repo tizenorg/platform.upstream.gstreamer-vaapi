@@ -147,6 +147,32 @@ gst_vaapi_window_wayland_hide(GstVaapiWindow *window)
     return TRUE;
 }
 
+static void display_sync_callback(void *data, struct wl_callback *callback, uint32_t serial)
+{
+    int *done = data;
+    *done = 1;
+    wl_callback_destroy(callback);
+}
+static const struct wl_callback_listener sync_listener = {
+    display_sync_callback
+};
+static int event_queue_round_trip(struct wl_display *wld_display, struct wl_event_queue *queue)
+{
+    int done = 0, ret = 0;
+
+    struct wl_callback* callback = wl_display_sync(wld_display);
+    wl_callback_add_listener(callback, &sync_listener, &done);
+    wl_proxy_set_queue((struct wl_proxy *) callback, queue);
+
+    while (ret != -1 && !done) {
+        ret = wl_display_dispatch_queue(wld_display, queue);
+    }
+
+    wl_display_dispatch_pending(wld_display);
+
+    return ret;
+}
+
 static gboolean
 gst_vaapi_window_wayland_sync(GstVaapiWindow *window)
 {
@@ -155,14 +181,14 @@ gst_vaapi_window_wayland_sync(GstVaapiWindow *window)
     struct wl_display * const wl_display =
         GST_VAAPI_OBJECT_WL_DISPLAY(window);
 
-    if (priv->frame) {
-        do {
-            if (wl_display_dispatch_queue(wl_display, priv->event_queue) < 0)
-                return FALSE;
-        } while (priv->frame);
+    while (priv->frame) {
+        if (event_queue_round_trip(wl_display, priv->event_queue)<0) {
+            GST_ERROR("wayland event queue sync failed");
+        }
     }
-    wl_display_dispatch_pending(wl_display);
-
+    if (priv->frame) {
+            GST_ERROR("frame callback lost");
+    }
     return TRUE;
 }
 
@@ -538,6 +564,7 @@ gst_vaapi_window_wayland_render(
     }
 
     frame->callback = wl_surface_frame(priv->surface);
+    wl_proxy_set_queue((struct wl_proxy *)frame->callback, priv->event_queue);
     wl_callback_add_listener(frame->callback, &frame_callback_listener, frame);
     wl_buffer_add_listener(buffer, &wl_buf_listener, NULL);
     // XXXX, it is not ok to use internal event_queue here,
