@@ -783,7 +783,7 @@ fill_profiles(GstVaapiProfile profiles[16], guint *n_profiles_ptr,
 }
 
 static GstVaapiProfile
-get_profile(GstVaapiDecoderH264 *decoder, GstH264SPS *sps)
+get_profile(GstVaapiDecoderH264 *decoder, GstH264SPS *sps, GstH264PPS *pps)
 {
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
     GstVaapiDisplay * const display = GST_VAAPI_DECODER_DISPLAY(decoder);
@@ -797,7 +797,9 @@ get_profile(GstVaapiDecoderH264 *decoder, GstH264SPS *sps)
     fill_profiles(profiles, &n_profiles, profile);
     switch (profile) {
     case GST_VAAPI_PROFILE_H264_BASELINE:
-        if (sps->constraint_set1_flag) { // A.2.2 (main profile)
+        if (sps->constraint_set1_flag ||
+            (pps->num_slice_groups_minus1 == 0 &&
+             !pps->redundant_pic_cnt_present_flag)) { // A.2.2 (main profile)
             fill_profiles(profiles, &n_profiles,
                 GST_VAAPI_PROFILE_H264_CONSTRAINED_BASELINE);
             fill_profiles(profiles, &n_profiles,
@@ -827,7 +829,7 @@ get_profile(GstVaapiDecoderH264 *decoder, GstH264SPS *sps)
 }
 
 static GstVaapiDecoderStatus
-ensure_context(GstVaapiDecoderH264 *decoder, GstH264SPS *sps)
+ensure_context(GstVaapiDecoderH264 *decoder, GstH264SPS *sps, GstH264PPS *pps)
 {
     GstVaapiDecoder * const base_decoder = GST_VAAPI_DECODER_CAST(decoder);
     GstVaapiDecoderH264Private * const priv = &decoder->priv;
@@ -837,7 +839,7 @@ ensure_context(GstVaapiDecoderH264 *decoder, GstH264SPS *sps)
     gboolean reset_context = FALSE;
     guint mb_width, mb_height;
 
-    profile = get_profile(decoder, sps);
+    profile = get_profile(decoder, sps, pps);
     if (!profile) {
         GST_ERROR("unsupported profile_idc %u", sps->profile_idc);
         return GST_VAAPI_DECODER_STATUS_ERROR_UNSUPPORTED_PROFILE;
@@ -2533,7 +2535,7 @@ decode_picture(GstVaapiDecoderH264 *decoder, GstVaapiDecoderUnit *unit)
     GstVaapiPictureH264 *picture;
     GstVaapiDecoderStatus status;
 
-    status = ensure_context(decoder, sps);
+    status = ensure_context(decoder, sps, pps);
     if (status != GST_VAAPI_DECODER_STATUS_SUCCESS)
         return status;
 
