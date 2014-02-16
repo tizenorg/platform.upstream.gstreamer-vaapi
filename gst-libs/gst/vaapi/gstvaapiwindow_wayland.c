@@ -231,41 +231,55 @@ gst_vaapi_window_wayland_create(
         GST_VAAPI_WINDOW_WAYLAND_GET_PRIVATE(window);
     GstVaapiDisplayWaylandPrivate * const priv_display =
         GST_VAAPI_DISPLAY_WAYLAND_GET_PRIVATE(GST_VAAPI_OBJECT_DISPLAY(window));
+    struct wl_surface *wld_surface  = (struct wl_surface*)GST_VAAPI_OBJECT_ID(window);
 
     GST_DEBUG("create window, size %ux%u", *width, *height);
 
-    g_return_val_if_fail(priv_display->compositor != NULL, FALSE);
-    g_return_val_if_fail(priv_display->shell != NULL, FALSE);
+    priv->shell_surface     = NULL;
+    priv->surface           = NULL;
+    priv->opaque_region     = NULL;
+    priv->event_queue       = NULL;
+    priv->is_shown          = FALSE;
 
+    g_return_val_if_fail(priv_display->compositor != NULL, FALSE);
+    if (!wld_surface) {
+        g_return_val_if_fail(priv_display->shell != NULL, FALSE);
+    }
     GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
     priv->event_queue = wl_display_create_queue(priv_display->wl_display);
     GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
     if (!priv->event_queue)
         return FALSE;
 
-    GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
-    priv->surface = wl_compositor_create_surface(priv_display->compositor);
-    GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
+    if(wld_surface){
+        priv->surface = wld_surface;
+        window->use_foreign_window = TRUE;
+    } else {
+        GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
+        priv->surface = wl_compositor_create_surface(priv_display->compositor);
+        GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
+        window->use_foreign_window = FALSE;
+    }
     if (!priv->surface)
         return FALSE;
     wl_proxy_set_queue((struct wl_proxy *)priv->surface, priv->event_queue);
+    if (window->use_foreign_window == FALSE) {
+        GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
+        priv->shell_surface =
+            wl_shell_get_shell_surface(priv_display->shell, priv->surface);
+        GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
+        if (!priv->shell_surface)
+            return FALSE;
+        wl_proxy_set_queue((struct wl_proxy *)priv->shell_surface,
+            priv->event_queue);
 
-    GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
-    priv->shell_surface =
-        wl_shell_get_shell_surface(priv_display->shell, priv->surface);
-    GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
-    if (!priv->shell_surface)
-        return FALSE;
-    wl_proxy_set_queue((struct wl_proxy *)priv->shell_surface,
-        priv->event_queue);
+        wl_shell_surface_add_listener(priv->shell_surface,
+                                      &shell_surface_listener, priv);
+        wl_shell_surface_set_toplevel(priv->shell_surface);
 
-    wl_shell_surface_add_listener(priv->shell_surface,
-                                  &shell_surface_listener, priv);
-    wl_shell_surface_set_toplevel(priv->shell_surface);
-
-    if (priv->fullscreen_on_show)
-        gst_vaapi_window_wayland_set_fullscreen(window, TRUE);
-
+        if (priv->fullscreen_on_show)
+            gst_vaapi_window_wayland_set_fullscreen(window, TRUE);
+    }
     priv->surface_format = GST_VIDEO_FORMAT_ENCODED;
     priv->use_vpp = GST_VAAPI_DISPLAY_HAS_VPP(GST_VAAPI_OBJECT_DISPLAY(window));
     priv->is_shown = TRUE;
@@ -279,6 +293,7 @@ gst_vaapi_window_wayland_destroy(GstVaapiWindow * window)
     GstVaapiWindowWaylandPrivate * const priv =
         GST_VAAPI_WINDOW_WAYLAND_GET_PRIVATE(window);
 
+    wl_display_dispatch_queue_pending(GST_VAAPI_OBJECT_WL_DISPLAY(window), priv->event_queue);
     if (priv->frame) {
         frame_state_free(priv->frame);
         priv->frame = NULL;
@@ -290,7 +305,9 @@ gst_vaapi_window_wayland_destroy(GstVaapiWindow * window)
     }
 
     if (priv->surface) {
-        wl_surface_destroy(priv->surface);
+        if (!window->use_foreign_window) {
+            wl_surface_destroy(priv->surface);
+        }
         priv->surface = NULL;
     }
 
@@ -317,13 +334,14 @@ gst_vaapi_window_wayland_resize(
 
     GST_DEBUG("resize window, new size %ux%u", width, height);
 
-    if (priv->opaque_region)
-        wl_region_destroy(priv->opaque_region);
-    GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
-    priv->opaque_region = wl_compositor_create_region(priv_display->compositor);
-    GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
-    wl_region_add(priv->opaque_region, 0, 0, width, height);
-
+    if (window->use_foreign_window == FALSE) {
+        if (priv->opaque_region)
+            wl_region_destroy(priv->opaque_region);
+        GST_VAAPI_OBJECT_LOCK_DISPLAY(window);
+        priv->opaque_region = wl_compositor_create_region(priv_display->compositor);
+        GST_VAAPI_OBJECT_UNLOCK_DISPLAY(window);
+        wl_region_add(priv->opaque_region, 0, 0, width, height);
+    }
     return TRUE;
 }
 
@@ -571,4 +589,31 @@ gst_vaapi_window_wayland_new(
 
     return gst_vaapi_window_new(GST_VAAPI_WINDOW_CLASS(
         gst_vaapi_window_wayland_class()), display, width, height);
+}
+
+/**
+ * gst_vaapi_window_wayland_new_with_surface:
+ * @display: a #GstVaapiDisplay
+ * @wld_surface:a wl_surface pointer
+ *
+ * Creates a window with the specified @wld_surface. The window
+ * will be attached to the @display and remains invisible to the user
+ * until gst_vaapi_window_show() is called.
+ *
+ * Return value: the newly allocated #GstVaapiWindow object
+ */
+GstVaapiWindow *
+gst_vaapi_window_wayland_new_with_surface(
+    GstVaapiDisplay *display,
+    gpointer wld_surface
+)
+{
+    GST_INFO("new surface 0x%08x,vaapidisplay=%p", wld_surface,display);
+    struct wl_display *wl_dpy = gst_vaapi_display_wayland_get_display((GstVaapiDisplayWayland*)display);
+    g_return_val_if_fail(display, NULL);
+
+    if(!wld_surface) return NULL;
+    return gst_vaapi_window_new_from_native(GST_VAAPI_WINDOW_CLASS(
+            gst_vaapi_window_wayland_class()), display, wld_surface);
+
 }
