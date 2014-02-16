@@ -39,6 +39,7 @@
 
 #define DEBUG 1
 #include "gstvaapidebug.h"
+#define WORKAROUND_DISABLE_VPP       1
 
 #define GST_VAAPI_WINDOW_WAYLAND_CAST(obj) \
     ((GstVaapiWindowWayland *)(obj))
@@ -463,6 +464,10 @@ gst_vaapi_window_wayland_render(
         need_vpp = TRUE;
     if (dst_rect->width != window->width || dst_rect->height != window->height)
         need_vpp = TRUE;
+
+    #if WORKAROUND_DISABLE_VPP
+        need_vpp = FALSE;
+    #endif
 
     /* Try to construct a Wayland buffer from VA surface as is (without VPP) */
     if (!need_vpp) {
