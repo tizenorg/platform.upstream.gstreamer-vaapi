@@ -211,6 +211,33 @@ gst_vaapi_plugin_base_set_display_type (GstVaapiPluginBase * plugin,
 }
 
 /**
+ * gst_vaapi_plugin_base_set_native_display:
+ * @plugin: a #GstVaapiPluginBase
+ * @display_type: the new request #GstVaapiDisplayType
+ * @native_display: native display
+ *
+ * setup GstVaapiDisplay with given native display
+ */
+void
+gst_vaapi_plugin_base_set_native_display (GstVaapiPluginBase * plugin,
+    const gchar *type, void *native_display)
+{
+  GValue value = G_VALUE_INIT;
+
+  g_value_init (&value, G_TYPE_POINTER);
+  g_value_set_pointer (&value, native_display);
+  gst_vaapi_set_display (type, &value, &plugin->display);
+
+  if (!strcmp (type, "x11-display")) {
+      plugin->display_type_req = GST_VAAPI_DISPLAY_TYPE_X11;
+      plugin->display_type = GST_VAAPI_DISPLAY_TYPE_X11;
+  } else if (!strcmp (type, "wl-display")) {
+      plugin->display_type_req = GST_VAAPI_DISPLAY_TYPE_WAYLAND;
+      plugin->display_type = GST_VAAPI_DISPLAY_TYPE_WAYLAND;
+  }
+}
+
+/**
  * gst_vaapi_plugin_base_ensure_display:
  * @plugin: a #GstVaapiPluginBase
  *

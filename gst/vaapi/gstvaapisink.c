@@ -587,12 +587,12 @@ gst_vaapisink_ensure_window_wl_surface(GstVaapiSink *sink, gpointer wld_surface)
     if (!gst_vaapisink_ensure_display(sink))
         return FALSE;
 
-    switch (sink->display_type) {
+    switch (GST_VAAPI_PLUGIN_BASE_DISPLAY_TYPE(sink)) {
 	case GST_VAAPI_DISPLAY_TYPE_WAYLAND:
-        sink->window = gst_vaapi_window_wayland_new_with_surface(sink->display, wld_surface);
+        sink->window = gst_vaapi_window_wayland_new_with_surface(GST_VAAPI_PLUGIN_BASE_DISPLAY(sink), wld_surface);
         break;
     default:
-        GST_ERROR("unsupported display type %d", sink->display_type);
+        GST_ERROR("unsupported display type %d", GST_VAAPI_PLUGIN_BASE_DISPLAY_TYPE(sink));
         return FALSE;
     }
     return sink->window != NULL;
@@ -1123,7 +1123,7 @@ gst_vaapisink_show_frame(GstBaseSink *base_sink, GstBuffer *src_buffer)
     gst_buffer_unref(buffer);
 
 #if USE_WAYLAND
-    if (sink->display_type == GST_VAAPI_DISPLAY_TYPE_WAYLAND) {
+    if (GST_VAAPI_PLUGIN_BASE_DISPLAY_TYPE(sink) == GST_VAAPI_DISPLAY_TYPE_WAYLAND) {
         GstStructure *s;
         GstMessage *msg;
         static int frame_num = 0;
@@ -1211,8 +1211,8 @@ gst_vaapisink_set_property(
         wld_display = g_value_get_pointer(value);
         if(wld_display==NULL)
             return;
-        sink->display = gst_vaapi_display_wayland_new_with_display(wld_display);
-        sink->display_type = GST_VAAPI_DISPLAY_TYPE_WAYLAND;
+        gst_vaapi_plugin_base_set_native_display (GST_VAAPI_PLUGIN_BASE(sink),
+            "wl-display", wld_display);
         break;
 #endif
     case PROP_DISPLAY_TYPE:
@@ -1256,7 +1256,7 @@ gst_vaapisink_get_property(
     switch (prop_id) {
 #if USE_WAYLAND
     case PROP_DISPLAY:
-        g_value_set_pointer(value,sink->display);
+        g_value_set_pointer(value,GST_VAAPI_PLUGIN_BASE_DISPLAY(sink));
         break;
 #endif
     case PROP_DISPLAY_TYPE:
