@@ -1,3 +1,15 @@
+* Tue Feb 18 2014 Zhao, Halley <halley.zhao@intel.com> 0.2.6@0549a7d
+- add gst_vaapi_plugin_base_set_native_display
+- h264 dec: add more checks from pps for hardware profile
+- wayland: update frame sync callback
+- wayland: disable crop support by vpp
+- destroy wl_buffer by register to wl_buffer_listener
+- wayland: retain additional 3 gst buffer after video rendering
+- add 'frame-rendered' signal for wayland platform
+- add foreign wl_display/wl_surface support
+- Fix issue of mem map
+- add packaging folder and update submodule pkgs
+
 * Thu Sep 12 2013 Zhao Halley <halley.zhao@intel.com> 0.2.6@1392323
   Rebase to upstream 0.5.6 release with hw encoder support
   Fix TIVI-1478 JPEG issue
