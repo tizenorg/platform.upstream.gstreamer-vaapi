@@ -51,7 +51,7 @@ developing applications that use %{name}.
 %build
 cp %{SOURCE1001} .
 
-%autogen --with-gstreamer-api=1.0 --enable-encoders
+%autogen --enable-encoders
 make %{?_smp_mflags}
 
 %install
