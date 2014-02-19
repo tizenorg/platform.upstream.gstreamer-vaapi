@@ -25,7 +25,11 @@
 #ifndef GST_VAAPI_TEXTURE_H
 #define GST_VAAPI_TEXTURE_H
 
-#include <GL/gl.h>
+#ifdef HAVE_GL_GL_H
+# include <GL/gl.h>
+#else
+# include <GLES/gl.h>
+#endif
 #include <gst/vaapi/gstvaapitypes.h>
 #include <gst/vaapi/gstvaapiobject.h>
 #include <gst/vaapi/gstvaapidisplay.h>
