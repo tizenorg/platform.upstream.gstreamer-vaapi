@@ -1,5 +1,5 @@
 #! /bin/sh
-# @author: Philippe Coval <mailto:philippe.coval@eurogiciel.com>
+# @author: Philippe Coval <mailto:philippe.coval@eurogiciel.fr>
 # @description: manage git submodules with git-build-package-rpm
 
 set -x
@@ -18,7 +18,7 @@ git submodule status | awk '{ print $2 }' | while read dir  ; do
     tar cjvf "./packaging/${name}.tar.bz2" "${dir}"
 
     cat<<EOF
-# Please add "SourceN: $name.tar.bz2" and "%setup -q -T -D -a N" to "packaging/*.spec"
+# Please add "SourceN: $name.tar.bz2" and "%setup -q -a N" to "packaging/*.spec"
 EOF
 
 done
