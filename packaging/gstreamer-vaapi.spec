@@ -1,7 +1,7 @@
 %bcond_with x
 
 Name:       gstreamer-vaapi
-Version:    0.5.8
+Version:    0.5.9
 Release:    0
 Summary:    VA-API based plugins for GStreamer and helper libraries
 Group:      Multimedia/Multimedia Framework
@@ -11,15 +11,16 @@ Source0:    %{name}-%{version}.tar.bz2
 Source1001: gstreamer-vaapi.manifest
 Source2001: codecparsers.tar.bz2
 Source2002: videoutils.tar.bz2
+Source2003: upstream.tar.bz2
 %if %{with x}
 BuildRequires:  pkgconfig(x11)
 %endif
 
 BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(gstreamer-1.0)
-BuildRequires:  pkgconfig(gstreamer-basevideo-1.0)
 BuildRequires:  pkgconfig(gstreamer-plugins-base-1.0)
 BuildRequires:  pkgconfig(libdrm)
+BuildRequires:  yasm
 BuildRequires:  which
 BuildRequires:  git
 ExclusiveArch:  %{ix86} x86_64
@@ -43,16 +44,20 @@ The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
 
 %prep
-%setup -q 
+%setup -q
 %setup -q -T -D -a 2001
 %setup -q -T -D -a 2002
+%setup -q -T -D -a 2003
 
 
 %build
 cp %{SOURCE1001} .
 
-%autogen --with-gstreamer-api=1.0 --enable-encoders
-make %{?_smp_mflags}
+%autogen \
+    --with-gstreamer-api=1.2 \
+    --enable-encoders
+
+%__make %{?_smp_mflags} V=1
 
 %install
 %make_install
@@ -70,7 +75,7 @@ make %{?_smp_mflags}
 %files devel
 %manifest %{name}.manifest
 %license COPYING.LIB
-%dir %{_includedir}/gstreamer-1.0/gst/vaapi
-%{_includedir}/gstreamer-1.0/gst/vaapi/*.h
+%dir %{_includedir}/gstreamer-*/gst/vaapi
+%{_includedir}/gstreamer-*/gst/vaapi/*.h
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/%{name}*.pc
