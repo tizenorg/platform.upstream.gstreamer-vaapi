@@ -874,6 +874,7 @@ gst_vaapidecode_parse_frame(GstVideoDecoder *vdec,
 
     switch (status) {
     case GST_VAAPI_DECODER_STATUS_SUCCESS:
+    case GST_VAAPI_DECODER_STATUS_ERROR_BITSTREAM_PARSER:
         if (got_unit_size > 0) {
             gst_video_decoder_add_to_frame(vdec, got_unit_size);
             decode->current_frame_size += got_unit_size;
