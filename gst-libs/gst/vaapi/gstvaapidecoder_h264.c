@@ -1598,7 +1598,7 @@ parse_sei(GstVaapiDecoderH264 *decoder, GstVaapiDecoderUnit *unit)
     result = gst_h264_parser_parse_sei(priv->parser, &pi->nalu, sei_ptr);
     if (result != GST_H264_PARSER_OK) {
         GST_WARNING("failed to parse SEI messages");
-        return get_status(result);
+        return GST_VAAPI_DECODER_STATUS_SUCCESS;
     }
     return GST_VAAPI_DECODER_STATUS_SUCCESS;
 }
