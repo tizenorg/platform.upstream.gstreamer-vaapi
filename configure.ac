@@ -36,9 +36,9 @@ m4_define([gst12_plugins_bad_version],  [1.1.0])
 m4_define([gst14_version],              [1.2.90])
 m4_define([gst14_plugins_base_version], [1.3.0])
 m4_define([gst14_plugins_bad_version],  [1.3.0])
-m4_define([gst16_version],              [1.5.0])
-m4_define([gst16_plugins_base_version], [1.5.0])
-m4_define([gst16_plugins_bad_version],  [1.5.0])
+m4_define([gst16_version],              [1.6.0])
+m4_define([gst16_plugins_base_version], [1.6.0])
+m4_define([gst16_plugins_bad_version],  [1.6.0])
 
 # Wayland minimum version number
 m4_define([wayland_api_version], [1.0.0])
@@ -229,7 +229,7 @@ case $GST_API_VERSION in
     GST_PLUGINS_BASE_VERSION_REQUIRED=gst14_plugins_base_version
     GST_PLUGINS_BAD_VERSION_REQUIRED=gst14_plugins_bad_version
     ;;
-1.5)
+1.[[5-6]])
     GST_VERSION_REQUIRED=gst16_version
     GST_PLUGINS_BASE_VERSION_REQUIRED=gst16_plugins_base_version
     GST_PLUGINS_BAD_VERSION_REQUIRED=gst16_plugins_bad_version
@@ -483,7 +483,7 @@ case $GST_API_VERSION in
 1.0)    lt_bias=gst1_vaapi_lt_current_bias;;
 1.2)    lt_bias=gst2_vaapi_lt_current_bias;;
 1.[[3-4]]) lt_bias=gst4_vaapi_lt_current_bias;;
-1.5)    lt_bias=gst6_vaapi_lt_current_bias;;
+1.[[5-6]]) lt_bias=gst6_vaapi_lt_current_bias;;
 esac
 GST_VAAPI_MAJOR_VERSION=`expr gst_vaapi_lt_current - "$lt_bias"`
 AC_SUBST(GST_VAAPI_MAJOR_VERSION)
