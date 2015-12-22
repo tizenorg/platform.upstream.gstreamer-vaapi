@@ -20,6 +20,7 @@ BuildRequires:  pkgconfig(libva)
 BuildRequires:  pkgconfig(gstreamer-1.0)
 BuildRequires:  pkgconfig(gstreamer-plugins-base-1.0)
 BuildRequires:  pkgconfig(libdrm)
+BuildRequires:  pkgconfig(gles20)
 BuildRequires:  yasm
 BuildRequires:  which
 BuildRequires:  git
